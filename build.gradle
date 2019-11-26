@@ -1,0 +1,116 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+group = 'io.github.crucible'
+version = '1.0'
+
+archivesBaseName = "Grimoire"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
+    runDir = "minecraft"
+}
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+repositories {
+    maven {
+        name = 'spongepowered-repo'
+        url = 'http://repo.spongepowered.org/maven/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+
+    shade("org.spongepowered:mixin:0.8-SNAPSHOT") {
+        exclude module: "launchwrapper"
+        exclude module: 'guava'
+    }
+
+    compileOnly fileTree(dir: 'lib', include: ['*.jar'])
+}
+
+processResources {
+
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
+
+        expand "version": project.version, "mcversion": project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+
+}
+
+ext {
+    mixinSrg = new File(project.buildDir, 'mixins/mixin.mint.srg')
+    mixinRefMap = new File(project.buildDir, "mixins/mixin.mintasm.refmap.json")
+}
+
+jar {
+    from project.mixinRefMap
+
+    manifest {
+        attributes(
+                'FMLCorePlugin': "io.github.crucible.grimoire.Grimoire",
+                'FMLCorePluginContainsFMLMod': 'false',
+                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
+        )
+    }
+
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            include 'org/spongepowered', 'org/spongepowered/**','net/cubespace','net/cubespace/**'
+        }
+    }
+
+}
+
+reobf.addExtraSrgFile project.mixinSrg
+
+compileJava {
+    options.compilerArgs += [
+            '-Xlint:-processing',
+            "-AoutSrgFile=${project.mixinSrg.canonicalPath}",
+            "-AoutRefMapFile=${project.mixinRefMap.canonicalPath}",
+            "-AreobfSrgFile=${project.file('build/srgs/mcp-srg.srg').canonicalPath}"
+    ]
+}
+
+task copySrgs(type: Copy, dependsOn: 'genSrgs') {
+    from plugins.getPlugin("forge").delayedFile('{SRG_DIR}')
+
+    include '**/*.srg'
+    into 'build/srgs'
+}
+
+compileJava.dependsOn copySrgs
