@@ -46,7 +46,7 @@ repositories {
 
 dependencies {
 
-    shade("org.spongepowered:mixin:0.8-SNAPSHOT") {
+    shade("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
         exclude module: "launchwrapper"
         exclude module: 'guava'
     }
@@ -72,8 +72,8 @@ processResources {
 }
 
 ext {
-    mixinSrg = new File(project.buildDir, 'mixins/mixin.mint.srg')
-    mixinRefMap = new File(project.buildDir, "mixins/mixin.mintasm.refmap.json")
+    mixinSrg = new File(project.buildDir, 'mixins/mixin.grimoire.srg')
+    mixinRefMap = new File(project.buildDir, "mixins/mixin.grimoire.refmap.json")
 }
 
 jar {
@@ -85,17 +85,23 @@ jar {
                 'FMLCorePluginContainsFMLMod': 'false',
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
         )
+
     }
 
     configurations.shade.each { dep ->
         from(project.zipTree(dep)){
-            include 'org/spongepowered', 'org/spongepowered/**','net/cubespace','net/cubespace/**'
+            exclude 'META-INF', 'META-INF/**'
+        }
+        from(project.zipTree(dep)){
+            include 'META-INF/services', 'META-INF/services/**'
         }
     }
 
 }
 
-reobf.addExtraSrgFile project.mixinSrg
+reobf {
+    addExtraSrgFile project.mixinSrg
+}
 
 compileJava {
     options.compilerArgs += [
