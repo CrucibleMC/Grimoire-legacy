@@ -41,6 +41,11 @@ repositories {
         name = 'spongepowered-repo'
         url = 'http://repo.spongepowered.org/maven/'
     }
+
+    maven {
+        name = 'jitpack'
+        url  = 'https://jitpack.io'
+    }
     mavenCentral()
 }
 
@@ -50,6 +55,8 @@ dependencies {
         exclude module: "launchwrapper"
         exclude module: 'guava'
     }
+
+    compile 'com.github.cruciblemc:BlackMagic:1.0'
 
     compileOnly fileTree(dir: 'lib', include: ['*.jar'])
 }

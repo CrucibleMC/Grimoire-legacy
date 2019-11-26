@@ -1,8 +1,12 @@
 package io.github.crucible.grimoire;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import io.github.crucible.blackmagic.BlackMagic;
+import io.github.crucible.blackmagic.core.FileLoader;
+import io.github.crucible.grimoire.core.MixinModLoader;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.lib.tree.ClassNode;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -21,11 +25,12 @@ public class Grimoire implements IFMLLoadingPlugin, IMixinConfigPlugin {
     private static Grimoire instance;
 
     public Grimoire(){
+        BlackMagic.inject(this.getClass(), new FileLoader(this.getClass(), "libs"));
         System.setProperty("mixin.debug.export", "true");
-        System.setProperty("mixin.env.disableRefMap","true");
         MixinBootstrap.init();
         instance = this;
-        System.out.println("Teste");
+
+        new MixinModLoader().init();
 
     }
 
