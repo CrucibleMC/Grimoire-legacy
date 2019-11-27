@@ -25,8 +25,7 @@ public class Grimoire implements IFMLLoadingPlugin, IMixinConfigPlugin {
         MixinBootstrap.init();
         instance = this;
 
-        new MixinModLoader().init();
-
+        MixinModLoader.init();
     }
 
     public static Grimoire getInstance() {

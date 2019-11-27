@@ -5,32 +5,34 @@ import io.github.crucible.blackmagic.core.FileLoader;
 import io.github.crucible.grimoire.Grimoire;
 import org.spongepowered.asm.mixin.Mixins;
 
-
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class MixinModLoader {
 
-    public void init(){
-        File dir = new File("mixinmods");
+    private static ArrayList<File> mixin_mods = new ArrayList<>();
+
+    public static void init(){
+        File dir = new File("grimoire");
 
         if(!dir.exists()){
             if(dir.mkdirs()){
-                Grimoire.getLogger().info("[Grinmoire] Criando pasta para os mods.");
+                Grimoire.getLogger().info("[Grimoire] Criando pasta para os mods.");
             }
         }
 
         File[] files;
         if((files = dir.listFiles()) != null){
-            for(File mods : files){
+            for(File mod : files){
                 try {
 
-                    if(mods.isDirectory()) continue;
+                    if(mod.isDirectory()) continue;
 
-                    ZipFile zipFile = new ZipFile(mods);
+                    ZipFile zipFile = new ZipFile(mod);
 
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
                     ZipEntry mixinjson = null;
@@ -44,15 +46,27 @@ public class MixinModLoader {
                     }
 
                     if(mixinjson != null){
-                        BlackMagic.inject(this.getClass(), new FileLoader(mods.getCanonicalPath()));
-                        Mixins.addConfiguration(mixinjson.getName());
+                        try{
+
+                            BlackMagic.inject(MixinModLoader.class, new FileLoader(mod.getCanonicalPath()));
+                            Mixins.addConfiguration(mixinjson.getName());
+
+                            mixin_mods.add(mod);
+
+                        }catch (Exception e){
+                            Grimoire.getLogger().info("[Grimoire] Falha ao carregar \'" + mod.getName() + "\' arquivo inválido." );
+                        }
                     }
 
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Grimoire.getLogger().info("[Grimoire] Falha ao carregar \'" + mod.getName() + "\' arquivo inválido." );
                 }
             }
         }
+    }
+
+    public static ArrayList<File> getLoadedMixins() {
+        return mixin_mods;
     }
 }
