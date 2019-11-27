@@ -1,6 +1,5 @@
 package io.github.crucible.grimoire.core;
 
-
 import io.github.crucible.blackmagic.BlackMagic;
 import io.github.crucible.blackmagic.core.FileLoader;
 import io.github.crucible.grimoire.Grimoire;

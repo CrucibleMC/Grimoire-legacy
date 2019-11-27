@@ -1,0 +1,3 @@
+[submodule "BlackMagic"]
+	path = BlackMagic
+	url = https://github.com/CrucibleMC/BlackMagic.git
