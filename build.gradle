@@ -17,6 +17,7 @@ buildscript {
 }
 
 apply plugin: 'forge'
+apply plugin: 'idea'
 
 group = 'io.github.crucible'
 version = '1.0'
@@ -42,23 +43,14 @@ repositories {
         url = 'http://repo.spongepowered.org/maven/'
     }
 
-    maven {
-        name = 'jitpack'
-        url  = 'https://jitpack.io'
-    }
     mavenCentral()
 }
 
 dependencies {
-
     shade("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
         exclude module: "launchwrapper"
         exclude module: 'guava'
     }
-
-    shade 'com.github.cruciblemc:BlackMagic:1.0'
-
-    compileOnly fileTree(dir: 'lib', include: ['*.jar'])
 }
 
 processResources {
@@ -92,14 +84,13 @@ jar {
                 'FMLCorePluginContainsFMLMod': 'false',
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
         )
-
     }
 
     configurations.shade.each { dep ->
-        from(project.zipTree(dep)){
+        from(project.zipTree(dep)) {
             exclude 'META-INF', 'META-INF/**'
         }
-        from(project.zipTree(dep)){
+        from(project.zipTree(dep)) {
             include 'META-INF/services', 'META-INF/services/**'
         }
     }
