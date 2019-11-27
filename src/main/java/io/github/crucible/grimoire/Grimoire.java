@@ -72,10 +72,10 @@ public class Grimoire implements IFMLLoadingPlugin {
     }
 
     private static boolean isMixinConfiguration(String name) {
-        String splitName = name.substring(name.lastIndexOf("/")); // Caso o zip esteja usando o "\" esse zip está quebrado, já que o padrão é o "/".
-        if (splitName.startsWith("mixin.") && splitName.endsWith(".json")) return true;
-        if (splitName.startsWith("mixin-") && splitName.endsWith(".json")) return true;
-        return splitName.endsWith("-mixin.json");
+        String splitName = ((name.contains("/")) ? name.substring(name.lastIndexOf("/")).replace("/", "") : name); // Caso o zip esteja usando o "\" esse zip está quebrado, já que o padrão é o "/".
+        if (splitName.startsWith("mixins.") && splitName.endsWith(".json")) return true;
+        if (splitName.startsWith("mixins-") && splitName.endsWith(".json")) return true;
+        return splitName.endsWith("-mixins.json");
     }
 
     @Override
