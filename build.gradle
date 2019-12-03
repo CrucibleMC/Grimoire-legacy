@@ -71,8 +71,11 @@ processResources {
 }
 
 ext {
+    new File(project.buildDir, 'mixins').mkdirs();
     mixinSrg = new File(project.buildDir, 'mixins/mixin.grimoire.srg')
+    mixinSrg.createNewFile()
     mixinRefMap = new File(project.buildDir, "mixins/mixin.grimoire.refmap.json")
+    mixinRefMap.createNewFile()
 }
 
 jar {
