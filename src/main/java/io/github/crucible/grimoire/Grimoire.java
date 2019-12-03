@@ -2,6 +2,7 @@ package io.github.crucible.grimoire;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
@@ -13,10 +14,11 @@ import java.util.zip.ZipFile;
 
 @IFMLLoadingPlugin.Name("Grimoire")
 @IFMLLoadingPlugin.MCVersion("1.7.10")
-@IFMLLoadingPlugin.SortingIndex(100000)
 public class Grimoire implements IFMLLoadingPlugin {
 
     private LaunchClassLoader classLoader;
+    private List<File> loadedPatches = new ArrayList<>();
+
     public static Grimoire instance;
 
     public Grimoire() {
@@ -53,38 +55,51 @@ public class Grimoire implements IFMLLoadingPlugin {
             return;
         }
 
-        List<File> loadedFiles = new ArrayList<>();
-        for (File mod : dir.listFiles()) {
-            if (mod.isDirectory() || !mod.canRead() || !mod.getName().endsWith(".jar")) continue;
-            try {
-                ZipFile zipFile = new ZipFile(mod);
-                Enumeration<? extends ZipEntry> entries = zipFile.entries();
-                List<ZipEntry> mixinEntries = new ArrayList<>();
-
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
-                    if (isMixinConfiguration(entry.getName())) {
-                        mixinEntries.add(entry);
-                    }
-                }
-
-                if (!mixinEntries.isEmpty()) {
-                    classLoader.addURL(mod.toPath().toUri().toURL());
-                    loadedFiles.add(mod);
-                    mixinEntries.forEach(json -> Mixins.addConfiguration(json.getName()));
-                }
-
-            } catch (Exception e) {
-                LogManager.getLogger().warn("[Grimoire] Unable to load \'" + mod.getAbsolutePath() + "\'.");
-                e.printStackTrace();
+        List<File> allFiles = new ArrayList<>(FileUtils.listFiles(dir,new String[]{"jar"},true));
+        Collections.sort(allFiles,Comparator.comparing(File::getName));//Arealdy Sorted, but.... just in case :D
+        allFiles.removeIf(file -> {
+            if (file.getName().startsWith("[")){
+                tryToLoadPatch(file);//It is a Priority Patch, then, load it first!
+                return true;
             }
-        }
+            return false;
+        });
+        allFiles.forEach(this::tryToLoadPatch);//Load the Rest!
 
-        LogManager.getLogger().warn(String.format("[Grimoire] Loaded files %s","(" + loadedFiles.size() + "):"));
-        for (File file : loadedFiles) {
+        LogManager.getLogger().warn(String.format("Loaded files %s","(" + loadedPatches.size() + "):"));
+        for (File file : loadedPatches) {
             LogManager.getLogger().warn(" - " + file.getName());
         }
         LogManager.getLogger().warn(" ");
+
+        Grimoire.instance = null; //Don't need the instance anymore :V
+    }
+
+    private void tryToLoadPatch(File mod){
+        if (!mod.canRead()) return;
+        try {
+            ZipFile zipFile = new ZipFile(mod);
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            List<ZipEntry> mixinEntries = new ArrayList<>();
+
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (isMixinConfiguration(entry.getName())) {
+                    mixinEntries.add(entry);
+                }
+            }
+
+            if (!mixinEntries.isEmpty()) {
+                classLoader.addURL(mod.toPath().toUri().toURL());
+                mixinEntries.forEach(json -> Mixins.addConfiguration(json.getName()));
+                loadedPatches.add(mod);
+                return;
+            }
+        } catch (Exception e) {
+            LogManager.getLogger().warn("[Grimoire] Unable to load \'" + mod.getAbsolutePath() + "\'.");
+            e.printStackTrace();
+        }
+        return;
     }
 
     private boolean isMixinConfiguration(String name) {

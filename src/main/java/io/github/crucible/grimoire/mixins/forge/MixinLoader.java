@@ -22,7 +22,7 @@ import java.net.MalformedURLException;
 import java.util.List;
 
 
-@Mixin(Loader.class)
+@Mixin(value = Loader.class, remap = false)
 public class MixinLoader {
 
     @Shadow

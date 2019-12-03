@@ -22,7 +22,7 @@ apply plugin: 'idea'
 group = 'io.github.crucible'
 version = '1.0'
 
-archivesBaseName = "Grimoire"
+archivesBaseName = "[0]Grimoire"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

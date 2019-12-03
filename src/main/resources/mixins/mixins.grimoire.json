@@ -8,6 +8,6 @@
   "client": [],
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.7.11",
-  "target": "@env(INIT)",
+  "target": "@env(PREINIT)",
   "refmap":"grimoire.refmap.json"
 }
