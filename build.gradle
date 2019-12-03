@@ -22,13 +22,14 @@ apply plugin: 'idea'
 group = 'io.github.crucible'
 version = '1.0'
 
-archivesBaseName = "Grimoire"
+archivesBaseName = "[0]Grimoire"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
+    mappings = "stable_12"
     runDir = "minecraft"
 }
 
@@ -72,9 +73,9 @@ processResources {
 
 ext {
     new File(project.buildDir, 'mixins').mkdirs();
-    mixinSrg = new File(project.buildDir, 'mixins/mixin.grimoire.srg')
+    mixinSrg = new File(project.buildDir, 'mixins/mixins.grimoire.srg')
     mixinSrg.createNewFile()
-    mixinRefMap = new File(project.buildDir, "mixins/mixin.grimoire.refmap.json")
+    mixinRefMap = new File(project.buildDir, "mixins/grimoire.refmap.json")
     mixinRefMap.createNewFile()
 }
 

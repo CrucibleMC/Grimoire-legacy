@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "io.github.crucible.grimoire.mixins.forge",
+  "mixins":[
+    "MixinLoader"
+  ],
+  "server": [],
+  "client": [],
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.7.11",
+  "target": "@env(PREINIT)",
+  "refmap":"grimoire.refmap.json"
+}
