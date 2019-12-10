@@ -8,8 +8,11 @@ import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 @IFMLLoadingPlugin.Name("Grimoire")
@@ -55,16 +58,20 @@ public class Grimoire implements IFMLLoadingPlugin {
             return;
         }
 
-        List<File> allFiles = new ArrayList<>(FileUtils.listFiles(dir,new String[]{"jar"},true));
-        Collections.sort(allFiles,Comparator.comparing(File::getName));//Arealdy Sorted, but.... just in case :D
-        allFiles.removeIf(file -> {
-            if (file.getName().startsWith("[")){
-                tryToLoadPatch(file);//It is a Priority Patch, then, load it first!
-                return true;
-            }
-            return false;
-        });
-        allFiles.forEach(this::tryToLoadPatch);//Load the Rest!
+        LinkedList<File> allFiles = new LinkedList<>(FileUtils.listFiles(dir,new String[]{"jar"},true));
+        //Collections.sort(allFiles,Comparator.comparing(File::getName));//Arealdy Sorted, but.... just in case :D
+        //allFiles = sortedFiles(allFiles);
+
+        //allFiles.removeIf(file -> {
+        //    if (file.getName().startsWith("[")){
+        //        tryToLoadPatch(file);//It is a Priority Patch, then, load it first!
+        //        return true;
+        //    }
+        //    return false;
+        //});
+
+        //allFiles.forEach(this::tryToLoadPatch);//Load the Rest!
+        sortedFiles(allFiles).forEach(this::tryToLoadPatch);
 
         LogManager.getLogger().warn(String.format("Loaded files %s","(" + loadedPatches.size() + "):"));
         for (File file : loadedPatches) {
@@ -107,6 +114,62 @@ public class Grimoire implements IFMLLoadingPlugin {
         if (splitName.startsWith("mixins.") && splitName.endsWith(".json")) return true;
         if (splitName.startsWith("mixins-") && splitName.endsWith(".json")) return true;
         return splitName.endsWith("-mixins.json");
+    }
+
+    private LinkedList<File> sortedFiles(List<File> files){
+        LinkedHashMap<File,Integer> sortedMods = new LinkedHashMap<>();
+
+        for(File file : files){
+            try {
+                ZipFile zipFile = new ZipFile(file);
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                while (entries.hasMoreElements()) {
+
+                    ZipEntry entry = entries.nextElement();
+
+                    if (entry.getName().equals("META-INF/MANIFEST.MF")) {
+                        Manifest manifest = new Manifest(zipFile.getInputStream(entry));
+                        int priority = 100;
+
+                        if(manifest != null){
+
+                            try{
+                                priority = (manifest.getMainAttributes().getValue("GRIMOIRE_PRIORITY") != null) ? Integer.parseInt(manifest.getMainAttributes().getValue("GRIMOIRE_PRIORITY")) : 100;
+                            }catch (Exception ignored){}
+
+                            System.out.println("Encontrado a prioridade " + priority + " em " + zipFile.getName());
+
+                        }
+
+                        sortedMods.put(file, priority);
+
+                        break;
+                    }
+
+                }
+
+            } catch (IOException e) {
+                sortedMods.put(file,100);
+            }
+        }
+
+        LinkedList<Map.Entry<File,Integer>> sortedModsFinal = new LinkedList<>(sortedMods.entrySet());
+
+        sortedModsFinal.sort(new Comparator<Map.Entry<File, Integer>>() {
+            public int compare(Map.Entry<File, Integer> o1,
+                               Map.Entry<File, Integer> o2) {
+                return (o1.getValue()).compareTo(o2.getValue());
+            }
+        });
+
+        LinkedList<File> sorted = new LinkedList<>();
+        for(Map.Entry<File,Integer> entry : sortedModsFinal){
+            sorted.add(entry.getKey());
+        }
+
+        System.out.println(sorted);
+        return sorted;
     }
 
     @Override

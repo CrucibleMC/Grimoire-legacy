@@ -29,7 +29,7 @@ targetCompatibility = 1.8
 
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
-    mappings = "stable_12"
+    //mappings = "stable_12"
     runDir = "minecraft"
 }
 
@@ -43,7 +43,6 @@ repositories {
         name = 'spongepowered-repo'
         url = 'http://repo.spongepowered.org/maven/'
     }
-
     mavenCentral()
 }
 
