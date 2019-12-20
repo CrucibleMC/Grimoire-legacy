@@ -20,7 +20,7 @@ apply plugin: 'forge'
 apply plugin: 'idea'
 
 group = 'io.github.crucible'
-version = '1.0'
+version = '1.0.2a'
 
 archivesBaseName = "[0]Grimoire"
 
