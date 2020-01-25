@@ -13,7 +13,7 @@ Basically it's a program that allows editing other programs at run time.
 
 For example, if there is a mod that causes tons o lag and the author does not give you the source code for you to edit it and recompile, you can use Sponge Mixin to edit that mod at runtime and fix the problem by yourself.
 
-### Where are the Grimoire Modules/Paches ?
+### Where are the Grimoire Modules/Patches ?
 
 You can find them over here: [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins)
 
