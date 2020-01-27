@@ -5,7 +5,7 @@ A core mod that Grimoire-Mixins Modules use to be loaded up.
 #### What is it?
 
 Grimoire is a coremod that implements [Sponge Mixin](https://github.com/SpongePowered/Mixin) and allows to 'organize' the order of mixins modules that will me implemented.
-These module are internally called 'Grim-Patchs'
+These module are internally called 'Grim-Patches'
 
 ###### What is Sponge Mixin?
 
@@ -19,7 +19,7 @@ You can find them over here: [Grimoire-Mixins](https://github.com/CrucibleMC/Gri
 
 ### How to Install?
 
-* 0 - Notice that grimoire will work in both server and client side. But, almost all of our Grim-Patchs are for ServerSide Only!
+* 0 - Notice that grimoire will work in both server and client side. But, almost all of our Grim-Patches are for ServerSide Only!
 * 1 - Download [Grimoire](https://github.com/CrucibleMC/Grimoire/releases).
 * 2 - Put it inside the mods folder.
 * 3 - Start the server, so the coremod can create a folder alongside the 'mods' and 'config' folders called 'grimoire'.
