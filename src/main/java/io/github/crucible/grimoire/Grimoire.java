@@ -1,8 +1,8 @@
 package io.github.crucible.grimoire;
 
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import io.github.crucible.grimoire.patch.GrimPatch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.launch.MixinBootstrap;
@@ -15,7 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 @IFMLLoadingPlugin.Name("Grimoire")
-@IFMLLoadingPlugin.MCVersion("1.7.10")
+@IFMLLoadingPlugin.MCVersion("1.12.2")
 public class Grimoire implements IFMLLoadingPlugin {
 
     private LaunchClassLoader classLoader;

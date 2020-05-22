@@ -1,14 +1,13 @@
 package io.github.crucible.grimoire.mixins.forge;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModClassLoader;
-import cpw.mods.fml.common.ModContainer;
+
 import io.github.crucible.grimoire.Grimoire;
 import net.minecraft.launchwrapper.Launch;
-import org.apache.logging.log4j.LogManager;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModClassLoader;
+import net.minecraftforge.fml.common.ModContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.MixinEnvironment;
-import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,7 +33,7 @@ public class MixinLoader {
      * @reason Load all mods now and load mod support mixin configs. This can't be done later
      * since constructing mods loads classes from them.
      */
-    @Inject(method = "loadMods", at = @At(value = "INVOKE", target = "Lcpw/mods/fml/common/LoadController;transition(Lcpw/mods/fml/common/LoaderState;Z)V", ordinal = 1), remap = false)
+    @Inject(method = "loadMods", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/LoadController;transition(Lnet/minecraftforge/fml/common/LoaderState;Z)V", ordinal = 1), remap = false)
     private void beforeConstructingMods(CallbackInfo ci) {
         // Add all mods to class loader
 
