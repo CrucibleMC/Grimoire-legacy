@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.transformer.MixinTransformer;
+import org.spongepowered.asm.mixin.transformer.IMixinTransformer;
 import org.spongepowered.asm.mixin.transformer.Proxy;
 
 import java.lang.reflect.Field;
@@ -52,15 +52,9 @@ public class MixinLoader {
         try {
             Field transformerField = Proxy.class.getDeclaredField("transformer");
             transformerField.setAccessible(true);
-            MixinTransformer transformer = (MixinTransformer) transformerField.get(mixinProxy);
+            IMixinTransformer transformer = (IMixinTransformer) transformerField.get(mixinProxy);
 
-            Method selectConfigsMethod = MixinTransformer.class.getDeclaredMethod("selectConfigs", MixinEnvironment.class);
-            selectConfigsMethod.setAccessible(true);
-            selectConfigsMethod.invoke(transformer, MixinEnvironment.getCurrentEnvironment());
-
-            Method prepareConfigsMethod = MixinTransformer.class.getDeclaredMethod("prepareConfigs", MixinEnvironment.class);
-            prepareConfigsMethod.setAccessible(true);
-            prepareConfigsMethod.invoke(transformer, MixinEnvironment.getCurrentEnvironment());
+            transformer.audit(MixinEnvironment.getCurrentEnvironment());
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
