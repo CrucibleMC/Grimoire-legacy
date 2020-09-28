@@ -15,7 +15,7 @@ apply plugin: 'idea'
 apply plugin: 'maven'
 
 group = 'io.github.crucible'
-version = '1.12.2-1.0.3a'
+version = '1.12.2-1.0.4a'
 
 archivesBaseName = "[0]Grimoire"
 
@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    shade("org.spongepowered:mixin:0.8-SNAPSHOT") {
+    shade("org.spongepowered:mixin:0.8.1-SNAPSHOT") {
         exclude module: "launchwrapper"
         exclude module: 'guava'
     }

@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.transformer.IMixinTransformer;
+import org.spongepowered.asm.mixin.transformer.MixinProcessor;
 import org.spongepowered.asm.mixin.transformer.Proxy;
 
 import java.lang.reflect.Field;
@@ -36,7 +36,6 @@ public class MixinLoader {
     @Inject(method = "loadMods", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/LoadController;transition(Lnet/minecraftforge/fml/common/LoaderState;Z)V", ordinal = 1), remap = false)
     private void beforeConstructingMods(CallbackInfo ci) {
         // Add all mods to class loader
-
         for (ModContainer mod : mods) {
             try {
                 modClassLoader.addFile(mod.getSource());
@@ -47,14 +46,27 @@ public class MixinLoader {
 
         Grimoire.instance.loadAllMixins();//Add all configs
 
-        //Reload the Mixin!
         Proxy mixinProxy = (Proxy) Launch.classLoader.getTransformers().stream().filter(transformer -> transformer instanceof Proxy).findFirst().get();
         try {
+            //This will very likely break on the next major mixin release.
+            Class mixinTransformerClass = Class.forName("org.spongepowered.asm.mixin.transformer.MixinTransformer");
+
             Field transformerField = Proxy.class.getDeclaredField("transformer");
             transformerField.setAccessible(true);
-            IMixinTransformer transformer = (IMixinTransformer) transformerField.get(mixinProxy);
+            Object transformer = transformerField.get(mixinProxy);
 
-            transformer.audit(MixinEnvironment.getCurrentEnvironment());
+            //Get MixinProcessor from MixinTransformer
+            Field processorField = mixinTransformerClass.getDeclaredField("processor");
+            processorField.setAccessible(true);
+            Object processor = processorField.get(transformer);
+
+            Method selectConfigsMethod = MixinProcessor.class.getDeclaredMethod("selectConfigs", MixinEnvironment.class);
+            selectConfigsMethod.setAccessible(true);
+            selectConfigsMethod.invoke(processor, MixinEnvironment.getCurrentEnvironment());
+
+            Method prepareConfigsMethod = MixinProcessor.class.getDeclaredMethod("prepareConfigs", MixinEnvironment.class);
+            prepareConfigsMethod.setAccessible(true);
+            prepareConfigsMethod.invoke(processor, MixinEnvironment.getCurrentEnvironment());
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
