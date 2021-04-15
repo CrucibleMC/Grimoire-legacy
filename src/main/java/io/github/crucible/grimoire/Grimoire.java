@@ -25,7 +25,6 @@ public class Grimoire implements IFMLLoadingPlugin {
 
     public Grimoire() {
         instance = this;
-        System.setProperty("mixin.debug.export", "true");
 
         if (!(Grimoire.class.getClassLoader() instanceof LaunchClassLoader))
             throw new RuntimeException("Coremod plugin class was loaded by another classloader!");
