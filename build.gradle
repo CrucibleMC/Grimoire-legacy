@@ -10,9 +10,13 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            name = "github"
+            url = "https://github.com/juanmuscaria/maven/raw/master"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.0.0-SNAPSHOT'
     }
 }
 
@@ -41,13 +45,13 @@ configurations {
 repositories {
     maven {
         name = 'spongepowered-repo'
-        url = 'http://repo.spongepowered.org/maven/'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
     mavenCentral()
 }
 
 dependencies {
-    shade("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
+    shade("org.spongepowered:mixin:0.8") {
         exclude module: "launchwrapper"
         exclude module: 'guava'
     }
