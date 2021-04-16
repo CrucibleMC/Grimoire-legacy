@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-public class GrimPatch implements Comparable<GrimPatch>{
+public class GrimPatch implements Comparable<GrimPatch> {
 
-    private long priority;
-    private String patchName;
-    private String modId;
-    private String targetJar;
-    private boolean corePatch;
-    private List<ZipEntry> mixinEntries;
+    private final long priority;
+    private final String patchName;
+    private final String modId;
+    private final String targetJar;
+    private final boolean corePatch;
+    private final List<ZipEntry> mixinEntries;
 
     public GrimPatch(Manifest manifest, List<ZipEntry> mixinEntries, File modFile) {
         this.priority       = getLong(manifest,"GRIMOIRE_PRIORITY", 0L);
@@ -47,29 +47,29 @@ public class GrimPatch implements Comparable<GrimPatch>{
         return mixinEntries;
     }
 
-    private long getLong(Manifest manifest, String key, long def){
+    private long getLong(Manifest manifest, String key, long def) {
         try {
             return Long.parseLong(manifest.getMainAttributes().getValue(key));
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
         }
         return def;
     }
 
-    private boolean getBoolean(Manifest manifest, String key, boolean def){
+    private boolean getBoolean(Manifest manifest, String key, boolean def) {
         try {
             return Boolean.parseBoolean(manifest.getMainAttributes().getValue(key));
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
         }
         return def;
     }
 
-    private String getString(Manifest manifest, String key, String def){
+    private String getString(Manifest manifest, String key, String def) {
         String targetValue = manifest.getMainAttributes().getValue(key);
         return targetValue != null ? targetValue : def;
     }
 
     @Override
     public int compareTo(GrimPatch other) {
-        return Long.compare(this.priority,other.priority);
+        return Long.compare(this.priority, other.priority);
     }
 }

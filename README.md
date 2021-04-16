@@ -1,17 +1,22 @@
 # Grimoire
 
-A core mod that Grimoire-Mixins Modules use to be loaded up.
+A coremod that ships mixin and loads all necessary things for grimoire mixins.
 
-#### What is it?
+### What is it?
 
-Grimoire is a coremod that implements [Sponge Mixin](https://github.com/SpongePowered/Mixin) and allows to 'organize' the order of mixins modules that will me implemented.
-These module are internally called 'Grim-Patches'
+Grimoire is a coremod that ships and uses [Sponge Mixin](https://github.com/SpongePowered/Mixin) allowing you to create
+a patch packages which will contain mixins to be applied.
 
-###### What is Sponge Mixin?
+These modules are internally called 'Grim-Patches'.
 
-Basically it's a program that allows editing other programs at run time.
+#### Why I need it?
 
-For example, if there is a mod that causes tons o lag and the author does not give you the source code for you to edit it and recompile, you can use Sponge Mixin to edit that mod at runtime and fix the problem by yourself.
+As server owner sometimes you need to patch some buggy or laggy mod, this coremod helps you to organize patches.
+
+#### Isn't patching mods a bad practice?
+
+Yes! it is, and you should not be doing it at all. Due to classloading issues mixins can't be applied to mods without
+hacks but sometimes following best practices isn't an option when your only option is fixing a mod with your own hands.  
 
 ### Where are the Grimoire Modules/Patches ?
 

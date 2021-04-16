@@ -5,10 +5,8 @@ import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
 import io.github.crucible.grimoire.Grimoire;
 import net.minecraft.launchwrapper.Launch;
-import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.MixinEnvironment;
-import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +19,9 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.List;
 
-
+/**
+ * This is not the ideal way to do it, pretend this does not even exist.
+ */
 @Mixin(value = Loader.class, remap = false)
 public class MixinLoader {
 
@@ -46,9 +46,8 @@ public class MixinLoader {
             }
         }
 
-        Grimoire.instance.loadAllMixins();//Add all configs
+        Grimoire.getInstance().loadAllMixins(); //Add all configs
 
-        //Reload the Mixin!
         Proxy mixinProxy = (Proxy) Launch.classLoader.getTransformers().stream().filter(transformer -> transformer instanceof Proxy).findFirst().get();
         try {
             Field transformerField = Proxy.class.getDeclaredField("transformer");
@@ -65,5 +64,7 @@ public class MixinLoader {
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
+
+        Grimoire.getInstance().cleanup();
     }
 }

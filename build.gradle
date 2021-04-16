@@ -26,7 +26,7 @@ apply plugin: 'idea'
 group = 'io.github.crucible'
 version = '1.0.2a'
 
-archivesBaseName = "[0]Grimoire"
+archivesBaseName = "Grimoire"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -51,7 +51,7 @@ repositories {
 }
 
 dependencies {
-    shade("org.spongepowered:mixin:0.8") {
+    shade("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
         exclude module: "launchwrapper"
         exclude module: 'guava'
     }

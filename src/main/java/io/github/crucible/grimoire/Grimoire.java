@@ -5,6 +5,7 @@ import io.github.crucible.grimoire.patch.GrimPatch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 
@@ -16,78 +17,63 @@ import java.util.zip.ZipFile;
 
 @IFMLLoadingPlugin.Name("Grimoire")
 @IFMLLoadingPlugin.MCVersion("1.7.10")
+@IFMLLoadingPlugin.SortingIndex(Integer.MIN_VALUE + 5)
 public class Grimoire implements IFMLLoadingPlugin {
-
-    private LaunchClassLoader classLoader;
+    public static final Logger logger = LogManager.getLogger("grimoire");
+    private static Grimoire instance;
+    private final LaunchClassLoader classLoader = (LaunchClassLoader) Grimoire.class.getClassLoader();
+    private final boolean shouldLog = !Boolean.parseBoolean(System.getProperty("grimoire.shutup", "false"));
     private List<GrimPatch> grimPatchList = new ArrayList<>();
 
-    public static Grimoire instance;
-
     public Grimoire() {
-        instance = this;
-
-        if (!(Grimoire.class.getClassLoader() instanceof LaunchClassLoader))
-            throw new RuntimeException("Coremod plugin class was loaded by another classloader!");
-
-        classLoader = (LaunchClassLoader) Grimoire.class.getClassLoader();
-
-        LogManager.getLogger().warn(" ");
-        LogManager.getLogger().warn("[Grimoire] Applying ModCompat MixinLoader!");
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins/mixins.grimoire.json");
-        LogManager.getLogger().warn(" ");
+        instance = this;
+    }
 
-        File grimoireFolder = new File("grimoire");
-        if (!grimoireFolder.exists()) {
-            LogManager.getLogger().warn("[Grimoire] Creating mixins folder.");
-            if (!grimoireFolder.mkdirs()) LogManager.getLogger().warn("[Grimoire] Unable to create the folder " + grimoireFolder.getAbsolutePath());
-        }
+    public static Grimoire getInstance() {
+        return instance;
+    }
 
-        if (grimoireFolder.listFiles().length == 0){ //No Grimoire Mixin
-            LogManager.getLogger().warn("[Grimoire] No grimoire-mixin found!");
-            return;
-        }
-
-        grimPatchList = scanForPatches(grimoireFolder);
-        Collections.sort(grimPatchList);
-        Collections.reverse(grimPatchList);
-
+    private void loadCoreMixins() {
         grimPatchList.forEach(grimPatch -> {
-            if (grimPatch.isCorePatch()){
+            if (grimPatch.isCorePatch()) {
                 grimPatch.getMixinEntries().forEach(json -> Mixins.addConfiguration(json.getName())); //CorePatchs should be applied alongside Grimoire itself!
-                LogManager.getLogger().warn("[Grimoire] Applying Core-GrimPatch " + grimPatch.getPatchName());
+                if (shouldLog)
+                    logger.info("[Grimoire] Applying Core-GrimPatch " + grimPatch.getPatchName());
             }
         });
     }
 
-    public void loadAllMixins(){
-        LogManager.getLogger().warn(" ");
-        LogManager.getLogger().warn("[Grimoire] Trying to apply class transformers.");
-        LogManager.getLogger().warn("    - If you got any errors contact the developer immediately.");
-        LogManager.getLogger().warn(" ");
+    public void loadAllMixins() {
+        if (shouldLog) {
+            logger.warn(" ");
+            logger.warn("[Grimoire] Trying to apply mod mixins.");
+            logger.warn("    - If you got any errors contact the developer immediately.");
+            logger.warn(" ");
+            logger.warn("Loaded files ({}):", grimPatchList.size());
+
+            for (GrimPatch grimPatch : grimPatchList) {
+                logger.warn(" - {}{}", grimPatch.getPatchName(), (grimPatch.isCorePatch() ? "(CorePatch! AlreadyLoaded)" : ""));
+            }
+            logger.warn(" ");
+        }
 
         grimPatchList.forEach(grimPatch -> {
             if (!grimPatch.isCorePatch()) {
                 grimPatch.getMixinEntries().forEach(json -> Mixins.addConfiguration(json.getName()));
             }
         });
-
-        LogManager.getLogger().warn(String.format("Loaded files %s","(" + grimPatchList.size() + "):"));
-
-        for (GrimPatch grimPatch : grimPatchList) {
-            LogManager.getLogger().warn(" - " + grimPatch.getPatchName() + (grimPatch.isCorePatch() ? "(CorePatch! AlreadyLoaded)" : ""));
-        }
-        LogManager.getLogger().warn(" ");
-
-        Grimoire.instance = null; //Don't need the instance anymore :V
     }
 
-    private List<GrimPatch> scanForPatches(File dir){
-        List<GrimPatch> grimPatchList = new ArrayList<>();
+    private List<GrimPatch> scanForPatches(File dir) {
+        List<GrimPatch> grimPatches = new ArrayList<>();
+
         for (File mod : FileUtils.listFiles(dir, new String[]{"jar"}, true)) {
-            if (!mod.canRead()) continue;
-            try {
-                ZipFile zipFile = new ZipFile(mod);
+            if (!mod.canRead())
+                continue;
+
+            try (ZipFile zipFile = new ZipFile(mod)) {
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
                 //GrimPatch Data
@@ -98,38 +84,33 @@ public class Grimoire implements IFMLLoadingPlugin {
                     ZipEntry entry = entries.nextElement();
                     if (isMixinConfiguration(entry.getName())) {
                         mixinEntries.add(entry);
-                    }else if (isManifest(entry.getName())) {
+                    } else if (entry.getName().equals("META-INF/MANIFEST.MF")) {
                         manifest = new Manifest(zipFile.getInputStream(entry));
                     }
                 }
 
                 if (!mixinEntries.isEmpty()) {
                     classLoader.addURL(mod.toPath().toUri().toURL());
-                    grimPatchList.add(new GrimPatch(manifest,mixinEntries, mod));
+                    grimPatches.add(new GrimPatch(manifest, mixinEntries, mod));
                 }
             } catch (Exception e) {
-                LogManager.getLogger().warn("[Grimoire] Unable to load \'" + mod.getAbsolutePath() + "\'.");
+                logger.error("[Grimoire] Unable to load '{}'.", mod.getAbsolutePath());
                 e.printStackTrace();
             }
         }
-        return grimPatchList;
+
+        return grimPatches;
     }
 
     private boolean isMixinConfiguration(String name) {
         String splitName = ((name.contains("/")) ? name.substring(name.lastIndexOf("/")).replace("/", "") : name); // Caso o zip esteja usando o "\" esse zip está quebrado, já que o padrão é o "/".
-        if (splitName.startsWith("mixins.") && splitName.endsWith(".json")) return true;
-        if (splitName.startsWith("mixins-") && splitName.endsWith(".json")) return true;
-        return splitName.endsWith("-mixins.json");
+        if (splitName.startsWith("mixins.grim.") && splitName.endsWith(".json")) return true;
+        if (splitName.startsWith("mixins-grim-") && splitName.endsWith(".json")) return true;
+        return splitName.endsWith("-grim-mixins.json");
     }
 
-    private boolean isManifest(String name) {
-        return name.equals("META-INF/MANIFEST.MF");
-    }
-
-    private void applyGrimPatch(GrimPatch grimPatch){
-        if (!grimPatch.getModId().isEmpty()){
-
-        }
+    public void cleanup() {
+        grimPatchList = null; //Do your magic GC!
     }
 
     @Override
@@ -149,6 +130,18 @@ public class Grimoire implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
+        //Search for grim patches on grimoire folder
+        File grimoireFolder = new File((File) data.get("mcLocation"), "grimoire");
+        if (grimoireFolder.exists()) {
+            grimPatchList.addAll(scanForPatches(grimoireFolder));
+        }
+
+        //Search for grim patches on mods folder
+        grimPatchList.addAll(scanForPatches(new File((File) data.get("mcLocation"), "mods")));
+
+        Collections.sort(grimPatchList);
+        Collections.reverse(grimPatchList);
+        loadCoreMixins();
     }
 
     @Override
