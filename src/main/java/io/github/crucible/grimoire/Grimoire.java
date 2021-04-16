@@ -3,17 +3,27 @@ package io.github.crucible.grimoire;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import io.github.crucible.grimoire.patch.GrimPatch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 @IFMLLoadingPlugin.Name("Grimoire")
 @IFMLLoadingPlugin.MCVersion("1.7.10")
@@ -66,7 +76,7 @@ public class Grimoire implements IFMLLoadingPlugin {
         });
     }
 
-    private List<GrimPatch> scanForPatches(File dir) {
+    private List<GrimPatch> scanForPatches(File dir, boolean legacy) {
         List<GrimPatch> grimPatches = new ArrayList<>();
 
         for (File mod : FileUtils.listFiles(dir, new String[]{"jar"}, true)) {
@@ -82,7 +92,7 @@ public class Grimoire implements IFMLLoadingPlugin {
 
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
-                    if (isMixinConfiguration(entry.getName())) {
+                    if (isMixinConfiguration(entry.getName(), legacy)) {
                         mixinEntries.add(entry);
                     } else if (entry.getName().equals("META-INF/MANIFEST.MF")) {
                         manifest = new Manifest(zipFile.getInputStream(entry));
@@ -102,8 +112,35 @@ public class Grimoire implements IFMLLoadingPlugin {
         return grimPatches;
     }
 
-    private boolean isMixinConfiguration(String name) {
-        String splitName = ((name.contains("/")) ? name.substring(name.lastIndexOf("/")).replace("/", "") : name); // Caso o zip esteja usando o "\" esse zip está quebrado, já que o padrão é o "/".
+    private File extractResources(Collection<String> resources) throws IOException {
+        File tmp = Files.createTempDirectory("grimoire").toFile();
+        for (String resource : resources) {
+            try (InputStream resourceStream = getClass().getResourceAsStream('/'+resource)) {
+                if (resourceStream == null) {
+                    logger.warn("[Grimoire] Failed to copy embedded patch with name {}", resource);
+                    continue;
+                }
+                File extracted = new File(tmp, resource.replace('/','_'));
+
+                if (shouldLog)
+                    logger.info("[Grimoire] Extracting embedded patch {} to {}", resource, extracted.getAbsolutePath());
+                Files.copy(resourceStream, extracted.toPath());
+            }
+        }
+        return tmp;
+    }
+
+    private boolean isMixinConfiguration(String name, boolean legacy) {
+        String splitName = ((name.contains("/")) ?
+                name.substring(name.lastIndexOf("/")).replace("/", "") :
+                name); // Caso o zip esteja usando o "\" esse zip está quebrado, já que o padrão é o "/".
+
+        if (legacy) {
+            if (splitName.startsWith("mixins.") && splitName.endsWith(".json")) return true;
+            if (splitName.startsWith("mixins-") && splitName.endsWith(".json")) return true;
+            return splitName.endsWith("-mixins.json");
+        }
+
         if (splitName.startsWith("mixins.grim.") && splitName.endsWith(".json")) return true;
         if (splitName.startsWith("mixins-grim-") && splitName.endsWith(".json")) return true;
         return splitName.endsWith("-grim-mixins.json");
@@ -130,14 +167,22 @@ public class Grimoire implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-        //Search for grim patches on grimoire folder
+        //Search for grim patches on grimoire legacy folder
         File grimoireFolder = new File((File) data.get("mcLocation"), "grimoire");
         if (grimoireFolder.exists()) {
-            grimPatchList.addAll(scanForPatches(grimoireFolder));
+            grimPatchList.addAll(scanForPatches(grimoireFolder, true));
         }
 
         //Search for grim patches on mods folder
-        grimPatchList.addAll(scanForPatches(new File((File) data.get("mcLocation"), "mods")));
+        grimPatchList.addAll(scanForPatches(new File((File) data.get("mcLocation"), "mods"), false));
+
+        //Load for any patch inside the grimoire resource folder.
+        try {
+            grimPatchList.addAll(scanForPatches(extractResources(ResourceList.getResources(Pattern.compile(".*grimoire/.*\\.jar"), classLoader)), false));
+        } catch (IOException e) {
+            logger.error("Error while trying to load embedded patches.");
+            e.printStackTrace();
+        }
 
         Collections.sort(grimPatchList);
         Collections.reverse(grimPatchList);
