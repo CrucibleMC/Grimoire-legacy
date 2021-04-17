@@ -13,6 +13,7 @@ public class GrimPatch implements Comparable<GrimPatch> {
     private final String targetJar;
     private final boolean corePatch;
     private final List<ZipEntry> mixinEntries;
+    private final String fileName;
 
     public GrimPatch(Manifest manifest, List<ZipEntry> mixinEntries, File modFile) {
         this.priority       = getLong(manifest,"GRIMOIRE_PRIORITY", 0L);
@@ -21,6 +22,7 @@ public class GrimPatch implements Comparable<GrimPatch> {
         this.targetJar      = getString(manifest,"GRIMOIRE_TARGETJAR", "");
         this.corePatch      = getBoolean(manifest,"GRIMOIRE_COREPATCH", false);
         this.mixinEntries   = mixinEntries;
+        this.fileName       = modFile.getName();
     }
 
     public long getPriority() {
@@ -66,6 +68,10 @@ public class GrimPatch implements Comparable<GrimPatch> {
     private String getString(Manifest manifest, String key, String def) {
         String targetValue = manifest.getMainAttributes().getValue(key);
         return targetValue != null ? targetValue : def;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     @Override

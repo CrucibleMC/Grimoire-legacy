@@ -3,9 +3,7 @@ package io.github.crucible.grimoire;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import io.github.crucible.grimoire.patch.GrimPatch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.launch.MixinBootstrap;
@@ -14,16 +12,12 @@ import org.spongepowered.asm.mixin.Mixins;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 @IFMLLoadingPlugin.Name("Grimoire")
 @IFMLLoadingPlugin.MCVersion("1.7.10")
@@ -33,7 +27,7 @@ public class Grimoire implements IFMLLoadingPlugin {
     private static Grimoire instance;
     private final LaunchClassLoader classLoader = (LaunchClassLoader) Grimoire.class.getClassLoader();
     private final boolean shouldLog = !Boolean.parseBoolean(System.getProperty("grimoire.shutup", "false"));
-    private List<GrimPatch> grimPatchList = new ArrayList<>();
+    private final List<GrimPatch> grimPatchList = new ArrayList<>();
 
     public Grimoire() {
         MixinBootstrap.init();
@@ -146,10 +140,6 @@ public class Grimoire implements IFMLLoadingPlugin {
         return splitName.endsWith("-grim-mixins.json");
     }
 
-    public void cleanup() {
-        grimPatchList = null; //Do your magic GC!
-    }
-
     @Override
     public String[] getASMTransformerClass() {
         return new String[0];
@@ -192,5 +182,9 @@ public class Grimoire implements IFMLLoadingPlugin {
     @Override
     public String getAccessTransformerClass() {
         return null;
+    }
+
+    public List<GrimPatch> getGrimPatchList() {
+        return grimPatchList;
     }
 }

@@ -65,6 +65,5 @@ public class MixinLoader {
             throw new RuntimeException(e);
         }
 
-        Grimoire.getInstance().cleanup();
     }
 }
