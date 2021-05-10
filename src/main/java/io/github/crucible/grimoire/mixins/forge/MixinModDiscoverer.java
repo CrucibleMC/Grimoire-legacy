@@ -20,7 +20,7 @@ public class MixinModDiscoverer {
             ))
     private boolean redirectCoremodCheck(List loadedCoremods, Object fileName) {
         for (GrimPatch patch : Grimoire.getInstance().getGrimPatchList()) {
-            if (patch.getFileName().equals(fileName))
+            if (patch.getFileOrDirectoryName().equals(fileName))
                 // Mods which contains a GrimPatch are loaded by forge's class path mod loading.
                 // Prevent forge from loading it again.
                 return true;
