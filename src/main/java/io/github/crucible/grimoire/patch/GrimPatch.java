@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
+import javax.annotation.Nullable;
+
 public class GrimPatch implements Comparable<GrimPatch> {
 
     private final long priority;
@@ -12,66 +14,97 @@ public class GrimPatch implements Comparable<GrimPatch> {
     private final String modId;
     private final String targetJar;
     private final boolean corePatch;
-    private final List<ZipEntry> mixinEntries;
-    private final String fileName;
+    private final List<ZipEntry> mixinZipEntries;
+    private final List<File> mixinFileEntries;
+    private final String fileOrDirectoryName;
 
-    public GrimPatch(Manifest manifest, List<ZipEntry> mixinEntries, File modFile) {
-        this.priority       = getLong(manifest,"GRIMOIRE_PRIORITY", 0L);
-        this.patchName      = getString(manifest,"GRIMOIRE_PATCHNAME", modFile.getName());
-        this.modId          = getString(manifest,"GRIMOIRE_MODID", "");
-        this.targetJar      = getString(manifest,"GRIMOIRE_TARGETJAR", "");
-        this.corePatch      = getBoolean(manifest,"GRIMOIRE_COREPATCH", false);
-        this.mixinEntries   = mixinEntries;
-        this.fileName       = modFile.getName();
+    public GrimPatch(Manifest manifest, List<ZipEntry> mixinZipEntries, File modFile) {
+        this(manifest, mixinZipEntries, null, modFile);
+    }
+
+    public GrimPatch(Manifest manifest, File modFile, List<File> mixinFileEntries) {
+        this(manifest, null, mixinFileEntries, modFile);
+    }
+
+    private GrimPatch(Manifest manifest, List<ZipEntry> mixinZipEntries, List<File> mixinFileEntries, File modFile) {
+        this.priority       = this.getLong(manifest,"GRIMOIRE_PRIORITY", 0L);
+        this.patchName      = this.getString(manifest,"GRIMOIRE_PATCHNAME", modFile.getName());
+        this.modId          = this.getString(manifest,"GRIMOIRE_MODID", "");
+        this.targetJar      = this.getString(manifest,"GRIMOIRE_TARGETJAR", "");
+        this.corePatch      = this.getBoolean(manifest,"GRIMOIRE_COREPATCH", false);
+        this.mixinZipEntries     = mixinZipEntries;
+        this.mixinFileEntries    = mixinFileEntries;
+        this.fileOrDirectoryName = modFile.getName();
     }
 
     public long getPriority() {
-        return priority;
+        return this.priority;
     }
 
     public String getPatchName() {
-        return patchName;
+        return this.patchName;
     }
 
     public String getModId() {
-        return modId;
+        return this.modId;
     }
 
     public String getTargetJar() {
-        return targetJar;
+        return this.targetJar;
     }
 
     public boolean isCorePatch() {
-        return corePatch;
+        return this.corePatch;
     }
 
-    public List<ZipEntry> getMixinEntries() {
-        return mixinEntries;
+    @Nullable
+    public List<ZipEntry> getMixinZipEntries() {
+        return this.mixinZipEntries;
+    }
+
+    @Nullable
+    public List<File> getMixinFileEntries() {
+        return this.mixinFileEntries;
     }
 
     private long getLong(Manifest manifest, String key, long def) {
         try {
-            return Long.parseLong(manifest.getMainAttributes().getValue(key));
+            if (manifest != null)
+                return Long.parseLong(manifest.getMainAttributes().getValue(key));
         } catch (Exception ignored) {
+            // NO-OP
         }
+
         return def;
     }
 
     private boolean getBoolean(Manifest manifest, String key, boolean def) {
         try {
-            return Boolean.parseBoolean(manifest.getMainAttributes().getValue(key));
+            if (manifest != null)
+                return Boolean.parseBoolean(manifest.getMainAttributes().getValue(key));
         } catch (Exception ignored) {
+            // NO-OP
         }
+
         return def;
     }
 
     private String getString(Manifest manifest, String key, String def) {
-        String targetValue = manifest.getMainAttributes().getValue(key);
-        return targetValue != null ? targetValue : def;
+        try {
+            if (manifest != null) {
+                String targetValue = manifest.getMainAttributes().getValue(key);
+                if (targetValue != null)
+                    return targetValue;
+            }
+        }  catch (Exception ignored) {
+            // NO-OP
+        }
+
+        return def;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFileOrDirectoryName() {
+        return this.fileOrDirectoryName;
     }
 
     @Override
