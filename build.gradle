@@ -1,0 +1,6 @@
+subprojects {
+    // Basic project configuration
+    apply plugin: 'idea'
+    group = 'io.github.crucible'
+    version = '3.0.0'
+}

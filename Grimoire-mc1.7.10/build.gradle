@@ -1,0 +1,140 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            name = "forge"
+            url = "https://maven.minecraftforge.net/"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            name = "github"
+            url = "https://github.com/juanmuscaria/maven/raw/master"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.3.1-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+project.evaluationDependsOn(":Grimoire-shared")
+
+// Force java 8 features
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+// All files should support UTF-8
+compileJava.options.encoding = 'UTF-8'
+archivesBaseName = "Grimoire-mc1.7.10"
+
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
+    //mappings = "stable_12"
+    runDir = "minecraft"
+}
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+repositories {
+    maven {
+        name = 'spongepowered-repo'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    shade("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
+        exclude module: "asm-commons"
+        exclude module: "asm-tree"
+        exclude module: "launchwrapper"
+        exclude module: "guava"
+        exclude module: "log4j-core"
+        exclude module: "gson"
+        exclude module: "commons-io"
+    }
+    shade(project(':Grimoire-shared'))
+    annotationProcessor("org.spongepowered:mixin:0.7.11-SNAPSHOT")
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
+
+        expand "version": project.version, "mcversion": project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+
+}
+
+ext {
+    new File(project.buildDir, 'mixins').mkdirs()
+    mixinSrg = new File(project.buildDir, 'mixins/mixins.io.github.crucible.grimoire.srg')
+    mixinSrg.createNewFile()
+    mixinRefMap = new File(project.buildDir, "mixins/io.github.crucible.grimoire.refmap.json")
+    mixinRefMap.createNewFile()
+}
+
+jar {
+    from project.mixinRefMap
+
+    manifest {
+        attributes([
+                "Specification-Title": "io.github.crucible.grimoire",
+                "Specification-Vendor": "Grimoire",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${project.version}",
+                "Implementation-Vendor" :"Grimoire",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'FMLCorePlugin': "io.github.crucible.grimoire.GrimoireCoremod",
+                'FMLCorePluginContainsFMLMod': 'true',
+                "ForceLoadAsMod": "true",
+                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
+        ])
+    }
+
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)) {
+            exclude 'META-INF', 'META-INF/**'
+        }
+        from(project.zipTree(dep)) {
+            include 'META-INF/services', 'META-INF/services/**'
+        }
+    }
+
+}
+
+reobf {
+    addExtraSrgFile project.mixinSrg
+}
+
+compileJava {
+    options.compilerArgs += [
+            '-Xlint:-processing',
+            "-AoutSrgFile=${project.mixinSrg.canonicalPath}",
+            "-AoutRefMapFile=${project.mixinRefMap.canonicalPath}",
+            "-AreobfSrgFile=${project.file('build/srgs/mcp-srg.srg').canonicalPath}"
+    ]
+}
+
+task copySrgs(type: Copy, dependsOn: 'genSrgs') {
+    from plugins.getPlugin("forge").delayedFile('{SRG_DIR}')
+
+    include '**/*.srg'
+    into 'build/srgs'
+}
+
+compileJava.dependsOn copySrgs

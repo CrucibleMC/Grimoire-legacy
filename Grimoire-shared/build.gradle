@@ -1,0 +1,22 @@
+apply plugin: 'java'
+// Force java 8 features
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+// All files should support UTF-8
+compileJava.options.encoding = 'UTF-8'
+
+repositories {
+    maven {
+        name = 'spongepowered-repo'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+}
+
+dependencies {
+    implementation("org.spongepowered:mixin:0.7.11-SNAPSHOT")
+    implementation("org.apache.logging.log4j:log4j-api:2.0-beta9")
+    implementation('org.jetbrains:annotations:20.1.0')
+    compile('net.minecraft:launchwrapper:1.11') {
+        exclude module: 'lwjgl'
+    }
+}
