@@ -104,7 +104,7 @@ jar {
                 "Implementation-Version": "${project.version}",
                 "Implementation-Vendor" :"Grimoire",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'FMLCorePlugin': "io.github.crucible.grimoire.GrimoireCoremod",
+                'FMLCorePlugin': "io.github.crucible.grimoire.mc1_7_10.GrimoireCoremod",
                 'FMLCorePluginContainsFMLMod': 'true',
                 "ForceLoadAsMod": "true",
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
