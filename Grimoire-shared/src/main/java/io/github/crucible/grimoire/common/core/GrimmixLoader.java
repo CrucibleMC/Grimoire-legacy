@@ -112,7 +112,6 @@ public class GrimmixLoader {
         return candidates;
     }
 
-
     protected void seekGrimmixes(Collection<URL> paths, @Nullable LaunchClassLoader classLoader) {
         for (URL url : paths) {
             try {
