@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Implementation-Title: Grimoire-mc1.7.10
+Implementation-Version: 3.0.0
+FMLCorePluginContainsFMLMod: true
+Specification-Vendor: Grimoire
+Specification-Title: io.github.crucible.grimoire
+Implementation-Timestamp: 2021-06-05T00:06:21+0200
+TweakClass: org.spongepowered.asm.launch.MixinTweaker
+ForceLoadAsMod: true
+Specification-Version: 1
+FMLCorePlugin: io.github.crucible.grimoire.mc1_7_10.GrimoireCoremod
+Implementation-Vendor: Grimoire
+
