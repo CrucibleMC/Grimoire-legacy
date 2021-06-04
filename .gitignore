@@ -40,3 +40,4 @@ hs_err_pid*
 .classpath
 .project
 bin
+**/.factorypath

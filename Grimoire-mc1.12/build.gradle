@@ -52,6 +52,7 @@ dependencies {
     shadow(project(':Grimoire-shared'))
     annotationProcessor("org.spongepowered:mixin:0.8.3-SNAPSHOT:processor")
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2855'
+    implementation fileTree(dir: file('libs'), include: ['*.jar'])
 }
 
 mixin {

@@ -1,6 +1,7 @@
 subprojects {
     // Basic project configuration
     apply plugin: 'idea'
+    apply plugin: 'eclipse'
     group = 'io.github.crucible'
     version = '3.0.0'
 }
