@@ -46,6 +46,10 @@ repositories {
         name = 'spongepowered-repo'
         url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
+    maven {
+        name = "juanmuscaria"
+        url = "https://github.com/juanmuscaria/maven/raw/master"
+    }
     mavenCentral()
 }
 
@@ -61,6 +65,7 @@ dependencies {
     }
     shade(project(':Grimoire-shared'))
     annotationProcessor("org.spongepowered:mixin:0.7.11-SNAPSHOT")
+    implementation fileTree(dir: file('libs'), include: ['*.jar'])
 }
 
 processResources {
