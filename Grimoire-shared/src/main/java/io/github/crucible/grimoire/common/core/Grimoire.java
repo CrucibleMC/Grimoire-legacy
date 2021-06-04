@@ -47,9 +47,6 @@ public class Grimoire {
     }
 
     public static void finish() {
-        for (IGrimmix grimmix : grimmixLoader.getAllContainers()) {
-            grimmix.registerIntegrations(grimmixIntegrations);
-        }
         grimmixLoader.finish();
     }
     public static IntegrationManager getGrimmixIntegrations() {

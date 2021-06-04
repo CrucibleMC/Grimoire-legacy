@@ -25,6 +25,4 @@ public interface IGrimmix {
 
     File getGrimmixFile();
 
-    void registerIntegrations(IntegrationManager manager);
-
 }
