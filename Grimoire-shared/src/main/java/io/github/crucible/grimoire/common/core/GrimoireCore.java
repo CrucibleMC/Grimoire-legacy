@@ -3,6 +3,10 @@ package io.github.crucible.grimoire.common.core;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.lib.Side;
 import io.github.crucible.grimoire.common.integrations.IntegrationManager;
+import io.github.crucible.grimoire.common.test.AnnotationConfigTest;
+import io.github.crucible.grimoire.common.test.OmniconfigTest;
+import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.annotation.core.AnnotationConfigCore;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,6 +41,9 @@ public class GrimoireCore {
     public void configure(File mcLocation, boolean obfuscated, String mcModFolder, String version, Side onSide) {
         this.side = onSide;
         this.mcLocation = mcLocation;
+
+        OmniconfigTest.INSTANCE.getClass(); // make it construct
+        AnnotationConfigCore.INSTANCE.addAnnotationConfig(AnnotationConfigTest.class);
 
         this.grimmixLoader.scanForGrimmixes(classLoader,
                 new File(mcLocation, mcModFolder),

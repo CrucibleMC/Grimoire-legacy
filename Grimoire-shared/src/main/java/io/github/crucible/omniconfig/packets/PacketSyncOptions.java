@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import io.github.crucible.omniconfig.wrappers.Omniconfig;
 import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
+import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
 
 // TODO Make version-specific synchronization packets
 
@@ -24,7 +24,7 @@ public class PacketSyncOptions {
         this.fileName = wrapper.config.getConfigFile().getName();
         this.configVersion = wrapper.config.getLoadedConfigVersion();
 
-        for (Omniconfig.GenericParameter param : wrapper.retrieveInvocationList()) {
+        for (AbstractParameter param : wrapper.retrieveInvocationList()) {
             if (param.isSynchronized()) {
                 this.synchronizedParameters.put(param.getId(), param.valueToString());
             }

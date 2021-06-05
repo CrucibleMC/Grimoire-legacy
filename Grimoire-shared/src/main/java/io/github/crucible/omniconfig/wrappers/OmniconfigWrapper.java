@@ -1,7 +1,5 @@
 package io.github.crucible.omniconfig.wrappers;
 
-import static io.github.crucible.omniconfig.wrappers.Omniconfig.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -12,13 +10,14 @@ import java.util.function.Consumer;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
 import io.github.crucible.omniconfig.packets.PacketSyncOptions;
-import io.github.crucible.omniconfig.wrappers.Omniconfig.BooleanParameter;
-import io.github.crucible.omniconfig.wrappers.Omniconfig.DoubleParameter;
-import io.github.crucible.omniconfig.wrappers.Omniconfig.EnumParameter;
-import io.github.crucible.omniconfig.wrappers.Omniconfig.GenericParameter;
-import io.github.crucible.omniconfig.wrappers.Omniconfig.IntParameter;
-import io.github.crucible.omniconfig.wrappers.Omniconfig.PerhapsParameter;
-import io.github.crucible.omniconfig.wrappers.Omniconfig.StringParameter;
+import io.github.crucible.omniconfig.wrappers.values.BooleanParameter;
+import io.github.crucible.omniconfig.wrappers.values.DoubleParameter;
+import io.github.crucible.omniconfig.wrappers.values.EnumParameter;
+import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
+import io.github.crucible.omniconfig.wrappers.values.IntegerParameter;
+import io.github.crucible.omniconfig.wrappers.values.PerhapsParameter;
+import io.github.crucible.omniconfig.wrappers.values.StringArrayParameter;
+import io.github.crucible.omniconfig.wrappers.values.StringParameter;
 
 public class OmniconfigWrapper {
     public static final Map<String, OmniconfigWrapper> wrapperRegistry = new HashMap<>();
@@ -30,7 +29,7 @@ public class OmniconfigWrapper {
     private double currentMin;
     private double currentMax;
     private boolean currentSynchronized;
-    public final Map<String, GenericParameter> invokationMap;
+    public final Map<String, AbstractParameter<?>> invokationMap;
     private boolean deferInvokation;
     private boolean forceSynchronized;
     private boolean currentClientOnly;
@@ -42,7 +41,7 @@ public class OmniconfigWrapper {
         this.config = config;
 
         this.defaultMin = 0;
-        this.defaultMax = STANDART_INTEGER_LIMIT;
+        this.defaultMax = OmniconfigCore.STANDART_INTEGER_LIMIT;
 
         this.invokationMap = new HashMap<>();
         this.deferInvokation = false;
@@ -147,6 +146,7 @@ public class OmniconfigWrapper {
         return this.currentClientOnly;
     }
 
+    // TODO Make this happen per-file rather than per-option
     public OmniconfigWrapper clientOnly() {
         return this.clientOnly(true);
     }
@@ -181,7 +181,7 @@ public class OmniconfigWrapper {
     }
 
     /**
-     * Generic action automatically re-invokes all extensions of {@link Omniconfig.GenericParameter}
+     * Generic action automatically re-invokes all extensions of {@link AbstractParameter}
      * that were invoked during initial loading procedure. Since references you retain from builder
      * point to those objects, values you get from them are automatically updated.<br/><br/>
      *
@@ -311,6 +311,10 @@ public class OmniconfigWrapper {
         return this.getString(name, defaultValue, (String[])null);
     }
 
+    public StringArrayParameter getStringArray(String name, String[] defaultValue) {
+        return this.getStringArray(name, defaultValue, (String[])null);
+    }
+
     public <V extends Enum<V>> EnumParameter<V> getEnum(String name, V defaultValue) {
         return this.getEnum(name, defaultValue, (V[])null);
     }
@@ -338,13 +342,29 @@ public class OmniconfigWrapper {
         return returned;
     }
 
+    public StringArrayParameter getStringArray(String name, String[] defaultValue, String[] validValues) {
+        StringArrayParameter returned = new StringArrayParameter(defaultValue);
+
+        this.applyGenericProperties(returned, name);
+
+        if (validValues != null && validValues.length > 0) {
+            returned.setValidValues(validValues);
+        }
+
+        this.resetOptionStuff();
+
+        this.invokationMap.put(returned.getId(), returned);
+        if (!this.deferInvokation) {
+            returned.invoke(this.config);
+        }
+
+        return returned;
+    }
+
     public StringParameter getString(String name, String defaultValue, String... validValues) {
         StringParameter returned = new StringParameter(defaultValue);
-        returned.setName(this.optionPrefix + name);
-        returned.setCategory(this.currentCategory);
-        returned.setComment(this.currentComment);
-        returned.setSynchronized(this.currentSynchronized);
-        returned.setClientOnly(this.currentClientOnly);
+
+        this.applyGenericProperties(returned, name);
 
         if (validValues != null && validValues.length > 0) {
             returned.setValidValues(validValues);
@@ -362,12 +382,8 @@ public class OmniconfigWrapper {
 
     public BooleanParameter getBoolean(String name, boolean defaultValue) {
         BooleanParameter returned = new BooleanParameter(defaultValue);
-        returned.setName(this.optionPrefix + name);
-        returned.setCategory(this.currentCategory);
-        returned.setComment(this.currentComment);
-        returned.setSynchronized(this.currentSynchronized);
-        returned.setClientOnly(this.currentClientOnly);
 
+        this.applyGenericProperties(returned, name);
         this.resetOptionStuff();
 
         this.invokationMap.put(returned.getId(), returned);
@@ -378,15 +394,12 @@ public class OmniconfigWrapper {
         return returned;
     }
 
-    public IntParameter getInt(String name, int defaultValue) {
-        IntParameter returned = new IntParameter(defaultValue);
-        returned.setName(this.optionPrefix + name);
-        returned.setCategory(this.currentCategory);
-        returned.setComment(this.currentComment);
+    public IntegerParameter getInt(String name, int defaultValue) {
+        IntegerParameter returned = new IntegerParameter(defaultValue);
+
+        this.applyGenericProperties(returned, name);
         returned.setMinValue((int) this.currentMin);
         returned.setMaxValue((int) this.currentMax);
-        returned.setSynchronized(this.currentSynchronized);
-        returned.setClientOnly(this.currentClientOnly);
 
         this.resetOptionStuff();
 
@@ -400,13 +413,10 @@ public class OmniconfigWrapper {
 
     public DoubleParameter getDouble(String name, double defaultValue) {
         DoubleParameter returned = new DoubleParameter(defaultValue);
-        returned.setName(this.optionPrefix + name);
-        returned.setCategory(this.currentCategory);
-        returned.setComment(this.currentComment);
+
+        this.applyGenericProperties(returned, name);
         returned.setMinValue(this.currentMin);
         returned.setMaxValue(this.currentMax);
-        returned.setSynchronized(this.currentSynchronized);
-        returned.setClientOnly(this.currentClientOnly);
 
         this.resetOptionStuff();
 
@@ -420,13 +430,10 @@ public class OmniconfigWrapper {
 
     public PerhapsParameter getPerhaps(String name, int defaultPercentage) {
         PerhapsParameter returned = new PerhapsParameter(defaultPercentage);
-        returned.setName(this.optionPrefix + name);
-        returned.setCategory(this.currentCategory);
-        returned.setComment(this.currentComment);
+
+        this.applyGenericProperties(returned, name);
         returned.setMinValue((int) this.currentMin);
         returned.setMaxValue((int) this.currentMax);
-        returned.setSynchronized(this.currentSynchronized);
-        returned.setClientOnly(this.currentClientOnly);
 
         this.resetOptionStuff();
 
@@ -438,6 +445,14 @@ public class OmniconfigWrapper {
         return returned;
     }
 
+    protected void applyGenericProperties(AbstractParameter<?> param, String name) {
+        param.setName(this.optionPrefix + name);
+        param.setCategory(this.currentCategory);
+        param.setComment(this.currentComment);
+        param.setSynchronized(this.currentSynchronized);
+        param.setClientOnly(this.currentClientOnly);
+    }
+
     public Configuration build() {
         if (!this.deferInvokation) {
             this.config.save();
@@ -446,7 +461,7 @@ public class OmniconfigWrapper {
         return this.config;
     }
 
-    public Collection<GenericParameter> retrieveInvocationList() {
+    public Collection<AbstractParameter<?>> retrieveInvocationList() {
         return this.invokationMap.values();
     }
 

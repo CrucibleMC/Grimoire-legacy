@@ -41,6 +41,7 @@ import com.google.common.collect.ImmutableSet;
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.lib.Side;
 import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.lib.FileWatcher;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -1574,8 +1575,13 @@ public class Configuration {
         Property prop = this.get(category, name, defaultValue);
         prop.setValidValues(validValues);
         prop.setLanguageKey(langKey);
-        prop.comment = comment + " [default: " + defaultValue + this.getSynchronizedComment() + "]" + NEW_LINE +
-                "Valid values: " + Arrays.stream(validValues).collect(Collectors.joining(", "));
+        prop.comment = comment + " [default: " + defaultValue + this.getSynchronizedComment() + "]";
+
+        if (validValues != null && validValues.length > 0) {
+            prop.comment += NEW_LINE +
+                    "Valid values: " + Arrays.stream(validValues).collect(Collectors.joining(", "));
+        }
+
         return prop.getString();
     }
 
@@ -1619,6 +1625,12 @@ public class Configuration {
         prop.setLanguageKey(langKey);
         prop.setValidValues(validValues);
         prop.comment = comment + " [default: " + prop.getDefault() + this.getSynchronizedComment() + "]";
+
+        if (validValues != null && validValues.length > 0) {
+            prop.comment += NEW_LINE +
+                    "Valid values: " + Arrays.stream(validValues).collect(Collectors.joining(", "));
+        }
+
         return prop.getStringList();
     }
 

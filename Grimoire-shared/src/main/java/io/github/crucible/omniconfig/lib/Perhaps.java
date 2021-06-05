@@ -1,4 +1,4 @@
-package io.github.crucible.omniconfig.core;
+package io.github.crucible.omniconfig.lib;
 
 import java.util.Random;
 
