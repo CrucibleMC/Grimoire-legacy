@@ -16,7 +16,7 @@ public class GrimoireCore {
 
     private final GrimmixLoader grimmixLoader;
     private final IntegrationManager grimmixIntegrations;
-
+    private File mcLocation;
     private Side side;
 
     public GrimoireCore() {
@@ -36,6 +36,7 @@ public class GrimoireCore {
 
     public void configure(File mcLocation, boolean obfuscated, String mcModFolder, String version, Side onSide) {
         this.side = onSide;
+        this.mcLocation = mcLocation;
 
         this.grimmixLoader.scanForGrimmixes(classLoader,
                 new File(mcLocation, mcModFolder),
@@ -64,6 +65,10 @@ public class GrimoireCore {
 
     public Side getSide() {
         return this.side;
+    }
+
+    public File getMCLocation() {
+        return this.mcLocation;
     }
 
 }

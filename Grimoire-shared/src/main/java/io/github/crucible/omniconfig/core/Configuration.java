@@ -1,9 +1,9 @@
-package io.github.crucible.omniconfig;
+package io.github.crucible.omniconfig.core;
 
-import static io.github.crucible.omniconfig.Property.Type.BOOLEAN;
-import static io.github.crucible.omniconfig.Property.Type.DOUBLE;
-import static io.github.crucible.omniconfig.Property.Type.INTEGER;
-import static io.github.crucible.omniconfig.Property.Type.STRING;
+import static io.github.crucible.omniconfig.core.Property.Type.BOOLEAN;
+import static io.github.crucible.omniconfig.core.Property.Type.DOUBLE;
+import static io.github.crucible.omniconfig.core.Property.Type.INTEGER;
+import static io.github.crucible.omniconfig.core.Property.Type.STRING;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,6 +40,7 @@ import com.google.common.collect.ImmutableSet;
 
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.lib.Side;
+import io.github.crucible.omniconfig.OmniconfigCore;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -125,13 +126,13 @@ public class Configuration {
     private boolean terminateNonInvokedKeys = false;
 
     protected ConfigBeholder associatedBeholder = null;
-    public static final File CONFIG_DIR = new File("config");
 
     static {
         NEW_LINE = System.getProperty("line.separator");
     }
 
     public Configuration() {
+        // NO-OP
     }
 
     /**
@@ -148,7 +149,7 @@ public class Configuration {
         this.file = file;
         this.definedConfigVersion = configVersion;
 
-        String basePath = (CONFIG_DIR).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
+        String basePath = (OmniconfigCore.CONFIG_DIR).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
         String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
         if (PARENT != null) {
             PARENT.setChild(path, this);
@@ -1320,7 +1321,7 @@ public class Configuration {
 
     public static void enableGlobalConfig() {
         try {
-            PARENT = new Configuration(new File(CONFIG_DIR.getCanonicalFile(), "global.cfg"));
+            PARENT = new Configuration(new File(OmniconfigCore.CONFIG_DIR.getCanonicalFile(), "global.cfg"));
         } catch (IOException e) {
             throw new RuntimeException("Something broken", e);
         }

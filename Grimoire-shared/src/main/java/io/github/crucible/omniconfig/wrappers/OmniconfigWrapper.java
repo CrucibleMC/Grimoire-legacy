@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import io.github.crucible.omniconfig.Configuration;
+import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.core.Configuration;
 import io.github.crucible.omniconfig.packets.PacketSyncOptions;
 import io.github.crucible.omniconfig.wrappers.Omniconfig.BooleanParameter;
 import io.github.crucible.omniconfig.wrappers.Omniconfig.DoubleParameter;
@@ -64,7 +65,7 @@ public class OmniconfigWrapper {
 
     public static OmniconfigWrapper setupBuilder(String fileName, boolean caseSensitive, String version) {
         try {
-            return setupBuilder(new File(Configuration.CONFIG_DIR, fileName+".omniconf"), caseSensitive, version);
+            return setupBuilder(new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf"), caseSensitive, version);
         } catch (Exception ex) {
             new RuntimeException("Something screwed up when loading config.", ex).printStackTrace();
             return null;

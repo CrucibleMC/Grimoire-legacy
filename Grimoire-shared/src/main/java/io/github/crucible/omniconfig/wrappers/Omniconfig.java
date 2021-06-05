@@ -1,8 +1,8 @@
 package io.github.crucible.omniconfig.wrappers;
 
-import io.github.crucible.omniconfig.Configuration;
 import io.github.crucible.omniconfig.OmniconfigCore;
-import io.github.crucible.omniconfig.Perhaps;
+import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.core.Perhaps;
 
 public class Omniconfig {
 

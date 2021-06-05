@@ -66,6 +66,8 @@ public class GrimmixLoader {
     }
 
     private boolean isMixinConfiguration(String fileName) {
+        // TODO Probably inspect actual .json file contents instead of making assumptions from its name
+
         String splitName = ((fileName.contains("/")) ?
                 fileName.substring(fileName.lastIndexOf("/")).replace("/", "") : fileName);
 
