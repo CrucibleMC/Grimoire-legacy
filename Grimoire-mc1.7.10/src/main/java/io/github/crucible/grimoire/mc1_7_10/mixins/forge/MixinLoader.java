@@ -3,7 +3,7 @@ package io.github.crucible.grimoire.mc1_7_10.mixins.forge;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
-import io.github.crucible.grimoire.common.core.Grimoire;
+import io.github.crucible.grimoire.common.core.GrimoireCore;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -46,7 +46,7 @@ public class MixinLoader {
             }
         }
 
-        Grimoire.loadModMixins(); // Add all mod configurations
+        GrimoireCore.INSTANCE.loadModMixins(); // Add all mod configurations
 
         // Force configurations to load once more
         Proxy mixinProxy = (Proxy) Launch.classLoader.getTransformers().stream().filter(transformer -> transformer instanceof Proxy).findFirst().get();
@@ -66,6 +66,6 @@ public class MixinLoader {
             throw new RuntimeException(e);
         }
 
-        Grimoire.finish(); // Dispatch final lifecycle events
+        GrimoireCore.INSTANCE.finish(); // Dispatch final lifecycle events
     }
 }

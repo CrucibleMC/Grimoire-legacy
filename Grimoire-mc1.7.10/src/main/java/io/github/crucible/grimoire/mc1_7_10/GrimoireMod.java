@@ -4,7 +4,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
-import io.github.crucible.grimoire.common.core.Grimoire;
+import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.grimoire.mc1_7_10.integrations.eventhelper.EventHelperIntegration;
 
 @Mod(modid = GrimoireMod.MODID)
@@ -24,10 +24,10 @@ public class GrimoireMod {
     public void preInit(FMLPreInitializationEvent event) {
         //Register our embedded integrations
         if (FMLCommonHandler.instance().getSide().isServer()) {
-            Grimoire.getGrimmixIntegrations().registerIntegration(new EventHelperIntegration());
+            GrimoireCore.INSTANCE.getGrimmixIntegrations().registerIntegration(new EventHelperIntegration());
         }
         //Init grimmix integrations
-        Grimoire.getGrimmixIntegrations().init();
+        GrimoireCore.INSTANCE.getGrimmixIntegrations().init();
     }
 
 }

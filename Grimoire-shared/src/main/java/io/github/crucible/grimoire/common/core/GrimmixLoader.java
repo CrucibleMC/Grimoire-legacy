@@ -125,7 +125,7 @@ public class GrimmixLoader {
                 Manifest manifest = null;
                 boolean isDirectory = candidateFile.isDirectory();
 
-                Grimoire.logger.info("Scanning {} {} for Grimmix controllers...", isDirectory ? "directory" : "file", uri.toString().replaceAll("%20", " "));
+                GrimoireCore.logger.info("Scanning {} {} for Grimmix controllers...", isDirectory ? "directory" : "file", uri.toString().replaceAll("%20", " "));
 
                 if (isDirectory) {
                     File manifestFile = new File(candidateFile, "META-INF/MANIFEST.MF");
@@ -160,7 +160,7 @@ public class GrimmixLoader {
                     }
 
                     if (!alreadyThere) {
-                        Grimoire.logger.info("Adding location: {} to java classpath, not there yet", url.toString().replaceAll("%20", " "));
+                        GrimoireCore.logger.info("Adding location: {} to java classpath, not there yet", url.toString().replaceAll("%20", " "));
                         classLoader.addURL(url);
                     }
                 }
@@ -179,8 +179,8 @@ public class GrimmixLoader {
                         this.containerList.add(container);
                         this.activeContainerList.add(container);
 
-                        Grimoire.logger.info("Sucessfully collected controller constructor: " + controllerConstructor);
-                        Grimoire.logger.info("Configuration candidates for Grimmix {}: {}", candidate.getClassName(), configList);
+                        GrimoireCore.logger.info("Sucessfully collected controller constructor: " + controllerConstructor);
+                        GrimoireCore.logger.info("Configuration candidates for Grimmix {}: {}", candidate.getClassName(), configList);
                     } catch (Exception ex) {
                         throw new RuntimeException("Failed to collect controller constructor: " + candidate.getClassName(), ex);
                     }
@@ -200,14 +200,14 @@ public class GrimmixLoader {
         if (this.finishedScan)
             return;
 
-        Grimoire.logger.info("Scanning for Grimmix controllers in following locations: ");
+        GrimoireCore.logger.info("Scanning for Grimmix controllers in following locations: ");
 
         if (classLoader != null) {
-            Grimoire.logger.info("Location: Java Classpath");
+            GrimoireCore.logger.info("Location: Java Classpath");
         }
         for (File file : directories) {
             try {
-                Grimoire.logger.info("Location: " + file.getCanonicalFile().toURI().toString().replaceAll("%20", " "));
+                GrimoireCore.logger.info("Location: " + file.getCanonicalFile().toURI().toString().replaceAll("%20", " "));
             } catch (Exception e) {
                 e.printStackTrace();
             }

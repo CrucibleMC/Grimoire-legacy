@@ -38,6 +38,9 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
+import io.github.crucible.grimoire.common.GrimoireInternals;
+import io.github.crucible.grimoire.common.api.lib.Side;
+
 /**
  * This class offers advanced configurations capabilities, allowing to provide
  * various categories for configuration variables.
@@ -75,6 +78,16 @@ public class Configuration {
 
         public boolean isSided() {
             return this != COMMON;
+        }
+
+        @Nullable
+        public Side getSide() {
+            if (this == CLIENT)
+                return Side.CLIENT;
+            else if (this == SERVER)
+                return Side.DEDICATED_SERVER;
+            else
+                return null;
         }
     }
 
@@ -1748,8 +1761,7 @@ public class Configuration {
 
     private void executeSided(Runnable run) {
         if (this.sidedType.isSided()) {
-            // TODO Properly replace this
-            //DistExecutor.unsafeRunWhenOn(this.sidedType.getDist(), () -> { return run; });
+            GrimoireInternals.executeOnSide(this.sidedType.getSide(), () -> { return run; });
         } else {
             run.run();
         }

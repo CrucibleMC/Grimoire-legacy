@@ -114,7 +114,7 @@ public class GrimmixAnnotationVisitor extends ClassVisitor {
         public boolean validate() {
 
             if (this.hasAnnotation) {
-                Grimoire.logger.info("Grimmix candidate found: {}", this.className);
+                GrimoireCore.logger.info("Grimmix candidate found: {}", this.className);
             }
 
             return this.hasAnnotation;

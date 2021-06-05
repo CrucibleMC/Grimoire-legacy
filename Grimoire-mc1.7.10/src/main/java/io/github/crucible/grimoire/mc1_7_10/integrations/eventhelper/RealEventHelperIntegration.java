@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class RealEventHelperIntegration implements IEventHelperIntegration {
-//    private final List<IEssentialsInjection> injections = new ArrayList<>();
 
     public RealEventHelperIntegration() {
         // NO-OP
@@ -114,20 +113,8 @@ public class RealEventHelperIntegration implements IEventHelperIntegration {
     }
 
     @Override
-    public boolean inGodmode(EntityPlayer player) {
-//        for (IEssentialsInjection inj : this.injections)
-//            if (inj.inGodMode(player))
-//                return true;
-
-        return false;
-    }
-
-    @Override
     public void initInjections() {
-//        IEssentialsInjection essentialsInj = EssentialsInjection.getInjection();
-//        if (essentialsInj != null) {
-//            this.injections.add(essentialsInj);
-//        }
+        // NO-OP
     }
 
 }

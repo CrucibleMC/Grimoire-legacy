@@ -51,8 +51,6 @@ public interface IEventHelperIntegration {
 
     public boolean hasPermission(@Nullable String playerName, @Nonnull String permission);
 
-    public boolean inGodmode(@Nonnull EntityPlayer player);
-
     public void initInjections();
 
 }

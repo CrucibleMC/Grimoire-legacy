@@ -1,6 +1,6 @@
 package io.github.crucible.grimoire.common.integrations;
 
-import io.github.crucible.grimoire.common.core.Grimoire;
+import io.github.crucible.grimoire.common.core.GrimoireCore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class IntegrationManager {
             try {
                 integration.initIntegration();
             } catch (Throwable e) {
-                Grimoire.logger.error("Unable to initialize integration \"{}\"\nRemoving it.", integration.getClass().getName());
+                GrimoireCore.logger.error("Unable to initialize integration \"{}\"\nRemoving it.", integration.getClass().getName());
                 integrations.remove(integration);
                 e.printStackTrace();
             }

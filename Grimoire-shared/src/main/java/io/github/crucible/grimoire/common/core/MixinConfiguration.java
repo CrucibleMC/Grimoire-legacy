@@ -14,11 +14,13 @@ import java.util.Optional;
 public class MixinConfiguration implements IMixinConfiguration {
     private static final List<MixinConfiguration> unclaimedConfigurations = new ArrayList<>();
     private static boolean permitConfig = false;
+
     protected final Optional<IGrimmix> owner;
     protected final String classpath;
     protected final ConfigurationType configType;
     protected boolean isLoaded = false;
     protected boolean isValid = true;
+
     public MixinConfiguration(IGrimmix owner, ConfigurationType type, String classpath) {
         this.owner = owner != null ? Optional.of(owner) : Optional.empty();
         this.classpath = classpath;
@@ -38,7 +40,7 @@ public class MixinConfiguration implements IMixinConfiguration {
             unclaimedConfigurations.add(this);
         }
 
-        Grimoire.logger.info("Registered new IMixinConfiguration, owner: {}, type: {}, paths: {}",
+        GrimoireCore.logger.info("Registered new IMixinConfiguration, owner: {}, type: {}, paths: {}",
                 this.owner.isPresent() ? this.owner.get().getName() : null, this.configType, this.classpath);
     }
 

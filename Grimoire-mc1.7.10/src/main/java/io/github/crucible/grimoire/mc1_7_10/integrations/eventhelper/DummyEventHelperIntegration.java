@@ -110,11 +110,6 @@ public class DummyEventHelperIntegration implements IEventHelperIntegration {
     }
 
     @Override
-    public boolean inGodmode(EntityPlayer player) {
-        return false;
-    }
-
-    @Override
     public void initInjections() {
         // NO-OP
     }

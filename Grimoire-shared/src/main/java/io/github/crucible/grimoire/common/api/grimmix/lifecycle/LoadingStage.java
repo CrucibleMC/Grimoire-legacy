@@ -3,7 +3,12 @@ package io.github.crucible.grimoire.common.api.grimmix.lifecycle;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 
 public enum LoadingStage {
-    PRE_CONSTRUCTION, CONSTRUCTION, VALIDATION, CORELOAD, MODLOAD, FINAL;
+    PRE_CONSTRUCTION,
+    CONSTRUCTION,
+    VALIDATION,
+    CORELOAD,
+    MODLOAD,
+    FINAL;
 
     public LoadingStage getNextStage() {
         return LoadingStage.values()[this.ordinal() + 1];

@@ -1,7 +1,9 @@
 package io.github.crucible.grimoire.mc1_7_10;
 
+import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import io.github.crucible.grimoire.common.core.Grimoire;
+import io.github.crucible.grimoire.common.api.lib.Side;
+import io.github.crucible.grimoire.common.core.GrimoireCore;
 import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.Mixins;
@@ -14,7 +16,8 @@ import java.util.Map;
 @IFMLLoadingPlugin.SortingIndex(Integer.MIN_VALUE + 1000)
 public class GrimoireCoremod implements IFMLLoadingPlugin {
     public GrimoireCoremod() {
-        Grimoire.construct();
+        GrimoireCore.INSTANCE.getClass(); // Make it construct
+
         MixinBootstrap.init();
         Mixins.addConfiguration("grimoire/mixins.forge.json");
 
@@ -23,10 +26,9 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-        Grimoire.configure((File) data.get("mcLocation"),
-                (Boolean) data.get("runtimeDeobfuscationEnabled"),
-                "mods",
-                "1.7.10");
+        GrimoireCore.INSTANCE.configure((File) data.get("mcLocation"),
+                (Boolean) data.get("runtimeDeobfuscationEnabled"), "mods", "1.7.10",
+                FMLLaunchHandler.side() == cpw.mods.fml.relauncher.Side.CLIENT ? Side.CLIENT : Side.DEDICATED_SERVER);
     }
 
     @Override
