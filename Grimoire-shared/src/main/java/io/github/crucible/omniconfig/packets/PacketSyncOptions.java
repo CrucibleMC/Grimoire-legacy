@@ -24,7 +24,7 @@ public class PacketSyncOptions {
         this.fileName = wrapper.config.getConfigFile().getName();
         this.configVersion = wrapper.config.getLoadedConfigVersion();
 
-        for (AbstractParameter param : wrapper.retrieveInvocationList()) {
+        for (AbstractParameter<?> param : wrapper.retrieveInvocationList()) {
             if (param.isSynchronized()) {
                 this.synchronizedParameters.put(param.getId(), param.valueToString());
             }

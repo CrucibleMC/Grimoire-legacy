@@ -21,6 +21,8 @@ public class GrimoireCore {
     private final GrimmixLoader grimmixLoader;
     private final IntegrationManager grimmixIntegrations;
     private File mcLocation;
+    private File mcModFolder;
+    private String version;
     private Side side;
 
     public GrimoireCore() {
@@ -40,22 +42,22 @@ public class GrimoireCore {
 
     public void configure(File mcLocation, boolean obfuscated, String mcModFolder, String version, Side onSide) {
         this.side = onSide;
+        this.version = version;
         this.mcLocation = mcLocation;
+        this.mcModFolder = new File(this.mcLocation, mcModFolder);
 
+        OmniconfigCore.logger.info("Initializing omniconfig core...");
+    }
+
+    public void init() {
         OmniconfigTest.INSTANCE.getClass(); // make it construct
         AnnotationConfigCore.INSTANCE.addAnnotationConfig(AnnotationConfigTest.class);
 
-        this.grimmixLoader.scanForGrimmixes(classLoader,
-                new File(mcLocation, mcModFolder),
-                new File(mcLocation, mcModFolder + File.separator + version));
+        this.grimmixLoader.scanForGrimmixes(classLoader, this.mcModFolder, new File(this.mcModFolder, this.version));
 
         this.grimmixLoader.construct();
         this.grimmixLoader.validate();
         this.grimmixLoader.coreLoad();
-    }
-
-    public boolean isDevEnvironment() {
-        return Boolean.parseBoolean(System.getProperty("fml.isDevEnvironment"));
     }
 
     public void loadModMixins() {
@@ -70,12 +72,20 @@ public class GrimoireCore {
         return this.grimmixIntegrations;
     }
 
-    public Side getSide() {
+    public Side getEnvironment() {
         return this.side;
     }
 
     public File getMCLocation() {
         return this.mcLocation;
+    }
+
+    public File getMCModFolder() {
+        return this.mcModFolder;
+    }
+
+    public boolean isDevEnvironment() {
+        return Boolean.parseBoolean(System.getProperty("fml.isDevEnvironment"));
     }
 
 }

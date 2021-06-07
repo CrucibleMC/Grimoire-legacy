@@ -24,19 +24,19 @@ public class OmniconfigTest {
         wrapper.loadConfigFile();
         wrapper.pushCategory("Generic Config", "Just some generic stuff");
 
-        wrapper.comment("lol").minMax(100).getInt("exampleInt", exampleInt)
+        wrapper.comment("lol").minMax(100).sync().getInt("exampleInt", exampleInt)
         .uponInvoke((value) -> {exampleInt = value.getValue(); System.out.println("Updated int: " + exampleInt);});
 
         wrapper.comment("example double or smth").min(-1).max(120000).getDouble("exampleDouble", exampleDouble)
         .uponInvoke((value) -> exampleDouble = value.getValue());
 
-        wrapper.comment("aaaaaand example boolean thing").getBoolean("exampleBoolean", exampleBoolean)
+        wrapper.comment("aaaaaand example boolean thing").sync().getBoolean("exampleBoolean", exampleBoolean)
         .uponInvoke((value) -> exampleBoolean = value.getValue());
 
-        wrapper.comment("string kekw").getString("exampleString", exampleString, "LOLOLOLOL", "KEKEKEKEKEKE", "OMEGALUL")
+        wrapper.comment("string kekw").sync().getString("exampleString", exampleString, "LOLOLOLOL", "KEKEKEKEKEKE", "OMEGALUL")
         .uponInvoke((value) -> exampleString = value.getValue());
 
-        wrapper.comment("some string array").getStringArray("exampleStringArray", exampleStringArray)
+        wrapper.comment("some string array").sync().getStringArray("exampleStringArray", exampleStringArray)
         .uponInvoke((value) -> {exampleStringArray = value.getValue(); System.out.println("Array now: " + Arrays.asList(exampleStringArray));});
 
         wrapper.popCategory();

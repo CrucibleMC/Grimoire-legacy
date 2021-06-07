@@ -63,7 +63,7 @@ public class StringArrayParameter extends AbstractParameter<StringArrayParameter
             if (stringValue == null) {
                 stringValue = string;
             } else {
-                stringValue += "[$@$]" + string;
+                stringValue += "@%$" + string;
             }
 
         }
@@ -74,7 +74,7 @@ public class StringArrayParameter extends AbstractParameter<StringArrayParameter
     @Override
     public void parseFromString(String value) {
         try {
-            String[] stringValues = value.split("[$@$]");
+            String[] stringValues = value.split("@%$");
             this.value = stringValues;
         } catch (Exception e) {
             this.logGenericParserError(value);

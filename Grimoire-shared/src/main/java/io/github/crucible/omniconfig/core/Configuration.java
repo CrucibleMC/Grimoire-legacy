@@ -1774,7 +1774,7 @@ public class Configuration {
 
     private void executeSided(Runnable run) {
         if (this.sidedType.isSided()) {
-            GrimoireInternals.executeOnSide(this.sidedType.getSide(), () -> { return run; });
+            GrimoireInternals.executeInEnvironment(this.sidedType.getSide(), () -> { return run; });
         } else {
             run.run();
         }

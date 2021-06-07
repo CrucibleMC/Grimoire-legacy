@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.github.crucible.omniconfig.packets.PacketSyncOptions;
 import io.github.crucible.omniconfig.wrappers.values.BooleanParameter;
 import io.github.crucible.omniconfig.wrappers.values.DoubleParameter;
@@ -21,6 +22,11 @@ import io.github.crucible.omniconfig.wrappers.values.StringParameter;
 
 public class OmniconfigWrapper {
     public static final Map<String, OmniconfigWrapper> wrapperRegistry = new HashMap<>();
+
+    /**
+     * This must only ever true if we are in a client environment and
+     * currently are logged in to non-local server.
+     */
     public static boolean onRemoteServer = false;
 
     public final Configuration config;
@@ -205,19 +211,7 @@ public class OmniconfigWrapper {
                 });
             }
 
-            /* TODO Fix this
-            SuperpositionHandler.executeOnServer(server -> {
-                for (ServerPlayerEntity player : server.getPlayerList().getPlayers()) {
-                    boolean worked = syncWrapperToPlayer(this, player);
-
-                    if (worked) {
-                        EnigmaticLegacy.logger.info("Successfully resynchronized file " + config.getConfigFile().getName() + " to " + player.getGameProfile().getName());
-                    } else {
-                        EnigmaticLegacy.logger.info("File " + config.getConfigFile().getName() + " was not resynchronized to " + player.getGameProfile().getName() + ", since this integrated server is hosted by them.");
-                    }
-                }
-            });
-             */
+            SynchronizationManager.syncToAll(this);
         });
         return this;
     }
@@ -263,7 +257,7 @@ public class OmniconfigWrapper {
     }
 
     public OmniconfigWrapper pushCategory(String name, String comment) {
-        this.pushCategory(name);
+        this.pushCategory(name); // TODO Proper subcategories
         this.config.addCustomCategoryComment(name, comment);
         return this;
     }
@@ -464,31 +458,5 @@ public class OmniconfigWrapper {
     public Collection<AbstractParameter<?>> retrieveInvocationList() {
         return this.invokationMap.values();
     }
-
-    /* TODO Fix this
-    public static boolean syncAllToPlayer(ServerPlayerEntity player) {
-        if (SuperpositionHandler.areWeRemoteServer(player)) {
-            EnigmaticLegacy.logger.info("Synchronizing omniconfig files to " + player.getGameProfile().getName() + "...");
-
-            for (OmniconfigWrapper wrapper : wrapperRegistry.values()) {
-                if (!wrapper.config.getSidedType().isSided()) {
-                    syncWrapperToPlayer(wrapper, player);
-                }
-            }
-
-            return true;
-        } else
-            return false;
-    }
-
-    public static boolean syncWrapperToPlayer(OmniconfigWrapper wrapper, ServerPlayerEntity player) {
-        if (SuperpositionHandler.areWeRemoteServer(player)) {
-            EnigmaticLegacy.logger.info("Sending data for " + wrapper.config.getConfigFile().getName());
-            EnigmaticLegacy.packetInstance.send(PacketDistributor.PLAYER.with(() -> player), new PacketSyncOptions(wrapper));
-            return true;
-        } else
-            return false;
-    }
-     */
 
 }

@@ -1,17 +1,16 @@
-package io.github.crucible.grimoire.mc1_7_10;
+package io.github.crucible.grimoire.mc1_12;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartedEvent;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
-import io.github.crucible.grimoire.mc1_7_10.handlers.ChadEventHandler;
-import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher;
-import io.github.crucible.grimoire.mc1_7_10.integrations.eventhelper.EventHelperIntegration;
-import io.github.crucible.grimoire.mc1_7_10.network.PacketSyncOmniconfig;
+import io.github.crucible.grimoire.mc1_12.handlers.IncelEventHandler;
+import io.github.crucible.grimoire.mc1_12.handlers.IncelPacketDispatcher;
+import io.github.crucible.grimoire.mc1_12.network.PacketSyncOmniconfig;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = GrimoireMod.MODID, name = GrimoireMod.NAME, version = GrimoireMod.VERSION)
 public class GrimoireMod {
@@ -32,10 +31,9 @@ public class GrimoireMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        ChadPacketDispatcher.INSTANCE.getClass();
+        IncelPacketDispatcher.INSTANCE.getClass();
 
-        ChadEventHandler handler = new ChadEventHandler();
-        FMLCommonHandler.instance().bus().register(handler);
+        IncelEventHandler handler = new IncelEventHandler();
         MinecraftForge.EVENT_BUS.register(handler);
 
         packetPipeline = new SimpleNetworkWrapper("GrimoireChannel");
@@ -43,7 +41,7 @@ public class GrimoireMod {
 
         //Register our embedded integrations
         if (FMLCommonHandler.instance().getSide().isServer()) {
-            GrimoireCore.INSTANCE.getGrimmixIntegrations().registerIntegration(new EventHelperIntegration());
+            //GrimoireCore.INSTANCE.getGrimmixIntegrations().registerIntegration(new EventHelperIntegration());
         }
         //Init grimmix integrations
         GrimoireCore.INSTANCE.getGrimmixIntegrations().init();

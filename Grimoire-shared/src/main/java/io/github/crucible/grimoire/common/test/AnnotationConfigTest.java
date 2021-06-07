@@ -2,6 +2,7 @@ package io.github.crucible.grimoire.common.test;
 
 import io.github.crucible.omniconfig.annotation.annotations.AnnotationConfig;
 import io.github.crucible.omniconfig.annotation.annotations.values.*;
+import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
 
 @AnnotationConfig
 public class AnnotationConfigTest {
@@ -17,5 +18,8 @@ public class AnnotationConfigTest {
 
     @ConfigString(comment = "String thing")
     public static String exampleString = "LOLOLOLOL";
+
+    @ConfigEnum(comment = "Enum")
+    public static SidedConfigType type = SidedConfigType.COMMON;
 
 }
