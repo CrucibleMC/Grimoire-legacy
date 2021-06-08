@@ -1,56 +1,56 @@
 package io.github.crucible.omniconfig.wrappers.values;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 
 public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumParameter<T>> {
-    private final Class<T> clazz;
-    private T defaultValue;
-    private T[] validValues;
-    private T value;
+    protected final Class<T> enumClass;
+    protected final T defaultValue;
+    protected final ImmutableList<T> validValues;
+    protected T value;
 
-    public EnumParameter(T defaultValue) {
-        super();
-        this.clazz = defaultValue.getDeclaringClass();
-        this.defaultValue = defaultValue;
-        this.value = this.defaultValue;
+    public EnumParameter(Builder<T> builder) {
+        super(builder);
 
-        this.validValues = this.clazz.getEnumConstants();
+        this.enumClass = builder.enumClass;
+        this.defaultValue = builder.defaultValue;
+
+        ImmutableList.Builder<T> validBuilder;
+
+        if (builder.validValues != null) {
+            validBuilder = builder.validValues;
+        } else {
+            validBuilder = ImmutableList.builder();
+            validBuilder.add(this.enumClass.getEnumConstants());
+        }
+
+        this.validValues = validBuilder.build();
+
+        this.finishConstruction(builder);
     }
 
     public T getDefaultValue() {
         return this.defaultValue;
     }
 
-    public void setDefaultValue(T defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
     public T getValue() {
         return this.value;
     }
 
-    public void setValue(T value) {
-        this.value = value;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void setValidValues(T... values) {
-        this.validValues = values;
-    }
-
-    public T[] getValidValues() {
+    public List<T> getValidValues() {
         return this.validValues;
     }
 
     @Override
-    public EnumParameter<T> invoke(Configuration config) {
-        // <V extends Enum<V>> ForgeConfigSpec
-        if (!this.isClientOnly() || config.getSidedType() == Configuration.SidedConfigType.CLIENT) {
-            config.pushSynchronized(this.isSynchornized);
-            this.value = config.getEnum(this.name, this.category, this.defaultValue, this.comment, this.validValues);
-        }
-
-        return super.invoke(config);
+    protected void load(Configuration config) {
+        config.pushSynchronized(this.isSynchronized);
+        T[] checkType = Arrays.copyOf(this.enumClass.getEnumConstants(), 0);
+        this.value = config.getEnum(this.name, this.category, this.defaultValue, this.comment, this.validValues.toArray(checkType));
     }
 
     @Override
@@ -60,12 +60,46 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
 
     @Override
     public void parseFromString(String value) {
-        this.value = Enum.valueOf(this.clazz, value);
+        this.value = Enum.valueOf(this.enumClass, value);
     }
 
     @Override
     public String toString() {
         return this.value.toString();
+    }
+
+    public static <T extends Enum<T>> Builder<T> builder(Omniconfig.Builder parent, String name, T defaultValue) {
+        return new Builder<>(parent, name, defaultValue);
+    }
+
+    public static class Builder<T extends Enum<T>> extends AbstractParameter.Builder<EnumParameter<T>, Builder<T>> {
+        protected final T defaultValue;
+        protected final Class<T> enumClass;
+        protected ImmutableList.Builder<T> validValues = null;
+
+        protected Builder(Omniconfig.Builder parentBuilder, String name, T defaultValue) {
+            super(parentBuilder, name);
+
+            this.defaultValue = defaultValue;
+            this.enumClass = defaultValue.getDeclaringClass();
+        }
+
+        @SuppressWarnings("unchecked")
+        public Builder<T> validValues(T... values) {
+            this.validValues = ImmutableList.builder();
+
+            for (T value : values) {
+                this.validValues.add(value);
+            }
+
+            return this;
+        }
+
+        @Override
+        public EnumParameter<T> build() {
+            return new EnumParameter<>(this);
+        }
+
     }
 
 }

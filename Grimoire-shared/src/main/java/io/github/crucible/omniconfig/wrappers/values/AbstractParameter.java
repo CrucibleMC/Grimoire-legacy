@@ -1,35 +1,34 @@
 package io.github.crucible.omniconfig.wrappers.values;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
+
+import javax.print.attribute.HashAttributeSet;
+
+import com.google.common.collect.ImmutableList;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 
+@SuppressWarnings("unchecked")
 public abstract class AbstractParameter<T extends AbstractParameter<T>> {
-    protected String name = "unknownKey";
-    protected String comment = "undefinedComment";
-    protected String category = "undefinedCategory";
-    protected boolean isSynchornized = false;
-    protected boolean clientOnly = false;
+    protected final String name;
+    protected final String comment;
+    protected final String category;
+    protected final boolean isSynchronized;
+    protected final ImmutableList<Listener<T>> listeners;
 
-    protected List<Consumer<T>> onInvokeList = new ArrayList<>();
-
-    public AbstractParameter() {
-        // NO-OP
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    protected AbstractParameter(Builder<T, ?> builder) {
+        this.name = builder.prefix + builder.name;
+        this.comment = builder.comment;
+        this.category = builder.category;
+        this.isSynchronized = builder.isSynchronized;
+        this.listeners = builder.listeners.build();
     }
 
     public String getCategory() {
@@ -45,23 +44,11 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
     }
 
     public boolean isSynchronized() {
-        return this.isSynchornized;
+        return this.isSynchronized;
     }
 
-    public String getId() {
+    public String getID() {
         return this.category + "$" + this.name;
-    }
-
-    public void setSynchronized(boolean isSyncable) {
-        this.isSynchornized = isSyncable;
-    }
-
-    public boolean isClientOnly() {
-        return this.clientOnly;
-    }
-
-    public void setClientOnly(boolean clientOnly) {
-        this.clientOnly = clientOnly;
     }
 
     protected void logGenericParserError(String value) {
@@ -72,25 +59,106 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
 
     public abstract void parseFromString(String value);
 
-    public void uponInvoke(Consumer<T> consumer) {
-        this.uponInvoke(consumer, true);
+    protected abstract void load(Configuration config);
+
+
+    public void reloadFrom(Omniconfig config) {
+        this.load(config.getBackingConfig());
+        this.notifyListeners();
     }
 
-    @SuppressWarnings("unchecked")
-    public void uponInvoke(Consumer<T> consumer, boolean initialInvokation) {
-        this.onInvokeList.add(consumer);
+    protected void finishConstruction(Builder<T, ?> builder) {
+        this.load(builder.getBackingConfig());
+        this.notifyListeners();
 
-        if (initialInvokation) {
-            consumer.accept((T) this);
+        builder.getParentBuilder().getPropertyMap().put(this.getID(), this);
+    }
+
+    protected void notifyListeners() {
+        this.listeners.forEach(listener -> {
+            listener.accept((T) this);
+        });
+    }
+
+    protected static class Listener<E extends AbstractParameter<E>> {
+        private final Consumer<E> consumer;
+        private boolean firstLoadPassed;
+
+        public Listener(Consumer<E> consumer, boolean invokeOnFirstLoad) {
+            this.firstLoadPassed = invokeOnFirstLoad;
+            this.consumer = consumer;
+        }
+
+        public void accept(E value) {
+            if (!this.firstLoadPassed) {
+                this.firstLoadPassed = true;
+            } else {
+                this.consumer.accept(value);
+            }
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public T invoke(Configuration config) {
-        this.onInvokeList.forEach(consumer -> {
-            consumer.accept((T) this);
-        });
-        return (T) this;
+    public static abstract class Builder<E extends AbstractParameter<E>, T extends Builder<E, T>> {
+        protected final ImmutableList.Builder<Listener<E>> listeners = ImmutableList.builder();
+        protected final Omniconfig.Builder parentBuilder;
+        protected final String name;
+
+        protected String comment = "undefinedComment";
+        protected boolean isSynchronized;
+        protected String category;
+        protected String prefix;
+
+        protected Builder(Omniconfig.Builder parentBuilder, String name) {
+            this.parentBuilder = parentBuilder;
+            this.isSynchronized = parentBuilder.isSynchronized();
+            this.prefix = parentBuilder.getPrefix();
+            this.category = parentBuilder.getCurrentCategory();
+            this.name = name;
+        }
+
+        protected Configuration getBackingConfig() {
+            return this.parentBuilder.getBackingConfig();
+        }
+
+        protected Omniconfig.Builder getParentBuilder() {
+            return this.parentBuilder;
+        }
+
+        public T category(String category) {
+            this.category = category;
+            return this.self();
+        }
+
+        public T comment(String comment) {
+            this.comment = comment;
+            return this.self();
+        }
+
+        public T sync(boolean isSyncable) {
+            this.isSynchronized = isSyncable;
+            return this.self();
+        }
+
+        public T sync() {
+            this.sync(true);
+            return this.self();
+        }
+
+        public T uponLoad(Consumer<E> consumer, boolean invokeOnFirstLoad) {
+            this.listeners.add(new Listener<>(consumer, invokeOnFirstLoad));
+            return this.self();
+        }
+
+        public T uponLoad(Consumer<E> consumer) {
+            this.uponLoad(consumer, true);
+            return this.self();
+        }
+
+        protected T self() {
+            return (T) this;
+        }
+
+        public abstract E build();
     }
 
 }

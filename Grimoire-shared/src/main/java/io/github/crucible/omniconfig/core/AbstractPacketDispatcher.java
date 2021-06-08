@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.crucible.omniconfig.lib.Finalized;
-import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlayerMP;
 
 public abstract class AbstractPacketDispatcher<T, E extends AbstractPlayerMP<?>> {
@@ -26,7 +26,7 @@ public abstract class AbstractPacketDispatcher<T, E extends AbstractPlayerMP<?>>
             return this.player;
         }
 
-        public abstract void sendSyncPacket(OmniconfigWrapper wrapper);
+        public abstract void sendSyncPacket(Omniconfig wrapper);
 
         public abstract boolean areWeRemoteServer();
 

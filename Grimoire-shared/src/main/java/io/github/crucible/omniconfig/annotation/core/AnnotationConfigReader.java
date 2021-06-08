@@ -87,7 +87,7 @@ public class AnnotationConfigReader {
 
                 wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
                 .getBoolean(name, defaultValue)
-                .uponInvoke(value -> this.trySetBoolean(field, value.getValue()));
+                .uponLoad(value -> this.trySetBoolean(field, value.getValue()));
 
             } else if (type == ConfigFloat.class) {
                 this.checkType(field, float.class);
@@ -101,7 +101,7 @@ public class AnnotationConfigReader {
                 wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
                 .getDouble(name, defaultValue)
-                .uponInvoke(value -> this.trySetFloat(field, (float)value.getValue()));
+                .uponLoad(value -> this.trySetFloat(field, (float)value.getValue()));
             } else if (type == ConfigDouble.class) {
                 this.checkType(field, double.class);
                 this.checkFinal(field);
@@ -114,7 +114,7 @@ public class AnnotationConfigReader {
                 wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
                 .getDouble(name, defaultValue)
-                .uponInvoke(value -> this.trySetDouble(field, value.getValue()));
+                .uponLoad(value -> this.trySetDouble(field, value.getValue()));
             } else if (type == ConfigInt.class) {
                 this.checkType(field, int.class);
                 this.checkFinal(field);
@@ -127,7 +127,7 @@ public class AnnotationConfigReader {
                 wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
                 .getInt(name, defaultValue)
-                .uponInvoke(value -> this.trySetInt(field, value.getValue()));
+                .uponLoad(value -> this.trySetInt(field, value.getValue()));
             } else if (type == ConfigString.class) {
                 this.checkType(field, String.class);
                 this.checkFinal(field);
@@ -139,7 +139,7 @@ public class AnnotationConfigReader {
 
                 wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
                 .getString(name, defaultValue)
-                .uponInvoke(value -> this.trySetString(field, value.getValue()));
+                .uponLoad(value -> this.trySetString(field, value.getValue()));
             } else if (type == ConfigClassSet.class) {
                 this.checkType(field, ClassSet.class);
 
@@ -151,7 +151,7 @@ public class AnnotationConfigReader {
 
                 wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
                 .getStringArray(name, classSet.getRaw().toArray(new String[0]))
-                .uponInvoke(value ->  {
+                .uponLoad(value ->  {
                     classSet.clear();
                     classSet.addRaw(Arrays.asList(value.getValue()));
                 });
@@ -167,7 +167,7 @@ public class AnnotationConfigReader {
 
                 wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
                 .getEnum(name, defaultValue)
-                .uponInvoke(value -> this.trySetValue(field, ((EnumParameter)value).getValue()));
+                .uponLoad(value -> this.trySetValue(field, ((EnumParameter)value).getValue()));
             } else if (type == ConfigStringCollection.class) {
                 this.checkType(field, Collection.class);
 
@@ -179,7 +179,7 @@ public class AnnotationConfigReader {
 
                 wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
                 .getStringArray(name, collection.toArray(new String[0]))
-                .uponInvoke(value -> {
+                .uponLoad(value -> {
                     collection.clear();
 
                     for (String string : value.getValue()) {

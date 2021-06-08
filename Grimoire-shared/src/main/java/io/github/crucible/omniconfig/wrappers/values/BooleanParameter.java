@@ -1,41 +1,33 @@
 package io.github.crucible.omniconfig.wrappers.values;
 
+import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
+import io.github.crucible.omniconfig.wrappers.values.BooleanParameter.Builder;
 
 public class BooleanParameter extends AbstractParameter<BooleanParameter> {
-    private boolean defaultValue;
-    private boolean value;
+    protected final boolean defaultValue;
+    protected boolean value;
 
-    public BooleanParameter(boolean defaultValue) {
-        super();
-        this.defaultValue = defaultValue;
-        this.value = this.defaultValue;
-    }
+    public BooleanParameter(Builder builder) {
+        super(builder);
 
-    public boolean getDefaultValue() {
-        return this.defaultValue;
-    }
-
-    public void setDefaultValue(boolean defaultValue) {
-        this.defaultValue = defaultValue;
+        this.defaultValue = builder.defaultValue;
+        this.finishConstruction(builder);
     }
 
     public boolean getValue() {
         return this.value;
     }
 
-    public void setValue(boolean value) {
-        this.value = value;
+    public boolean getDefault() {
+        return this.defaultValue;
     }
 
     @Override
-    public BooleanParameter invoke(Configuration config) {
-        if (!this.isClientOnly() || config.getSidedType() == Configuration.SidedConfigType.CLIENT) {
-            config.pushSynchronized(this.isSynchornized);
-            this.value = config.getBoolean(this.name, this.category, this.defaultValue, this.comment);
-        }
-
-        return super.invoke(config);
+    protected void load(Configuration config) {
+        config.pushSynchronized(this.isSynchronized());
+        this.value = config.getBoolean(this.name, this.category, this.defaultValue, this.comment);
     }
 
     @Override
@@ -54,7 +46,25 @@ public class BooleanParameter extends AbstractParameter<BooleanParameter> {
 
     @Override
     public String toString() {
-        return Boolean.toString(this.value);
+        return this.valueToString();
+    }
+
+    public static Builder builder(Omniconfig.Builder parent, String name, boolean defaultValue) {
+        return new Builder(parent, name, defaultValue);
+    }
+
+    public static class Builder extends AbstractParameter.Builder<BooleanParameter, Builder> {
+        protected final boolean defaultValue;
+
+        protected Builder(Omniconfig.Builder parentBuilder, String name, boolean defaultValue) {
+            super(parentBuilder, name);
+            this.defaultValue = defaultValue;
+        }
+
+        @Override
+        public BooleanParameter build() {
+            return new BooleanParameter(this);
+        }
     }
 
 }

@@ -4,59 +4,42 @@ import java.util.function.Consumer;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 
 public class IntegerParameter extends AbstractParameter<IntegerParameter> {
-    private int defaultValue;
-    private int value;
-    private int minValue = 0;
-    private int maxValue = OmniconfigCore.STANDART_INTEGER_LIMIT;
+    protected final int defaultValue, minValue, maxValue;
+    protected int value;
 
-    public IntegerParameter(int defaultValue) {
-        super();
-        this.defaultValue = defaultValue;
-        this.value = this.defaultValue;
-    }
+    public IntegerParameter(Builder builder) {
+        super(builder);
 
-    public int getDefaultValue() {
-        return this.defaultValue;
-    }
+        this.defaultValue = builder.defaultValue;
+        this.minValue = builder.minValue;
+        this.maxValue = builder.maxValue;
 
-    public void setDefaultValue(int defaultValue) {
-        this.defaultValue = defaultValue;
+        this.finishConstruction(builder);
     }
 
     public int getValue() {
         return this.value;
     }
 
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public int getMaxValue() {
+    public int getMax() {
         return this.maxValue;
     }
 
-    public int getMinValue() {
+    public int getMin() {
         return this.minValue;
     }
 
-    public void setMinValue(int minValue) {
-        this.minValue = minValue;
-    }
-
-    public void setMaxValue(int maxValue) {
-        this.maxValue = maxValue;
+    public int getDefault() {
+        return this.defaultValue;
     }
 
     @Override
-    public IntegerParameter invoke(Configuration config) {
-        if (!this.isClientOnly() || config.getSidedType() == Configuration.SidedConfigType.CLIENT) {
-            config.pushSynchronized(this.isSynchornized);
-            this.value = config.getInt(this.name, this.category, this.defaultValue, this.minValue, this.maxValue, this.comment);
-        }
-
-        return super.invoke(config);
+    protected void load(Configuration config) {
+        config.pushSynchronized(this.isSynchronized());
+        this.value = config.getInt(this.name, this.category, this.defaultValue, this.minValue, this.maxValue, this.comment);
     }
 
     @Override
@@ -76,7 +59,42 @@ public class IntegerParameter extends AbstractParameter<IntegerParameter> {
 
     @Override
     public String toString() {
-        return Integer.toString(this.value);
+        return this.valueToString();
+    }
+
+    public static Builder builder(Omniconfig.Builder parent, String name, int defaultValue) {
+        return new Builder(parent, name, defaultValue);
+    }
+
+    public static class Builder extends AbstractParameter.Builder<IntegerParameter, Builder> {
+        protected final int defaultValue;
+        protected int minValue = 0, maxValue = OmniconfigCore.STANDART_INTEGER_LIMIT;
+
+        protected Builder(Omniconfig.Builder parentBuilder, String name, int defaultValue) {
+            super(parentBuilder, name);
+            this.defaultValue = defaultValue;
+        }
+
+        public Builder max(int maxValue) {
+            this.maxValue = maxValue;
+            return this;
+        }
+
+        public Builder min(int minValue) {
+            this.minValue = minValue;
+            return this;
+        }
+
+        public Builder minMax(int minMax) {
+            this.min(-minMax);
+            this.max(minMax);
+            return this;
+        }
+
+        @Override
+        public IntegerParameter build() {
+            return new IntegerParameter(this);
+        }
     }
 
 }

@@ -13,7 +13,7 @@ import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractBuffe
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlayerMP;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractServer;
 import io.github.crucible.omniconfig.lib.Finalized;
-import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
 
 public class SynchronizationManager {
@@ -28,29 +28,29 @@ public class SynchronizationManager {
         return dispatcher;
     }
 
-    public static void syncToAll(OmniconfigWrapper wrapper) {
-        if (wrapper.config.getSidedType().isSided())
+    public static void syncToAll(Omniconfig wrapper) {
+        if (wrapper.getSidedType().isSided())
             return;
 
         Optional.ofNullable(dispatcher.getServer()).ifPresent(server -> {
             server.forEachPlayer(player -> {
                 if (player.areWeRemoteServer()) {
                     player.sendSyncPacket(wrapper);
-                    OmniconfigCore.logger.info("Successfully resynchronized file " + wrapper.config.getConfigFile().getName() + " to " + player.getProfileName());
+                    OmniconfigCore.logger.info("Successfully resynchronized file " + wrapper.getFileID() + " to " + player.getProfileName());
                 } else {
-                    OmniconfigCore.logger.info("File " + wrapper.config.getConfigFile().getName() + " was not resynchronized to " + player.getProfileName() + ", since this integrated server is hosted by them.");
+                    OmniconfigCore.logger.info("File " + wrapper.getFileID() + " was not resynchronized to " + player.getProfileName() + ", since this integrated server is hosted by them.");
                     OmniconfigCore.onRemoteServer = false;
                 }
             });
         });
     }
 
-    public static void syncToPlayer(OmniconfigWrapper wrapper, AbstractPlayerMP<?> player) {
-        if (wrapper.config.getSidedType().isSided())
+    public static void syncToPlayer(Omniconfig wrapper, AbstractPlayerMP<?> player) {
+        if (wrapper.getSidedType().isSided())
             return;
 
         if (player.areWeRemoteServer()) {
-            OmniconfigCore.logger.info("Sending data for " + wrapper.config.getConfigFile().getName());
+            OmniconfigCore.logger.info("Sending data for " + wrapper.getFileID());
             player.sendSyncPacket(wrapper);
         } else {
             OmniconfigCore.logger.info("File " + wrapper.config.getConfigFile().getName() + " was not resynchronized to " + player.getProfileName() + ", since this integrated server is hosted by them.");
@@ -83,7 +83,7 @@ public class SynchronizationManager {
 
         for (AbstractParameter<?> param : wrapper.retrieveInvocationList()) {
             if (param.isSynchronized()) {
-                synchronizedParameters.put(param.getId(), param.valueToString());
+                synchronizedParameters.put(param.getID(), param.valueToString());
             }
         }
 
@@ -126,7 +126,7 @@ public class SynchronizationManager {
                 String oldValue = parameter.valueToString();
                 parameter.parseFromString(entry.getValue());
 
-                OmniconfigCore.logger.info("Value of '" + parameter.getId() + "' was set to '" + parameter.valueToString() + "'; old value: " + oldValue);
+                OmniconfigCore.logger.info("Value of '" + parameter.getID() + "' was set to '" + parameter.valueToString() + "'; old value: " + oldValue);
             } else {
                 OmniconfigCore.logger.error("Value '" + entry.getKey() + "' does not exist in " + data.fileName + "! Skipping.");
             }
@@ -151,7 +151,7 @@ public class SynchronizationManager {
                         String oldValue = param.valueToString();
                         param.invoke(wrapper.config);
 
-                        OmniconfigCore.logger.info("Value of '" + param.getId() + "' was restored to '" + param.valueToString() + "'; former server-forced value: " + oldValue);
+                        OmniconfigCore.logger.info("Value of '" + param.getID() + "' was restored to '" + param.valueToString() + "'; former server-forced value: " + oldValue);
                     }
                 }
             }

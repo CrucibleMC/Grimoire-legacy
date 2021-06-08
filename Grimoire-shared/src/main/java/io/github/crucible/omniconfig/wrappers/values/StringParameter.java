@@ -1,56 +1,49 @@
 package io.github.crucible.omniconfig.wrappers.values;
 
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 
 public class StringParameter extends AbstractParameter<StringParameter> {
-    private String defaultValue;
-    private String value;
-    private String[] validValues;
+    protected final String defaultValue;
+    protected final ImmutableList<String> validValues;
+    protected String value;
 
-    public StringParameter(String defaultValue) {
-        super();
-        this.defaultValue = defaultValue;
-        this.value = this.defaultValue;
+    public StringParameter(Builder builder) {
+        super(builder);
+        this.defaultValue = builder.defaultValue;
 
-        this.validValues = null;
-    }
+        ImmutableList.Builder<String> validBuilder;
 
-    public String getDefaultValue() {
-        return this.defaultValue;
-    }
+        if (builder.validValues != null) {
+            validBuilder = builder.validValues;
+        } else {
+            validBuilder = ImmutableList.builder();
+        }
 
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+        this.validValues = validBuilder.build();
+        this.finishConstruction(builder);
     }
 
     public String getValue() {
         return this.value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public void setValidValues(String... validValues) {
-        this.validValues = validValues;
-    }
-
-    public String[] getValidValues() {
+    public ImmutableList<String> getValidValues() {
         return this.validValues;
     }
 
     @Override
-    public StringParameter invoke(Configuration config) {
-        if (!this.isClientOnly() || config.getSidedType() == Configuration.SidedConfigType.CLIENT) {
-            config.pushSynchronized(this.isSynchornized);
-            if (this.validValues == null) {
-                this.value = config.getString(this.name, this.category, this.defaultValue, this.comment);
-            } else {
-                this.value = config.getString(this.name, this.category, this.defaultValue, this.comment, this.validValues);
-            }
+    protected void load(Configuration config) {
+        config.pushSynchronized(this.isSynchronized);
+        if (this.validValues.size() <= 0) {
+            this.value = config.getString(this.name, this.category, this.defaultValue, this.comment);
+        } else {
+            this.value = config.getString(this.name, this.category, this.defaultValue, this.comment, this.validValues.toArray(new String[0]));
         }
-
-        return super.invoke(config);
     }
 
     @Override
@@ -68,4 +61,34 @@ public class StringParameter extends AbstractParameter<StringParameter> {
         return super.toString();
     }
 
+    public static Builder builder(Omniconfig.Builder parent, String name, String defaultValue) {
+        return new Builder(parent, name, defaultValue);
+    }
+
+    public static class Builder extends AbstractParameter.Builder<StringParameter, Builder> {
+        protected final String defaultValue;
+        protected ImmutableList.Builder<String> validValues;
+
+        protected Builder(Omniconfig.Builder parentBuilder, String name, String defaultValue) {
+            super(parentBuilder, name);
+
+            this.defaultValue = defaultValue;
+        }
+
+        public Builder validValues(String... values) {
+            this.validValues = ImmutableList.builder();
+
+            for (String value : values) {
+                this.validValues.add(value);
+            }
+
+            return this;
+        }
+
+        @Override
+        public StringParameter build() {
+            return new StringParameter(this);
+        }
+
+    }
 }

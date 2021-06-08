@@ -2,59 +2,43 @@ package io.github.crucible.omniconfig.wrappers.values;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
+import io.github.crucible.omniconfig.wrappers.values.DoubleParameter.Builder;
 
 public class DoubleParameter extends AbstractParameter<DoubleParameter> {
-    private double defaultValue;
-    private double value;
-    private double minValue = 0;
-    private double maxValue = OmniconfigCore.STANDART_INTEGER_LIMIT;
+    protected final double defaultValue, minValue, maxValue;
+    protected double value;
 
-    public DoubleParameter(double defaultValue) {
-        super();
-        this.defaultValue = defaultValue;
-        this.value = this.defaultValue;
-    }
+    public DoubleParameter(Builder builder) {
+        super(builder);
 
-    public double getDefaultValue() {
-        return this.defaultValue;
-    }
+        this.defaultValue = builder.defaultValue;
+        this.minValue = builder.minValue;
+        this.maxValue = builder.maxValue;
 
-    public void setDefaultValue(double defaultValue) {
-        this.defaultValue = defaultValue;
+        this.finishConstruction(builder);
     }
 
     public double getValue() {
         return this.value;
     }
 
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public double getMaxValue() {
+    public double getMax() {
         return this.maxValue;
     }
 
-    public double getMinValue() {
+    public double getMin() {
         return this.minValue;
     }
 
-    public void setMinValue(double minValue) {
-        this.minValue = minValue;
-    }
-
-    public void setMaxValue(double maxValue) {
-        this.maxValue = maxValue;
+    public double getDefault() {
+        return this.defaultValue;
     }
 
     @Override
-    public DoubleParameter invoke(Configuration config) {
-        if (!this.isClientOnly() || config.getSidedType() == Configuration.SidedConfigType.CLIENT) {
-            config.pushSynchronized(this.isSynchornized);
-            this.value = config.getDouble(this.name, this.category, this.defaultValue, this.minValue, this.maxValue, this.comment);
-        }
-
-        return super.invoke(config);
+    protected void load(Configuration config) {
+        config.pushSynchronized(this.isSynchronized());
+        this.value = config.getDouble(this.name, this.category, this.defaultValue, this.minValue, this.maxValue, this.comment);
     }
 
     @Override
@@ -74,7 +58,39 @@ public class DoubleParameter extends AbstractParameter<DoubleParameter> {
 
     @Override
     public String toString() {
-        return Double.toString(this.value);
+        return this.valueToString();
+    }
+
+    public static Builder builder(Omniconfig.Builder parent, String name, double defaultValue) {
+        return new Builder(parent, name, defaultValue);
+    }
+
+    public static class Builder extends AbstractParameter.Builder<DoubleParameter, Builder> {
+        protected final double defaultValue;
+        protected double minValue = 0, maxValue = OmniconfigCore.STANDART_INTEGER_LIMIT;
+
+        protected Builder(Omniconfig.Builder parentBuilder, String name, double defaultValue) {
+            super(parentBuilder, name);
+            this.defaultValue = defaultValue;
+        }
+
+        public void max(double maxValue) {
+            this.maxValue = maxValue;
+        }
+
+        public void min(double minValue) {
+            this.minValue = minValue;
+        }
+
+        public void minMax(double minMax) {
+            this.min(-minMax);
+            this.max(minMax);
+        }
+
+        @Override
+        public DoubleParameter build() {
+            return new DoubleParameter(this);
+        }
     }
 
 }

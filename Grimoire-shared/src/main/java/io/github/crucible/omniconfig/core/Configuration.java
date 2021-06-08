@@ -1766,7 +1766,7 @@ public class Configuration {
         });
     }
 
-    public void attachOverloadingAction(Consumer<Configuration> action) {
+    public void attachReloadingAction(Consumer<Configuration> action) {
         this.executeSided(() -> {
             this.overloadingAction = action;
         });

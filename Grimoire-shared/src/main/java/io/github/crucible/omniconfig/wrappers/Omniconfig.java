@@ -1,37 +1,107 @@
 package io.github.crucible.omniconfig.wrappers;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
 import io.github.crucible.omniconfig.core.Configuration.VersioningPolicy;
+import io.github.crucible.omniconfig.lib.Perhaps;
 import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
+import io.github.crucible.omniconfig.wrappers.values.BooleanParameter;
+import io.github.crucible.omniconfig.wrappers.values.DoubleParameter;
+import io.github.crucible.omniconfig.wrappers.values.EnumParameter;
+import io.github.crucible.omniconfig.wrappers.values.IntegerParameter;
+import io.github.crucible.omniconfig.wrappers.values.PerhapsParameter;
+import io.github.crucible.omniconfig.wrappers.values.StringArrayParameter;
+import io.github.crucible.omniconfig.wrappers.values.StringParameter;
 
 public class Omniconfig {
-    protected static final Map<String, Omniconfig> configRegistry = new HashMap<>();
-
     protected final Configuration config;
-    protected final Map<String, AbstractParameter<?>> propertyMap;
+    protected final String fileID;
+    protected final ImmutableMap<String, AbstractParameter<?>> propertyMap;
+    protected final ImmutableList<Consumer<Omniconfig>> updateListeners;
     protected final boolean reloadable;
 
-    protected Omniconfig(Configuration config, Map<String, AbstractParameter<?>> propertyMap, boolean reloadable) {
-        this.config = config;
-        this.propertyMap = propertyMap;
-        this.reloadable = reloadable;
+    protected Omniconfig(Builder builder) {
+        this.config = builder.config;
+        this.reloadable = builder.reloadable;
+        this.fileID = builder.fileID;
+        this.propertyMap = builder.propertyMap.build();
+        this.updateListeners = builder.updateListeners.build();
 
-        config.save();
-        configRegistry.put(config.getConfigFile().getName(), this);
+        this.config.save();
+
+        if (this.reloadable || this.updateListeners.size() > 0) {
+            this.config.attachReloadingAction(this::onConfigReload);
+        }
+
+        OmniconfigRegistry.INSTANCE.registerConfig(this);
+    }
+
+    public void forceReload() {
+        this.config.load();
+        this.updateListeners.forEach(listener -> listener.accept(this));
+    }
+
+    public boolean isReloadable() {
+        return this.reloadable;
+    }
+
+    public File getFile() {
+        return this.config.getConfigFile();
+    }
+
+    public String getFileName() {
+        return this.getFile().getName();
+    }
+
+    public String getFileID() {
+        return this.fileID;
+    }
+
+    public String getVersion() {
+        return this.config.getLoadedConfigVersion();
+    }
+
+    public SidedConfigType getSidedType() {
+        return this.config.getSidedType();
+    }
+
+    // Internal methods that should never be exposed via API
+
+    public Configuration getBackingConfig() {
+        return this.config;
+    }
+
+    protected void onConfigReload(Configuration config) {
+        if (this.reloadable) {
+            config.load();
+
+            this.propertyMap.entrySet().forEach(entry -> {
+                AbstractParameter<?> param = entry.getValue();
+
+                if (!OmniconfigCore.onRemoteServer || !param.isSynchronized()) {
+                    param.reloadFrom(this);
+                }
+            });
+        }
+
+        this.updateListeners.forEach(listener -> listener.accept(this));
     }
 
     // Builder starting methods
 
     public static Builder builder(String fileName) {
-        return builder(fileName, null);
+        return builder(fileName, "1.0.0");
     }
 
     public static Builder builder(String fileName, String version) {
@@ -40,27 +110,20 @@ public class Omniconfig {
 
     public static Builder builder(String fileName, boolean caseSensitive, String version) {
         try {
-            return builder(new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf"), caseSensitive, version);
+            File file = new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf");
+            String filePath = file.getCanonicalPath();
+            String configDirPath = OmniconfigCore.CONFIG_DIR.getCanonicalPath();
+
+            if (!filePath.startsWith(configDirPath))
+                throw new IOException("Requested config file [" + filePath + "] resides outside of default configuration directory ["
+                        + configDirPath + "]. This is strictly forbidden.");
+
+            String fileID = filePath.replaceFirst(configDirPath, "");
+
+            return new Builder(fileID, new Configuration(new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf"), version, caseSensitive));
         } catch (Exception ex) {
-            new RuntimeException("Something screwed up when loading config.", ex).printStackTrace();
-            return null;
+            throw new RuntimeException("Something screwed up when loading config!", ex);
         }
-    }
-
-    public static Builder builder(File file) {
-        return builder(file, null);
-    }
-
-    public static Builder builder(File file, String version) {
-        return builder(file, false, version);
-    }
-
-    public static Builder builder(File file, boolean caseSensitive, String version) {
-        return new Builder(new Configuration(file, version, caseSensitive));
-    }
-
-    public static Builder builder(Configuration config) {
-        return new Builder(config);
     }
 
     // Builder class
@@ -71,10 +134,13 @@ public class Omniconfig {
         protected String prefix = "";
         protected boolean sync = false;
         protected boolean reloadable = false;
-        protected ImmutableMap.Builder<String, AbstractParameter<?>> propertyMap = ImmutableMap.builder();
+        protected final String fileID;
+        protected final ImmutableMap.Builder<String, AbstractParameter<?>> propertyMap = ImmutableMap.builder();
+        protected final ImmutableList.Builder<Consumer<Omniconfig>> updateListeners = ImmutableList.builder();
 
-        protected Builder(Configuration config) {
+        protected Builder(String fileID, Configuration config) {
             this.config = config;
+            this.fileID = fileID;
         }
 
         public Builder synchronize(boolean sync) {
@@ -128,8 +194,68 @@ public class Omniconfig {
             return this;
         }
 
+        public Builder setReloadable() {
+            this.reloadable = true;
+            return this;
+        }
+
+        public Builder addUpdateListener(Consumer<Omniconfig> consumer) {
+            this.updateListeners.add(consumer);
+            return this;
+        }
+
+        public BooleanParameter.Builder getBoolean(String name, boolean defaultValue) {
+            return BooleanParameter.builder(this, name, defaultValue);
+        }
+
+        public IntegerParameter.Builder getInteger(String name, int defaultValue) {
+            return IntegerParameter.builder(this, name, defaultValue);
+        }
+
+        public DoubleParameter.Builder getDouble(String name, double defaultValue) {
+            return DoubleParameter.builder(this, name, defaultValue);
+        }
+
+        public PerhapsParameter.Builder getPerhaps(String name, Perhaps defaultValue) {
+            return PerhapsParameter.builder(this, name, defaultValue);
+        }
+
+        public StringParameter.Builder getString(String name, String defaultValue) {
+            return StringParameter.builder(this, name, defaultValue);
+        }
+
+        public StringArrayParameter.Builder getStringArray(String name, String... defaultValue) {
+            return StringArrayParameter.builder(this, name, defaultValue);
+        }
+
+        public <T extends Enum<T>> EnumParameter.Builder<T> getPerhaps(String name, T defaultValue) {
+            return EnumParameter.builder(this, name, defaultValue);
+        }
+
         public Omniconfig build() {
-            return new Omniconfig(this.config, this.propertyMap.build(), this.reloadable);
+            return new Omniconfig(this);
+        }
+
+        // Internal methods that must not be exposed via API
+
+        public String getPrefix() {
+            return this.prefix;
+        }
+
+        public boolean isSynchronized() {
+            return this.sync;
+        }
+
+        public String getCurrentCategory() {
+            return this.currentCategory;
+        }
+
+        public Configuration getBackingConfig() {
+            return this.config;
+        }
+
+        public ImmutableMap.Builder<String, AbstractParameter<?>> getPropertyMap() {
+            return this.propertyMap;
         }
     }
 
