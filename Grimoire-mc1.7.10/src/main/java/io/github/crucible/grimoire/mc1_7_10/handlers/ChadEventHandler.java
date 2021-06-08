@@ -8,6 +8,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.github.crucible.grimoire.common.GrimoireInternals;
+import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher.ChadPlayerMP;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
@@ -31,28 +32,7 @@ public class ChadEventHandler {
              */
 
             if (player == null) {
-                if (OmniconfigWrapper.onRemoteServer) {
-                    /*
-                     * After we log out of remote server, dismiss config values it
-                     * sent us and load our own ones from local file.
-                     */
-
-                    OmniconfigWrapper.onRemoteServer = false;
-
-                    for (OmniconfigWrapper wrapper : OmniconfigWrapper.wrapperRegistry.values()) {
-                        OmniconfigCore.logger.info("Dismissing values of " + wrapper.config.getConfigFile().getName() + " in favor of local config...");
-
-                        wrapper.config.load();
-                        for (AbstractParameter<?> param : wrapper.retrieveInvocationList()) {
-                            if (param.isSynchronized()) {
-                                String oldValue = param.valueToString();
-                                param.invoke(wrapper.config);
-
-                                OmniconfigCore.logger.info("Value of '" + param.getId() + "' was restored to '" + param.valueToString() + "'; former server-forced value: " + oldValue);
-                            }
-                        }
-                    }
-                }
+                SynchronizationManager.dropRemoteConfigs();
             }
         }
     }
@@ -63,7 +43,7 @@ public class ChadEventHandler {
             return;
 
         GrimoireInternals.ifInstance(event.player, EntityPlayerMP.class, player ->
-        ChadPacketDispatcher.INSTANCE.syncAllToPlayer(player));
+        SynchronizationManager.syncAllToPlayer(new ChadPlayerMP(player)));
     }
 
 }

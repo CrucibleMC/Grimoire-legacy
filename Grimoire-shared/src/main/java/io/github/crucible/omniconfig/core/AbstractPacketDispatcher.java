@@ -1,19 +1,51 @@
 package io.github.crucible.omniconfig.core;
 
+import java.util.function.Consumer;
+
+import org.jetbrains.annotations.Nullable;
+
 import io.github.crucible.omniconfig.lib.Finalized;
 import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
+import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlayerMP;
 
-public abstract class AbstractPacketDispatcher<T, E> {
+public abstract class AbstractPacketDispatcher<T, E extends AbstractPlayerMP<?>> {
 
     public abstract AbstractBufferIO<T> getBufferIO(T buffer);
 
-    public abstract void syncToAll(OmniconfigWrapper wrapper);
+    @Nullable
+    public abstract AbstractServer<?, E> getServer();
 
-    public abstract void syncToPlayer(OmniconfigWrapper wrapper, E player);
+    public static abstract class AbstractPlayerMP<T> {
+        protected final T player;
 
-    public abstract void syncAllToPlayer(E player);
+        public AbstractPlayerMP(T player) {
+            this.player = player;
+        }
 
+        public T get() {
+            return this.player;
+        }
 
+        public abstract void sendSyncPacket(OmniconfigWrapper wrapper);
+
+        public abstract boolean areWeRemoteServer();
+
+        public abstract String getProfileName();
+    }
+
+    public static abstract class AbstractServer<T, E extends AbstractPlayerMP<?>> {
+        protected final T server;
+
+        public AbstractServer(T server) {
+            this.server = server;
+        }
+
+        public T get() {
+            return this.server;
+        }
+
+        public abstract void forEachPlayer(Consumer<E> consumer);
+    }
 
     public static abstract class AbstractBufferIO<T> {
         protected final T buffer;

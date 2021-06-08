@@ -1,7 +1,9 @@
 package io.github.crucible.grimoire.mc1_12.handlers;
 
 import io.github.crucible.grimoire.common.GrimoireInternals;
+import io.github.crucible.grimoire.mc1_12.handlers.IncelPacketDispatcher.IncelPlayerMP;
 import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
 import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
 import net.minecraft.client.Minecraft;
@@ -29,28 +31,7 @@ public class IncelEventHandler {
              */
 
             if (player == null) {
-                if (OmniconfigWrapper.onRemoteServer) {
-                    /*
-                     * After we log out of remote server, dismiss config values it
-                     * sent us and load our own ones from local file.
-                     */
-
-                    OmniconfigWrapper.onRemoteServer = false;
-
-                    for (OmniconfigWrapper wrapper : OmniconfigWrapper.wrapperRegistry.values()) {
-                        OmniconfigCore.logger.info("Dismissing values of " + wrapper.config.getConfigFile().getName() + " in favor of local config...");
-
-                        wrapper.config.load();
-                        for (AbstractParameter<?> param : wrapper.retrieveInvocationList()) {
-                            if (param.isSynchronized()) {
-                                String oldValue = param.valueToString();
-                                param.invoke(wrapper.config);
-
-                                OmniconfigCore.logger.info("Value of '" + param.getId() + "' was restored to '" + param.valueToString() + "'; former server-forced value: " + oldValue);
-                            }
-                        }
-                    }
-                }
+                SynchronizationManager.dropRemoteConfigs();
             }
         }
     }
@@ -61,7 +42,7 @@ public class IncelEventHandler {
             return;
 
         GrimoireInternals.ifInstance(event.player, EntityPlayerMP.class, player ->
-        IncelPacketDispatcher.INSTANCE.syncAllToPlayer(player));
+        SynchronizationManager.syncAllToPlayer(new IncelPlayerMP(player)));
     }
 
 }

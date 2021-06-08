@@ -49,8 +49,6 @@ public class PacketSyncOmniconfig implements IMessage {
         @SideOnly(Side.CLIENT)
         public IMessage onMessage(PacketSyncOmniconfig message, MessageContext ctx) {
             OmniconfigWrapper.onRemoteServer = true;
-            OmniconfigCore.logger.info("Receiving data from remote server. SyncData preset: " + message.either.isB()
-            + ", file: " + message.either.getB().getFileName() + ", wrapper present: " + SynchronizationManager.getWrapper(message.either.getB().getFileName()).isPresent());
 
             message.either.ifB(data ->
             SynchronizationManager.getWrapper(data.getFileName()).ifPresent(wrapper ->
