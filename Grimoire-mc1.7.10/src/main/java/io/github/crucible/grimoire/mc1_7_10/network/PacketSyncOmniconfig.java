@@ -48,7 +48,7 @@ public class PacketSyncOmniconfig implements IMessage {
         @Override
         @SideOnly(Side.CLIENT)
         public IMessage onMessage(PacketSyncOmniconfig message, MessageContext ctx) {
-            OmniconfigWrapper.onRemoteServer = true;
+            OmniconfigCore.onRemoteServer = true;
 
             message.either.ifB(data ->
             SynchronizationManager.getWrapper(data.getFileName()).ifPresent(wrapper ->

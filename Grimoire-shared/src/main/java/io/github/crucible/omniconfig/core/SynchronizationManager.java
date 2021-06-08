@@ -39,7 +39,7 @@ public class SynchronizationManager {
                     OmniconfigCore.logger.info("Successfully resynchronized file " + wrapper.config.getConfigFile().getName() + " to " + player.getProfileName());
                 } else {
                     OmniconfigCore.logger.info("File " + wrapper.config.getConfigFile().getName() + " was not resynchronized to " + player.getProfileName() + ", since this integrated server is hosted by them.");
-                    OmniconfigWrapper.onRemoteServer = false;
+                    OmniconfigCore.onRemoteServer = false;
                 }
             });
         });
@@ -54,7 +54,7 @@ public class SynchronizationManager {
             player.sendSyncPacket(wrapper);
         } else {
             OmniconfigCore.logger.info("File " + wrapper.config.getConfigFile().getName() + " was not resynchronized to " + player.getProfileName() + ", since this integrated server is hosted by them.");
-            OmniconfigWrapper.onRemoteServer = false;
+            OmniconfigCore.onRemoteServer = false;
         }
     }
 
@@ -69,7 +69,7 @@ public class SynchronizationManager {
                 }
             }
         } else {
-            OmniconfigWrapper.onRemoteServer = false;
+            OmniconfigCore.onRemoteServer = false;
             OmniconfigCore.logger.info("Logging in to local integrated server; no synchronization is required.");
         }
     }
@@ -134,13 +134,13 @@ public class SynchronizationManager {
     }
 
     public static void dropRemoteConfigs() {
-        if (OmniconfigWrapper.onRemoteServer) {
+        if (OmniconfigCore.onRemoteServer) {
             /*
              * After we log out of remote server, dismiss config values it
              * sent us and load our own ones from local file.
              */
 
-            OmniconfigWrapper.onRemoteServer = false;
+            OmniconfigCore.onRemoteServer = false;
 
             for (OmniconfigWrapper wrapper : OmniconfigWrapper.wrapperRegistry.values()) {
                 OmniconfigCore.logger.info("Dismissing values of " + wrapper.config.getConfigFile().getName() + " in favor of local config...");

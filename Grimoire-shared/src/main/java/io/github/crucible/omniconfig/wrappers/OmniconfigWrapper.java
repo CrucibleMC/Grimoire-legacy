@@ -23,12 +23,6 @@ import io.github.crucible.omniconfig.wrappers.values.StringParameter;
 public class OmniconfigWrapper {
     public static final Map<String, OmniconfigWrapper> wrapperRegistry = new HashMap<>();
 
-    /**
-     * This must only ever true if we are in a client environment and
-     * currently are logged in to non-local server.
-     */
-    public static boolean onRemoteServer = false;
-
     public final Configuration config;
     private String currentCategory;
     private String currentComment;
@@ -116,7 +110,7 @@ public class OmniconfigWrapper {
     }
 
     private void resetCurrentSynchronized() {
-        this.currentSynchronized = false||this.forceSynchronized;
+        this.currentSynchronized = false || this.forceSynchronized;
     }
 
     private void resetClientOnly() {
@@ -205,7 +199,7 @@ public class OmniconfigWrapper {
             config.load();
             if (this.invokationMap != null) {
                 this.invokationMap.values().forEach(param -> {
-                    if (!onRemoteServer || !param.isSynchronized()) {
+                    if (!OmniconfigCore.onRemoteServer || !param.isSynchronized()) {
                         param.invoke(config);
                     }
                 });
