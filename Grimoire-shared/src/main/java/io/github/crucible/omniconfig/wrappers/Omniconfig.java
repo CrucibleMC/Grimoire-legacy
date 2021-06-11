@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,10 +119,14 @@ public class Omniconfig {
     }
 
     public static Builder builder(String fileName, String version) {
-        return builder(fileName, false, version);
+        return builder(fileName, version, false);
     }
 
-    public static Builder builder(String fileName, boolean caseSensitive, String version) {
+    public static Builder builder(String fileName, String version, boolean caseSensitive) {
+        return builder(fileName, version, caseSensitive, SidedConfigType.COMMON);
+    }
+
+    public static Builder builder(String fileName, String version, boolean caseSensitive, SidedConfigType sidedType) {
         try {
             File file = new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf");
             String filePath = file.getCanonicalPath();
@@ -132,8 +137,8 @@ public class Omniconfig {
                         + configDirPath + "]. This is strictly forbidden.");
 
             String fileID = filePath.replace(configDirPath + OmniconfigCore.FILE_SEPARATOR, "");
-            System.out.println("ID: " + fileID);
-            return new Builder(fileID, new Configuration(new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf"), version, caseSensitive));
+
+            return new Builder(fileID, new Configuration(new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf"), version, caseSensitive), sidedType);
         } catch (Exception ex) {
             throw new RuntimeException("Something screwed up when loading config!", ex);
         }
@@ -152,10 +157,11 @@ public class Omniconfig {
         protected final ImmutableList.Builder<Consumer<Omniconfig>> updateListeners = ImmutableList.builder();
         protected final List<AbstractParameter.Builder<?, ?>> incompleteBuilders = new ArrayList<>();
 
-
-        protected Builder(String fileID, Configuration config) {
+        protected Builder(String fileID, Configuration config, SidedConfigType sidedType) {
             this.config = config;
             this.fileID = fileID;
+
+            this.config.setSidedType(sidedType);
         }
 
         public Builder synchronize(boolean sync) {
@@ -170,11 +176,6 @@ public class Omniconfig {
 
         public Builder terminateNonInvokedKeys(boolean terminate) {
             this.config.setTerminateNonInvokedKeys(terminate);
-            return this;
-        }
-
-        public Builder sided(SidedConfigType type) {
-            this.config.setSidedType(type);
             return this;
         }
 
@@ -216,6 +217,18 @@ public class Omniconfig {
 
         public Builder addUpdateListener(Consumer<Omniconfig> consumer) {
             this.updateListeners.add(consumer);
+            return this;
+        }
+
+        public Builder builIncompleteParameters() {
+            List<AbstractParameter.Builder<?, ?>> builders = new ArrayList<>();
+            builders.addAll(this.incompleteBuilders);
+
+            builders.removeIf(builder -> {
+                builder.build();
+                return true;
+            });
+
             return this;
         }
 

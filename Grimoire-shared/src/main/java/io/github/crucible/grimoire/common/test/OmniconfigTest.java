@@ -16,7 +16,7 @@ public class OmniconfigTest {
     public static final OmniconfigTest INSTANCE = new OmniconfigTest();
 
     public OmniconfigTest() {
-        Omniconfig.Builder wrapper = Omniconfig.builder("omnitest", true, "1.0");
+        Omniconfig.Builder wrapper = Omniconfig.builder("omnitest", "1.0", true);
 
         wrapper.versioningPolicy(VersioningPolicy.AGGRESSIVE);
         wrapper.terminateNonInvokedKeys(true);

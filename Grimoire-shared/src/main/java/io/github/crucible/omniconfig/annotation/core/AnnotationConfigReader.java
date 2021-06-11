@@ -53,10 +53,9 @@ public class AnnotationConfigReader {
 
         this.parseAnnotations();
 
-        Omniconfig.Builder wrapper = Omniconfig.builder(cfgName, annotation.caseSensitiveCategories(), annotation.version());
+        Omniconfig.Builder wrapper = Omniconfig.builder(cfgName, annotation.version(), annotation.caseSensitiveCategories(), annotation.sidedType());
         wrapper.versioningPolicy(annotation.versioningPolicy());
         wrapper.terminateNonInvokedKeys(annotation.terminateNonInvokedKeys());
-        wrapper.sided(annotation.sidedType());
 
         wrapper.loadFile();
 
