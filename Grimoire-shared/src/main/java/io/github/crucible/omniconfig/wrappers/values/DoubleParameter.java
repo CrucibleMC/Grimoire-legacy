@@ -20,18 +20,22 @@ public class DoubleParameter extends AbstractParameter<DoubleParameter> {
     }
 
     public double getValue() {
+        this.assertValidEnvironment();
         return this.value;
     }
 
     public double getMax() {
+        this.assertValidEnvironment();
         return this.maxValue;
     }
 
     public double getMin() {
+        this.assertValidEnvironment();
         return this.minValue;
     }
 
     public double getDefault() {
+        this.assertValidEnvironment();
         return this.defaultValue;
     }
 

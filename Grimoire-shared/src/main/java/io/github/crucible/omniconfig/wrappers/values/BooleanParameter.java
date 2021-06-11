@@ -17,10 +17,12 @@ public class BooleanParameter extends AbstractParameter<BooleanParameter> {
     }
 
     public boolean getValue() {
+        this.assertValidEnvironment();
         return this.value;
     }
 
     public boolean getDefault() {
+        this.assertValidEnvironment();
         return this.defaultValue;
     }
 

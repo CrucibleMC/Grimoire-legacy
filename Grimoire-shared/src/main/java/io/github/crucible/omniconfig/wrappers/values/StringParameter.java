@@ -29,10 +29,12 @@ public class StringParameter extends AbstractParameter<StringParameter> {
     }
 
     public String getValue() {
+        this.assertValidEnvironment();
         return this.value;
     }
 
     public ImmutableList<String> getValidValues() {
+        this.assertValidEnvironment();
         return this.validValues;
     }
 

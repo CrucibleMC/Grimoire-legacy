@@ -91,6 +91,15 @@ public class Configuration {
             else
                 return null;
         }
+
+        public void executeSided(Runnable run) {
+            if (this.isSided()) {
+                GrimoireInternals.executeInEnvironment(this.getSide(), () -> { return run; });
+            } else {
+                run.run();
+            }
+        }
+
     }
 
     public static final String CATEGORY_GENERAL = "general";
@@ -1773,11 +1782,7 @@ public class Configuration {
     }
 
     private void executeSided(Runnable run) {
-        if (this.sidedType.isSided()) {
-            GrimoireInternals.executeInEnvironment(this.sidedType.getSide(), () -> { return run; });
-        } else {
-            run.run();
-        }
+        this.getSidedType().executeSided(run);
     }
 
     /**

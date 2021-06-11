@@ -21,18 +21,22 @@ public class IntegerParameter extends AbstractParameter<IntegerParameter> {
     }
 
     public int getValue() {
+        this.assertValidEnvironment();
         return this.value;
     }
 
     public int getMax() {
+        this.assertValidEnvironment();
         return this.maxValue;
     }
 
     public int getMin() {
+        this.assertValidEnvironment();
         return this.minValue;
     }
 
     public int getDefault() {
+        this.assertValidEnvironment();
         return this.defaultValue;
     }
 

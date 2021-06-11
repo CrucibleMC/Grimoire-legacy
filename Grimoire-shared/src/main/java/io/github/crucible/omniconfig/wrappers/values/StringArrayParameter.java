@@ -31,18 +31,22 @@ public class StringArrayParameter extends AbstractParameter<StringArrayParameter
 
 
     public ImmutableList<String> getDefaultValue() {
+        this.assertValidEnvironment();
         return this.defaultValue;
     }
 
     public ImmutableList<String> getValue() {
+        this.assertValidEnvironment();
         return this.value;
     }
 
     public String[] getArrayValue() {
+        this.assertValidEnvironment();
         return this.value.toArray(new String[0]);
     }
 
     public ImmutableList<String> getValidValues() {
+        this.assertValidEnvironment();
         return this.validValues;
     }
 

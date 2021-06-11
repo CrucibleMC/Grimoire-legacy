@@ -2,6 +2,7 @@ package io.github.crucible.grimoire.common.test;
 
 import java.util.Arrays;
 
+import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
 import io.github.crucible.omniconfig.core.Configuration.VersioningPolicy;
 import io.github.crucible.omniconfig.wrappers.Omniconfig;
 
@@ -16,7 +17,7 @@ public class OmniconfigTest {
     public static final OmniconfigTest INSTANCE = new OmniconfigTest();
 
     public OmniconfigTest() {
-        Omniconfig.Builder wrapper = Omniconfig.builder("omnitest", "1.0", true);
+        Omniconfig.Builder wrapper = Omniconfig.builder("omnitest", "1.0", true, SidedConfigType.SERVER);
 
         wrapper.versioningPolicy(VersioningPolicy.AGGRESSIVE);
         wrapper.terminateNonInvokedKeys(true);

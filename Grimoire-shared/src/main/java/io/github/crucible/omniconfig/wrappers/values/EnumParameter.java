@@ -35,14 +35,17 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
     }
 
     public T getDefaultValue() {
+        this.assertValidEnvironment();
         return this.defaultValue;
     }
 
     public T getValue() {
+        this.assertValidEnvironment();
         return this.value;
     }
 
     public List<T> getValidValues() {
+        this.assertValidEnvironment();
         return this.validValues;
     }
 

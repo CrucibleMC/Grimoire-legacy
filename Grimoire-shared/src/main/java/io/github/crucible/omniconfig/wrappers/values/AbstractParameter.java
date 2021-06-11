@@ -11,8 +11,10 @@ import javax.print.attribute.HashAttributeSet;
 
 import com.google.common.collect.ImmutableList;
 
+import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
 import io.github.crucible.omniconfig.wrappers.Omniconfig;
 
 @SuppressWarnings("unchecked")
@@ -22,6 +24,8 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
     protected final String category;
     protected final boolean isSynchronized;
     protected final ImmutableList<Listener<T>> listeners;
+    protected final SidedConfigType sidedType;
+    protected final boolean isValidEnvironment;
 
     protected AbstractParameter(Builder<T, ?> builder) {
         this.name = builder.prefix + builder.name;
@@ -29,6 +33,9 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
         this.category = builder.category;
         this.isSynchronized = builder.isSynchronized;
         this.listeners = builder.listeners.build();
+        this.sidedType = builder.sidedType;
+
+        this.isValidEnvironment = !this.sidedType.isSided() || this.sidedType.getSide() == GrimoireCore.INSTANCE.getEnvironment();
     }
 
     public String getCategory() {
@@ -61,23 +68,35 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
 
     protected abstract void load(Configuration config);
 
-
     public void reloadFrom(Omniconfig config) {
-        this.load(config.getBackingConfig());
-        this.notifyListeners();
+        this.sidedType.executeSided(() -> {
+            this.load(config.getBackingConfig());
+            this.notifyListeners();
+        });
     }
 
     protected void finishConstruction(Builder<T, ?> builder) {
-        this.load(builder.getBackingConfig());
-        this.notifyListeners();
-
+        this.sidedType.executeSided(() -> {
+            this.load(builder.getBackingConfig());
+            this.notifyListeners();
+        });
         builder.getParentBuilder().getPropertyMap().put(this.getID(), this);
     }
 
     protected void notifyListeners() {
-        this.listeners.forEach(listener -> {
-            listener.accept((T) this);
+        this.sidedType.executeSided(() -> {
+            this.listeners.forEach(listener -> {
+                listener.accept((T) this);
+            });
         });
+    }
+
+    protected void assertValidEnvironment() {
+        if (!this.isValidEnvironment)
+            throw new IllegalAccessError("Attempted to acess config property " + this.getID()
+            + " of sided type " + this.sidedType
+            + " in invalid environment " + GrimoireCore.INSTANCE.getEnvironment()
+            + "!");
     }
 
     protected static class Listener<E extends AbstractParameter<E>> {
@@ -101,6 +120,7 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
     public static abstract class Builder<E extends AbstractParameter<E>, T extends Builder<E, T>> {
         protected final ImmutableList.Builder<Listener<E>> listeners = ImmutableList.builder();
         protected final Omniconfig.Builder parentBuilder;
+        protected final SidedConfigType sidedType;
         protected final String name;
 
         protected String comment = "undefinedComment";
@@ -114,6 +134,7 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
             this.prefix = parentBuilder.getPrefix();
             this.category = parentBuilder.getCurrentCategory();
             this.name = name;
+            this.sidedType = parentBuilder.getBackingConfig().getSidedType();
         }
 
         protected Configuration getBackingConfig() {

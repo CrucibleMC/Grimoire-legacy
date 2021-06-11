@@ -20,18 +20,22 @@ public class PerhapsParameter extends AbstractParameter<PerhapsParameter> {
     }
 
     public Perhaps getDefault() {
+        this.assertValidEnvironment();
         return this.defaultValue;
     }
 
     public Perhaps getValue() {
+        this.assertValidEnvironment();
         return this.value;
     }
 
     public double getMin() {
+        this.assertValidEnvironment();
         return this.minValue;
     }
 
     public double getMax() {
+        this.assertValidEnvironment();
         return this.maxValue;
     }
 
