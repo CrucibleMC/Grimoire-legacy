@@ -11,7 +11,7 @@ import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher.ChadPlayerMP;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.SynchronizationManager;
-import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;

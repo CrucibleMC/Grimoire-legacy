@@ -74,17 +74,20 @@ public class DoubleParameter extends AbstractParameter<DoubleParameter> {
             this.defaultValue = defaultValue;
         }
 
-        public void max(double maxValue) {
+        public Builder max(double maxValue) {
             this.maxValue = maxValue;
+            return this;
         }
 
-        public void min(double minValue) {
+        public Builder min(double minValue) {
             this.minValue = minValue;
+            return this;
         }
 
-        public void minMax(double minMax) {
+        public Builder minMax(double minMax) {
             this.min(-minMax);
             this.max(minMax);
+            return this;
         }
 
         @Override

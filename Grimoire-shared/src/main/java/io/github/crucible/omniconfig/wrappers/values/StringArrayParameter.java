@@ -38,6 +38,10 @@ public class StringArrayParameter extends AbstractParameter<StringArrayParameter
         return this.value;
     }
 
+    public String[] getArrayValue() {
+        return this.value.toArray(new String[0]);
+    }
+
     public ImmutableList<String> getValidValues() {
         return this.validValues;
     }

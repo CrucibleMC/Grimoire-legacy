@@ -16,16 +16,17 @@ import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.github.crucible.omniconfig.core.SynchronizationManager.SyncData;
 import io.github.crucible.omniconfig.lib.Either;
-import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
+import io.github.crucible.omniconfig.wrappers.OmniconfigRegistry;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 
 public class PacketSyncOmniconfig implements IMessage {
     private final ChadPacketDispatcher dispatcher = ChadPacketDispatcher.INSTANCE;
-    private Either<OmniconfigWrapper, SyncData> either;
+    private Either<Omniconfig, SyncData> either;
 
-    public PacketSyncOmniconfig(@NotNull OmniconfigWrapper wrapper) {
+    public PacketSyncOmniconfig(@NotNull Omniconfig wrapper) {
         this.either = Either.fromA(Objects.requireNonNull(wrapper));
     }
 
@@ -51,7 +52,7 @@ public class PacketSyncOmniconfig implements IMessage {
             OmniconfigCore.onRemoteServer = true;
 
             message.either.ifB(data ->
-            SynchronizationManager.getWrapper(data.getFileName()).ifPresent(wrapper ->
+            OmniconfigRegistry.INSTANCE.getConfig(data.getFileID()).ifPresent(wrapper ->
             SynchronizationManager.updateData(wrapper, data)));
 
             return null;

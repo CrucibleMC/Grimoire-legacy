@@ -4,7 +4,6 @@ import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.mc1_12.handlers.IncelPacketDispatcher.IncelPlayerMP;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.SynchronizationManager;
-import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
 import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;

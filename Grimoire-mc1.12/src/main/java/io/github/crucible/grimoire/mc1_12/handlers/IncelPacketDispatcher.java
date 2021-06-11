@@ -16,7 +16,7 @@ import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractBufferIO;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlayerMP;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractServer;
-import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -60,7 +60,7 @@ public class IncelPacketDispatcher extends AbstractPacketDispatcher<ByteBuf, Inc
         }
 
         @Override
-        public void sendSyncPacket(OmniconfigWrapper wrapper) {
+        public void sendSyncPacket(Omniconfig wrapper) {
             GrimoireMod.packetPipeline.sendTo(new PacketSyncOmniconfig(wrapper), this.player);
         }
 

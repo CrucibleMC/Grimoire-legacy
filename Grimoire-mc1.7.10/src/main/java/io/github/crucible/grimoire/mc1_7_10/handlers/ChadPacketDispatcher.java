@@ -16,7 +16,7 @@ import io.github.crucible.grimoire.mc1_7_10.GrimoireMod;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher;
 import io.github.crucible.omniconfig.core.SynchronizationManager;
-import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -65,7 +65,7 @@ public class ChadPacketDispatcher extends AbstractPacketDispatcher<ByteBuf, Chad
         }
 
         @Override
-        public void sendSyncPacket(OmniconfigWrapper wrapper) {
+        public void sendSyncPacket(Omniconfig wrapper) {
             GrimoireMod.packetPipeline.sendTo(new PacketSyncOmniconfig(wrapper), this.player);
         }
 

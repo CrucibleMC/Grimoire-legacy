@@ -14,6 +14,7 @@ import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlaye
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractServer;
 import io.github.crucible.omniconfig.lib.Finalized;
 import io.github.crucible.omniconfig.wrappers.Omniconfig;
+import io.github.crucible.omniconfig.wrappers.OmniconfigRegistry;
 import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
 
 public class SynchronizationManager {
@@ -53,7 +54,7 @@ public class SynchronizationManager {
             OmniconfigCore.logger.info("Sending data for " + wrapper.getFileID());
             player.sendSyncPacket(wrapper);
         } else {
-            OmniconfigCore.logger.info("File " + wrapper.config.getConfigFile().getName() + " was not resynchronized to " + player.getProfileName() + ", since this integrated server is hosted by them.");
+            OmniconfigCore.logger.info("File " + wrapper.getFileID() + " was not resynchronized to " + player.getProfileName() + ", since this integrated server is hosted by them.");
             OmniconfigCore.onRemoteServer = false;
         }
     }
@@ -62,9 +63,9 @@ public class SynchronizationManager {
         if (player.areWeRemoteServer()) {
             OmniconfigCore.logger.info("Synchronizing omniconfig files to " + player.getProfileName() + "...");
 
-            for (OmniconfigWrapper wrapper : OmniconfigWrapper.wrapperRegistry.values()) {
-                if (!wrapper.config.getSidedType().isSided()) {
-                    OmniconfigCore.logger.info("Sending data for " + wrapper.config.getConfigFile().getName());
+            for (Omniconfig wrapper : OmniconfigRegistry.INSTANCE.getRegisteredConfigs()) {
+                if (!wrapper.getSidedType().isSided()) {
+                    OmniconfigCore.logger.info("Sending data for " + wrapper.getFileID());
                     player.sendSyncPacket(wrapper);
                 }
             }
@@ -74,21 +75,17 @@ public class SynchronizationManager {
         }
     }
 
-    public static Optional<OmniconfigWrapper> getWrapper(String fileName) {
-        return Optional.ofNullable(OmniconfigWrapper.wrapperRegistry.get(fileName));
-    }
-
-    public static void writeData(OmniconfigWrapper wrapper, AbstractBufferIO<?> io) {
+    public static void writeData(Omniconfig wrapper, AbstractBufferIO<?> io) {
         Map<String, String> synchronizedParameters = new HashMap<>();
 
-        for (AbstractParameter<?> param : wrapper.retrieveInvocationList()) {
+        for (AbstractParameter<?> param : wrapper.getLoadedParameters()) {
             if (param.isSynchronized()) {
                 synchronizedParameters.put(param.getID(), param.valueToString());
             }
         }
 
-        io.writeString(wrapper.config.getConfigFile().getName(), 512);
-        io.writeString(String.valueOf(wrapper.config.getLoadedConfigVersion()), 512);
+        io.writeString(wrapper.getFileID(), 512);
+        io.writeString(String.valueOf(wrapper.getVersion()), 512);
 
         io.writeLong(synchronizedParameters.size());
 
@@ -116,11 +113,11 @@ public class SynchronizationManager {
         return new SyncData(fileName, configVersion, params);
     }
 
-    public static void updateData(OmniconfigWrapper wrapper, SyncData data) {
-        OmniconfigCore.logger.info("Synchronizing values of " + data.fileName + " with ones dispatched by server...");
+    public static void updateData(Omniconfig wrapper, SyncData data) {
+        OmniconfigCore.logger.info("Synchronizing values of " + data.fileID + " with ones dispatched by server...");
 
         for (Entry<String, String> entry : data.synchronizedParameters.entrySet()) {
-            AbstractParameter<?> parameter = wrapper.invokationMap.get(entry.getKey());
+            AbstractParameter<?> parameter = wrapper.getParameter(entry.getKey()).orElse(null);
 
             if (parameter != null) {
                 String oldValue = parameter.valueToString();
@@ -128,7 +125,7 @@ public class SynchronizationManager {
 
                 OmniconfigCore.logger.info("Value of '" + parameter.getID() + "' was set to '" + parameter.valueToString() + "'; old value: " + oldValue);
             } else {
-                OmniconfigCore.logger.error("Value '" + entry.getKey() + "' does not exist in " + data.fileName + "! Skipping.");
+                OmniconfigCore.logger.error("Value '" + entry.getKey() + "' does not exist in " + data.fileID + "! Skipping.");
             }
         }
     }
@@ -142,14 +139,14 @@ public class SynchronizationManager {
 
             OmniconfigCore.onRemoteServer = false;
 
-            for (OmniconfigWrapper wrapper : OmniconfigWrapper.wrapperRegistry.values()) {
-                OmniconfigCore.logger.info("Dismissing values of " + wrapper.config.getConfigFile().getName() + " in favor of local config...");
+            for (Omniconfig wrapper : OmniconfigRegistry.INSTANCE.getRegisteredConfigs()) {
+                OmniconfigCore.logger.info("Dismissing values of " + wrapper.getFileID() + " in favor of local config...");
 
-                wrapper.config.load();
-                for (AbstractParameter<?> param : wrapper.retrieveInvocationList()) {
+                wrapper.forceReload();
+                for (AbstractParameter<?> param : wrapper.getLoadedParameters()) {
                     if (param.isSynchronized()) {
                         String oldValue = param.valueToString();
-                        param.invoke(wrapper.config);
+                        param.reloadFrom(wrapper);
 
                         OmniconfigCore.logger.info("Value of '" + param.getID() + "' was restored to '" + param.valueToString() + "'; former server-forced value: " + oldValue);
                     }
@@ -159,17 +156,17 @@ public class SynchronizationManager {
     }
 
     public static class SyncData {
-        protected final String fileName, configVersion;
+        protected final String fileID, configVersion;
         protected final Map<String, String> synchronizedParameters;
 
         protected SyncData(String fileName, String configVersion, Map<String, String> params) {
-            this.fileName = fileName;
+            this.fileID = fileName;
             this.configVersion = configVersion;
             this.synchronizedParameters = params;
         }
 
-        public String getFileName() {
-            return this.fileName;
+        public String getFileID() {
+            return this.fileID;
         }
 
         public String getConfigVersion() {

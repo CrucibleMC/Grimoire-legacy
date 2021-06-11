@@ -2,8 +2,10 @@ package io.github.crucible.omniconfig.wrappers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableList;
@@ -45,6 +47,14 @@ public class Omniconfig {
         }
 
         OmniconfigRegistry.INSTANCE.registerConfig(this);
+    }
+
+    public Collection<AbstractParameter<?>> getLoadedParameters() {
+        return this.propertyMap.values();
+    }
+
+    public Optional<AbstractParameter<?>> getParameter(String parameterID) {
+        return Optional.ofNullable(this.propertyMap.get(parameterID));
     }
 
     public void forceReload() {
@@ -228,7 +238,7 @@ public class Omniconfig {
             return StringArrayParameter.builder(this, name, defaultValue);
         }
 
-        public <T extends Enum<T>> EnumParameter.Builder<T> getPerhaps(String name, T defaultValue) {
+        public <T extends Enum<T>> EnumParameter.Builder<T> getEnum(String name, T defaultValue) {
             return EnumParameter.builder(this, name, defaultValue);
         }
 

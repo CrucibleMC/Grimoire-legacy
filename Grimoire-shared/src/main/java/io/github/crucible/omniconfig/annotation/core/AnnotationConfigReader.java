@@ -30,7 +30,7 @@ import io.github.crucible.omniconfig.annotation.annotations.values.ConfigInt;
 import io.github.crucible.omniconfig.annotation.annotations.values.ConfigString;
 import io.github.crucible.omniconfig.annotation.annotations.values.ConfigStringCollection;
 import io.github.crucible.omniconfig.annotation.lib.ClassSet;
-import io.github.crucible.omniconfig.wrappers.OmniconfigWrapper;
+import io.github.crucible.omniconfig.wrappers.Omniconfig;
 import io.github.crucible.omniconfig.wrappers.values.EnumParameter;
 
 public class AnnotationConfigReader {
@@ -42,7 +42,7 @@ public class AnnotationConfigReader {
         this.configClass = configClass;
     }
 
-    public void read() {
+    public Omniconfig read() {
         AnnotationConfig annotation = this.configClass.getAnnotation(AnnotationConfig.class);
         Objects.requireNonNull(annotation, "Annotaion " + AnnotationConfig.class.getName() + " not found for class " + this.configClass.getName());
 
@@ -53,24 +53,24 @@ public class AnnotationConfigReader {
 
         this.parseAnnotations();
 
-        OmniconfigWrapper wrapper = OmniconfigWrapper.setupBuilder(cfgName, annotation.caseSensitiveCategories(), annotation.version());
-        wrapper.pushVersioningPolicy(annotation.versioningPolicy());
-        wrapper.pushTerminateNonInvokedKeys(annotation.terminateNonInvokedKeys());
-        wrapper.pushSidedType(annotation.sidedType());
+        Omniconfig.Builder wrapper = Omniconfig.builder(cfgName, annotation.caseSensitiveCategories(), annotation.version());
+        wrapper.versioningPolicy(annotation.versioningPolicy());
+        wrapper.terminateNonInvokedKeys(annotation.terminateNonInvokedKeys());
+        wrapper.sided(annotation.sidedType());
 
-        wrapper.loadConfigFile();
+        wrapper.loadFile();
 
         this.loadFieldValues(wrapper);
-
-        wrapper.build();
 
         if (annotation.reloadable()) {
             wrapper.setReloadable();
         }
+
+        return wrapper.build();
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void loadFieldValues(OmniconfigWrapper wrapper) {
+    protected void loadFieldValues(Omniconfig.Builder wrapper) {
         for (Entry<Field, Annotation> entry : this.annotatedFields.entrySet()) {
             Field field = entry.getKey();
             Annotation annotation = entry.getValue();
@@ -85,10 +85,11 @@ public class AnnotationConfigReader {
 
                 boolean defaultValue = this.tryGetBoolean(field);
 
-                wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
+                wrapper.category(configAnnotation.category())
                 .getBoolean(name, defaultValue)
-                .uponLoad(value -> this.trySetBoolean(field, value.getValue()));
-
+                .comment(configAnnotation.comment())
+                .uponLoad(value -> this.trySetBoolean(field, value.getValue()))
+                .build();
             } else if (type == ConfigFloat.class) {
                 this.checkType(field, float.class);
                 this.checkFinal(field);
@@ -98,10 +99,11 @@ public class AnnotationConfigReader {
 
                 float defaultValue = this.tryGetFloat(field);
 
-                wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
+                wrapper.category(configAnnotation.category()).getDouble(name, defaultValue)
+                .comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
-                .getDouble(name, defaultValue)
-                .uponLoad(value -> this.trySetFloat(field, (float)value.getValue()));
+                .uponLoad(value -> this.trySetFloat(field, (float)value.getValue()))
+                .build();
             } else if (type == ConfigDouble.class) {
                 this.checkType(field, double.class);
                 this.checkFinal(field);
@@ -111,10 +113,12 @@ public class AnnotationConfigReader {
 
                 double defaultValue = this.tryGetDouble(field);
 
-                wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
-                .min(configAnnotation.min()).max(configAnnotation.max())
+                wrapper.category(configAnnotation.category())
                 .getDouble(name, defaultValue)
-                .uponLoad(value -> this.trySetDouble(field, value.getValue()));
+                .comment(configAnnotation.comment())
+                .min(configAnnotation.min()).max(configAnnotation.max())
+                .uponLoad(value -> this.trySetDouble(field, value.getValue()))
+                .build();
             } else if (type == ConfigInt.class) {
                 this.checkType(field, int.class);
                 this.checkFinal(field);
@@ -124,10 +128,12 @@ public class AnnotationConfigReader {
 
                 int defaultValue = this.tryGetInt(field);
 
-                wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
+                wrapper.category(configAnnotation.category())
+                .getInteger(name, defaultValue)
+                .comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
-                .getInt(name, defaultValue)
-                .uponLoad(value -> this.trySetInt(field, value.getValue()));
+                .uponLoad(value -> this.trySetInt(field, value.getValue()))
+                .build();
             } else if (type == ConfigString.class) {
                 this.checkType(field, String.class);
                 this.checkFinal(field);
@@ -137,9 +143,11 @@ public class AnnotationConfigReader {
 
                 String defaultValue = this.tryGetString(field);
 
-                wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
+                wrapper.category(configAnnotation.category())
                 .getString(name, defaultValue)
-                .uponLoad(value -> this.trySetString(field, value.getValue()));
+                .comment(configAnnotation.comment())
+                .uponLoad(value -> this.trySetString(field, value.getValue()))
+                .build();
             } else if (type == ConfigClassSet.class) {
                 this.checkType(field, ClassSet.class);
 
@@ -149,12 +157,14 @@ public class AnnotationConfigReader {
                 ClassSet<?> classSet = (ClassSet<?>) this.tryGetValue(field);
                 Objects.requireNonNull(classSet, field + " value must not be null");
 
-                wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
+                wrapper.category(configAnnotation.category())
                 .getStringArray(name, classSet.getRaw().toArray(new String[0]))
+                .comment(configAnnotation.comment())
                 .uponLoad(value ->  {
                     classSet.clear();
-                    classSet.addRaw(Arrays.asList(value.getValue()));
-                });
+                    classSet.addRaw(value.getValue());
+                })
+                .build();
             } else if (type == ConfigEnum.class) {
                 this.checkType(field, Enum.class);
                 this.checkFinal(field);
@@ -165,9 +175,11 @@ public class AnnotationConfigReader {
                 Enum defaultValue = (Enum) this.tryGetValue(field);
                 Objects.requireNonNull(defaultValue, field + " value must not be null");
 
-                wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
+                wrapper.category(configAnnotation.category())
                 .getEnum(name, defaultValue)
-                .uponLoad(value -> this.trySetValue(field, ((EnumParameter)value).getValue()));
+                .comment(configAnnotation.comment())
+                .uponLoad(value -> this.trySetValue(field, ((EnumParameter)value).getValue()))
+                .build();
             } else if (type == ConfigStringCollection.class) {
                 this.checkType(field, Collection.class);
 
@@ -177,15 +189,17 @@ public class AnnotationConfigReader {
                 Collection<String> collection = (Collection<String>) this.tryGetValue(field);
                 Objects.requireNonNull(collection, field + " value must not be null");
 
-                wrapper.pushCategory(configAnnotation.category()).comment(configAnnotation.comment())
+                wrapper.category(configAnnotation.category())
                 .getStringArray(name, collection.toArray(new String[0]))
+                .comment(configAnnotation.comment())
                 .uponLoad(value -> {
                     collection.clear();
 
                     for (String string : value.getValue()) {
                         collection.add(string);
                     }
-                });
+                })
+                .build();
             }
 
         }
