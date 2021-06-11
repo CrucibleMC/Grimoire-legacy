@@ -1815,8 +1815,8 @@ public class Configuration {
                 this.lastCall = System.currentTimeMillis();
                 Thread.currentThread().setContextClassLoader(this.realClassLoader);
 
-                System.out.println("File just got changed: " + this.config.getConfigFile());
-                System.out.println("Initiating overloading procedure...");
+                OmniconfigCore.logger.info("File just got changed: " + this.config.getConfigFile());
+                OmniconfigCore.logger.info("Initiating reloading procedure...");
 
                 if (this.config.overloadingAction != null) {
                     this.config.overloadingAction.accept(this.config);

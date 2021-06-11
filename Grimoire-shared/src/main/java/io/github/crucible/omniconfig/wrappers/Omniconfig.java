@@ -2,8 +2,10 @@ package io.github.crucible.omniconfig.wrappers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -43,6 +45,7 @@ public class Omniconfig {
         this.config.save();
 
         if (this.reloadable || this.updateListeners.size() > 0) {
+            this.config.attachBeholder();
             this.config.attachReloadingAction(this::onConfigReload);
         }
 
@@ -128,8 +131,8 @@ public class Omniconfig {
                 throw new IOException("Requested config file [" + filePath + "] resides outside of default configuration directory ["
                         + configDirPath + "]. This is strictly forbidden.");
 
-            String fileID = filePath.replaceFirst(configDirPath, "");
-
+            String fileID = filePath.replace(configDirPath + OmniconfigCore.FILE_SEPARATOR, "");
+            System.out.println("ID: " + fileID);
             return new Builder(fileID, new Configuration(new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf"), version, caseSensitive));
         } catch (Exception ex) {
             throw new RuntimeException("Something screwed up when loading config!", ex);
@@ -147,6 +150,8 @@ public class Omniconfig {
         protected final String fileID;
         protected final ImmutableMap.Builder<String, AbstractParameter<?>> propertyMap = ImmutableMap.builder();
         protected final ImmutableList.Builder<Consumer<Omniconfig>> updateListeners = ImmutableList.builder();
+        protected final List<AbstractParameter.Builder<?, ?>> incompleteBuilders = new ArrayList<>();
+
 
         protected Builder(String fileID, Configuration config) {
             this.config = config;
@@ -215,38 +220,56 @@ public class Omniconfig {
         }
 
         public BooleanParameter.Builder getBoolean(String name, boolean defaultValue) {
-            return BooleanParameter.builder(this, name, defaultValue);
+            return this.rememberBuilder(BooleanParameter.builder(this, name, defaultValue));
         }
 
         public IntegerParameter.Builder getInteger(String name, int defaultValue) {
-            return IntegerParameter.builder(this, name, defaultValue);
+            return this.rememberBuilder(IntegerParameter.builder(this, name, defaultValue));
         }
 
         public DoubleParameter.Builder getDouble(String name, double defaultValue) {
-            return DoubleParameter.builder(this, name, defaultValue);
+            return this.rememberBuilder(DoubleParameter.builder(this, name, defaultValue));
         }
 
         public PerhapsParameter.Builder getPerhaps(String name, Perhaps defaultValue) {
-            return PerhapsParameter.builder(this, name, defaultValue);
+            return this.rememberBuilder(PerhapsParameter.builder(this, name, defaultValue));
         }
 
         public StringParameter.Builder getString(String name, String defaultValue) {
-            return StringParameter.builder(this, name, defaultValue);
+            return this.rememberBuilder(StringParameter.builder(this, name, defaultValue));
         }
 
         public StringArrayParameter.Builder getStringArray(String name, String... defaultValue) {
-            return StringArrayParameter.builder(this, name, defaultValue);
+            return this.rememberBuilder(StringArrayParameter.builder(this, name, defaultValue));
         }
 
         public <T extends Enum<T>> EnumParameter.Builder<T> getEnum(String name, T defaultValue) {
-            return EnumParameter.builder(this, name, defaultValue);
+            return this.rememberBuilder(EnumParameter.builder(this, name, defaultValue));
         }
 
         public Omniconfig build() {
+            if (!this.incompleteBuilders.isEmpty()) {
+                OmniconfigCore.logger.fatal("Omniconfig builder for file " + this.fileID + " has incomplete parameter builders.");
+                OmniconfigCore.logger.fatal("This is an error state. List of incomplete parameter builders goes as following: ");
+                for (AbstractParameter.Builder<?, ?> builder : this.incompleteBuilders) {
+                    OmniconfigCore.logger.fatal("Class: {}, parameter ID: {}", builder.getClass(), builder.getParameterID());
+                }
+
+                throw new RuntimeException("Error when building omniconfig file " + this.fileID + "; incomplete parameter builders remain.");
+            }
             return new Omniconfig(this);
         }
 
         // Internal methods that must not be exposed via API
+
+        private <T extends AbstractParameter.Builder<?, ?>> T rememberBuilder(T builder) {
+            this.incompleteBuilders.add(builder);
+            return builder;
+        }
+
+        public void markBuilderCompleted(AbstractParameter.Builder<?, ?> builder) {
+            this.incompleteBuilders.remove(builder);
+        }
 
         public String getPrefix() {
             return this.prefix;

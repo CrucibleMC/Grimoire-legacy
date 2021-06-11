@@ -97,6 +97,7 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
 
         @Override
         public EnumParameter<T> build() {
+            this.finishBuilding();
             return new EnumParameter<>(this);
         }
 

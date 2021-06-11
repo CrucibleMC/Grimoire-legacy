@@ -63,6 +63,7 @@ public class BooleanParameter extends AbstractParameter<BooleanParameter> {
 
         @Override
         public BooleanParameter build() {
+            this.finishBuilding();
             return new BooleanParameter(this);
         }
     }

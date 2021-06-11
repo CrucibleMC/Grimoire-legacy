@@ -121,6 +121,7 @@ public class StringArrayParameter extends AbstractParameter<StringArrayParameter
 
         @Override
         public StringArrayParameter build() {
+            this.finishBuilding();
             return new StringArrayParameter(this);
         }
 

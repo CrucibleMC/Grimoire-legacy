@@ -159,6 +159,16 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
         }
 
         public abstract E build();
+
+        protected void finishBuilding() {
+            this.parentBuilder.markBuilderCompleted(this);
+        }
+
+        // Internal non-API methods
+
+        public String getParameterID() {
+            return this.category + "$" + this.name;
+        }
     }
 
 }

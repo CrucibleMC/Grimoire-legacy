@@ -18,7 +18,7 @@ public class OmniconfigRegistry {
         // NO-OP
     }
 
-    public void registerConfig(Omniconfig config) {
+    protected void registerConfig(Omniconfig config) {
         if (!this.registryMap.containsKey(config.getFileID())) {
             this.registryMap.put(config.getFileID(), config);
         } else

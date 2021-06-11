@@ -87,6 +87,7 @@ public class StringParameter extends AbstractParameter<StringParameter> {
 
         @Override
         public StringParameter build() {
+            this.finishBuilding();
             return new StringParameter(this);
         }
 

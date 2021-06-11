@@ -92,6 +92,7 @@ public class DoubleParameter extends AbstractParameter<DoubleParameter> {
 
         @Override
         public DoubleParameter build() {
+            this.finishBuilding();
             return new DoubleParameter(this);
         }
     }

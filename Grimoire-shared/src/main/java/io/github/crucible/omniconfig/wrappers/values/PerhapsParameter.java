@@ -94,6 +94,7 @@ public class PerhapsParameter extends AbstractParameter<PerhapsParameter> {
 
         @Override
         public PerhapsParameter build() {
+            this.finishBuilding();
             return new PerhapsParameter(this);
         }
 

@@ -93,6 +93,7 @@ public class IntegerParameter extends AbstractParameter<IntegerParameter> {
 
         @Override
         public IntegerParameter build() {
+            this.finishBuilding();
             return new IntegerParameter(this);
         }
     }
