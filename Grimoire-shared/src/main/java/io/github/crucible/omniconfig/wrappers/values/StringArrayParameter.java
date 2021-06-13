@@ -1,6 +1,7 @@
 package io.github.crucible.omniconfig.wrappers.values;
 
 import java.util.List;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 
@@ -11,11 +12,13 @@ import io.github.crucible.omniconfig.wrappers.Omniconfig;
 public class StringArrayParameter extends AbstractParameter<StringArrayParameter> {
     protected final ImmutableList<String> defaultValue;
     protected final ImmutableList<String> validValues;
+    protected final Function<String[], String[]> validator;
     protected ImmutableList<String> value;
 
     public StringArrayParameter(Builder builder) {
         super(builder);
         this.defaultValue = builder.defaultValue;
+        this.validator = builder.validator;
 
         ImmutableList.Builder<String> validBuilder;
 
@@ -53,6 +56,10 @@ public class StringArrayParameter extends AbstractParameter<StringArrayParameter
     @Override
     protected void load(Configuration config) {
         config.pushSynchronized(this.isSynchronized);
+        if (this.validator != null) {
+            config.pushValidator(this.validator);
+        }
+
         if (this.validValues.size() <= 0) {
             this.value = fromArray(config.getStringList(this.name, this.category, toArray(this.defaultValue), this.comment));
         } else {
@@ -109,6 +116,7 @@ public class StringArrayParameter extends AbstractParameter<StringArrayParameter
     public static class Builder extends AbstractParameter.Builder<StringArrayParameter, Builder> {
         protected final ImmutableList<String> defaultValue;
         protected ImmutableList.Builder<String> validValues;
+        protected Function<String[], String[]> validator;
 
         protected Builder(Omniconfig.Builder parentBuilder, String name, String... defaultValue) {
             super(parentBuilder, name);
@@ -120,6 +128,11 @@ public class StringArrayParameter extends AbstractParameter<StringArrayParameter
         public Builder validValues(String... values) {
             this.validValues = ImmutableList.builder();
             this.validValues.add(values);
+            return this;
+        }
+
+        public Builder validator(Function<String[], String[]> validator) {
+            this.validator = validator;
             return this;
         }
 

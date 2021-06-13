@@ -2,6 +2,10 @@ package io.github.crucible.omniconfig.wrappers;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,6 +28,7 @@ import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
 import io.github.crucible.omniconfig.wrappers.values.BooleanParameter;
 import io.github.crucible.omniconfig.wrappers.values.DoubleParameter;
 import io.github.crucible.omniconfig.wrappers.values.EnumParameter;
+import io.github.crucible.omniconfig.wrappers.values.FloatParameter;
 import io.github.crucible.omniconfig.wrappers.values.IntegerParameter;
 import io.github.crucible.omniconfig.wrappers.values.PerhapsParameter;
 import io.github.crucible.omniconfig.wrappers.values.StringArrayParameter;
@@ -164,63 +169,115 @@ public class Omniconfig {
             this.config.setSidedType(sidedType);
         }
 
+        @PhaseOnly(BuildingPhase.INITIALIZATION)
         public Builder synchronize(boolean sync) {
             this.sync = sync;
             return this;
         }
 
+        @PhaseOnly(BuildingPhase.INITIALIZATION)
         public Builder versioningPolicy(VersioningPolicy policy) {
             this.config.setVersioningPolicy(policy);
             return this;
         }
 
+        @PhaseOnly(BuildingPhase.INITIALIZATION)
         public Builder terminateNonInvokedKeys(boolean terminate) {
             this.config.setTerminateNonInvokedKeys(terminate);
             return this;
         }
 
+        @PhaseOnly(BuildingPhase.INITIALIZATION)
+        public Builder loadFile() {
+            this.config.load();
+            return this;
+        }
+
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public Builder prefix(String prefix) {
             this.prefix = prefix;
             return this;
         }
 
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public Builder resetPrefix() {
             this.prefix = "";
             return this;
         }
 
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public Builder category(String category) {
             this.currentCategory = category;
             return this;
         }
 
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public Builder category(String category, String comment) {
             this.currentCategory = category;
             this.config.addCustomCategoryComment(category, comment);
             return this;
         }
 
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public Builder resetCategory() {
             this.currentCategory = Configuration.CATEGORY_GENERAL;
             return this;
         }
 
-        public Builder loadFile() {
-            this.config.load();
-            return this;
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public BooleanParameter.Builder getBoolean(String name, boolean defaultValue) {
+            return this.rememberBuilder(BooleanParameter.builder(this, name, defaultValue));
         }
 
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public IntegerParameter.Builder getInteger(String name, int defaultValue) {
+            return this.rememberBuilder(IntegerParameter.builder(this, name, defaultValue));
+        }
+
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public DoubleParameter.Builder getDouble(String name, double defaultValue) {
+            return this.rememberBuilder(DoubleParameter.builder(this, name, defaultValue));
+        }
+
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public FloatParameter.Builder getFloat(String name, float defaultValue) {
+            return this.rememberBuilder(FloatParameter.builder(this, name, defaultValue));
+        }
+
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public PerhapsParameter.Builder getPerhaps(String name, Perhaps defaultValue) {
+            return this.rememberBuilder(PerhapsParameter.builder(this, name, defaultValue));
+        }
+
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public StringParameter.Builder getString(String name, String defaultValue) {
+            return this.rememberBuilder(StringParameter.builder(this, name, defaultValue));
+        }
+
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public StringArrayParameter.Builder getStringArray(String name, String... defaultValue) {
+            return this.rememberBuilder(StringArrayParameter.builder(this, name, defaultValue));
+        }
+
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public <T extends Enum<T>> EnumParameter.Builder<T> getEnum(String name, T defaultValue) {
+            return this.rememberBuilder(EnumParameter.builder(this, name, defaultValue));
+        }
+
+        @PhaseOnly(BuildingPhase.FINALIZATION)
         public Builder setReloadable() {
             this.reloadable = true;
             return this;
         }
 
+        @PhaseOnly(BuildingPhase.FINALIZATION)
         public Builder addUpdateListener(Consumer<Omniconfig> consumer) {
             this.updateListeners.add(consumer);
             return this;
         }
 
-        public Builder builIncompleteParameters() {
+        @PhaseOnly(BuildingPhase.FINALIZATION)
+        public Builder buildIncompleteParameters() {
             List<AbstractParameter.Builder<?, ?>> builders = new ArrayList<>();
             builders.addAll(this.incompleteBuilders);
 
@@ -232,34 +289,7 @@ public class Omniconfig {
             return this;
         }
 
-        public BooleanParameter.Builder getBoolean(String name, boolean defaultValue) {
-            return this.rememberBuilder(BooleanParameter.builder(this, name, defaultValue));
-        }
-
-        public IntegerParameter.Builder getInteger(String name, int defaultValue) {
-            return this.rememberBuilder(IntegerParameter.builder(this, name, defaultValue));
-        }
-
-        public DoubleParameter.Builder getDouble(String name, double defaultValue) {
-            return this.rememberBuilder(DoubleParameter.builder(this, name, defaultValue));
-        }
-
-        public PerhapsParameter.Builder getPerhaps(String name, Perhaps defaultValue) {
-            return this.rememberBuilder(PerhapsParameter.builder(this, name, defaultValue));
-        }
-
-        public StringParameter.Builder getString(String name, String defaultValue) {
-            return this.rememberBuilder(StringParameter.builder(this, name, defaultValue));
-        }
-
-        public StringArrayParameter.Builder getStringArray(String name, String... defaultValue) {
-            return this.rememberBuilder(StringArrayParameter.builder(this, name, defaultValue));
-        }
-
-        public <T extends Enum<T>> EnumParameter.Builder<T> getEnum(String name, T defaultValue) {
-            return this.rememberBuilder(EnumParameter.builder(this, name, defaultValue));
-        }
-
+        @PhaseOnly(BuildingPhase.FINALIZATION)
         public Omniconfig build() {
             if (!this.incompleteBuilders.isEmpty()) {
                 OmniconfigCore.logger.fatal("Omniconfig builder for file " + this.fileID + " has incomplete parameter builders.");
@@ -302,6 +332,20 @@ public class Omniconfig {
 
         public ImmutableMap.Builder<String, AbstractParameter<?>> getPropertyMap() {
             return this.propertyMap;
+        }
+
+        // TODO Move this to API when we make one and document
+        // TODO Wiki page explaining why both Omniconfig.Builder and @AnnotationConfig are useful
+        protected static enum BuildingPhase {
+            INITIALIZATION,
+            PARAMETER_LOADING,
+            FINALIZATION;
+        }
+
+        @Target(ElementType.METHOD)
+        @Retention(RetentionPolicy.CLASS)
+        protected static @interface PhaseOnly {
+            BuildingPhase value();
         }
     }
 

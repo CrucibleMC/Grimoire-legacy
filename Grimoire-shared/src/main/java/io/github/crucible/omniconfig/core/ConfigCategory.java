@@ -266,11 +266,11 @@ public class ConfigCategory implements Map<String, Property> {
 
                 this.write(out, pad1, " >");
             } else if (prop.getType() == null) {
-                this.write(out, pad1, propName, "=", prop.getString());
+                this.write(out, pad1, propName, "=", prop.getRawValue());
             } else {
                 char type = prop.getType().getID();
                 //System.out.println("Property: " + propName + ", value: " + prop.getString());
-                this.write(out, pad1, String.valueOf(type), ":", propName, "=", prop.getString());
+                this.write(out, pad1, String.valueOf(type), ":", propName, "=", prop.getRawValue());
             }
         }
 

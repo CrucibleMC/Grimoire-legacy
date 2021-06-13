@@ -2,6 +2,7 @@ package io.github.crucible.omniconfig.wrappers.values;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 
@@ -12,6 +13,7 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
     protected final Class<T> enumClass;
     protected final T defaultValue;
     protected final ImmutableList<T> validValues;
+    protected final Function<T, T> validator;
     protected T value;
 
     public EnumParameter(Builder<T> builder) {
@@ -19,6 +21,7 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
 
         this.enumClass = builder.enumClass;
         this.defaultValue = builder.defaultValue;
+        this.validator = builder.validator;
 
         ImmutableList.Builder<T> validBuilder;
 
@@ -49,11 +52,21 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
         return this.validValues;
     }
 
+    protected String validationWrapper(String value) {
+        T result = this.validator.apply(Enum.valueOf(this.enumClass, value));
+        return result.name();
+    }
+
     @Override
     protected void load(Configuration config) {
         config.pushSynchronized(this.isSynchronized);
+        if (this.validator != null) {
+            config.pushValidator(this::validationWrapper);
+        }
         T[] checkType = Arrays.copyOf(this.enumClass.getEnumConstants(), 0);
         this.value = config.getEnum(this.name, this.category, this.defaultValue, this.comment, this.validValues.toArray(checkType));
+
+        System.out.println("Name: " + this.getID() + ", value: " + this.value);
     }
 
     @Override
@@ -79,6 +92,7 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
         protected final T defaultValue;
         protected final Class<T> enumClass;
         protected ImmutableList.Builder<T> validValues = null;
+        protected Function<T, T> validator = null;
 
         protected Builder(Omniconfig.Builder parentBuilder, String name, T defaultValue) {
             super(parentBuilder, name);
@@ -95,6 +109,11 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
                 this.validValues.add(value);
             }
 
+            return this;
+        }
+
+        public Builder<T> validator(Function<T, T> validator) {
+            this.validator = validator;
             return this;
         }
 

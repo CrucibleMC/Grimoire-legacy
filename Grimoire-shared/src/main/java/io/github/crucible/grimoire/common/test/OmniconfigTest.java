@@ -13,11 +13,12 @@ public class OmniconfigTest {
     public static boolean exampleBoolean = false;
     public static String exampleString = "LOLOLOLOL";
     public static String[] exampleStringArray = { "LOL", "KEK", "MAN" };
+    public static RandomEnum randomEnum = RandomEnum.VALUE_3;
 
     public static final OmniconfigTest INSTANCE = new OmniconfigTest();
 
     public OmniconfigTest() {
-        Omniconfig.Builder wrapper = Omniconfig.builder("omnitest", "1.0", true, SidedConfigType.SERVER);
+        Omniconfig.Builder wrapper = Omniconfig.builder("omnitest", "1.0", true, SidedConfigType.COMMON);
 
         wrapper.versioningPolicy(VersioningPolicy.AGGRESSIVE);
         wrapper.terminateNonInvokedKeys(true);
@@ -46,10 +47,24 @@ public class OmniconfigTest {
         .uponLoad((value) -> {exampleStringArray = value.getArrayValue(); System.out.println("Array now: " + Arrays.asList(exampleStringArray));})
         .build();
 
+        wrapper.getEnum("randomEnum", randomEnum).comment("Random enum bruh").sync()
+        .validValues(RandomEnum.VALUE_1, RandomEnum.VALUE_3, RandomEnum.VALUE_5)
+        .validator(value -> value == RandomEnum.VALUE_5 ? RandomEnum.VALUE_4 : value)
+        .uponLoad((value) -> randomEnum = value.getValue())
+        .build();
+
         wrapper.resetCategory();
         wrapper.setReloadable();
 
         wrapper.build();
+    }
+
+    public static enum RandomEnum {
+        VALUE_1,
+        VALUE_2,
+        VALUE_3,
+        VALUE_4,
+        VALUE_5;
     }
 
 }

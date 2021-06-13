@@ -1,5 +1,7 @@
 package io.github.crucible.omniconfig.wrappers.values;
 
+import java.util.function.Function;
+
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
 import io.github.crucible.omniconfig.lib.Perhaps;
@@ -8,6 +10,7 @@ import io.github.crucible.omniconfig.wrappers.Omniconfig;
 public class PerhapsParameter extends AbstractParameter<PerhapsParameter> {
     protected final Perhaps defaultValue;
     protected final double minValue, maxValue;
+    protected final Function<Perhaps, Perhaps> validator;
     protected Perhaps value;
 
     public PerhapsParameter(Builder builder) {
@@ -15,6 +18,7 @@ public class PerhapsParameter extends AbstractParameter<PerhapsParameter> {
         this.defaultValue = builder.defaultValue;
         this.minValue = builder.minValue;
         this.maxValue = builder.maxValue;
+        this.validator = builder.validator;
 
         this.finishConstruction(builder);
     }
@@ -39,9 +43,17 @@ public class PerhapsParameter extends AbstractParameter<PerhapsParameter> {
         return this.maxValue;
     }
 
+    protected Double validationWrapper(Double value) {
+        Perhaps result = this.validator.apply(Perhaps.fromPercent(value));
+        return result.asPercent();
+    }
+
     @Override
     protected void load(Configuration config) {
         config.pushSynchronized(this.isSynchronized);
+        if (this.validator != null) {
+            config.pushValidator(this::validationWrapper);
+        }
         this.value = Perhaps.fromPercent(config.getDouble(this.name, this.category, this.defaultValue.asPercent(), this.minValue, this.maxValue, this.comment));
     }
 
@@ -74,6 +86,7 @@ public class PerhapsParameter extends AbstractParameter<PerhapsParameter> {
     public static class Builder extends AbstractParameter.Builder<PerhapsParameter, Builder> {
         protected final Perhaps defaultValue;
         protected double minValue = 0, maxValue = 100;
+        protected Function<Perhaps, Perhaps> validator;
 
         protected Builder(Omniconfig.Builder parentBuilder, String name, Perhaps defaultValue) {
             super(parentBuilder, name);
@@ -93,6 +106,11 @@ public class PerhapsParameter extends AbstractParameter<PerhapsParameter> {
         public Builder minMax(double percent) {
             this.min(-percent);
             this.max(percent);
+            return this;
+        }
+
+        public Builder validator(Function<Perhaps, Perhaps> validator) {
+            this.validator = validator;
             return this;
         }
 

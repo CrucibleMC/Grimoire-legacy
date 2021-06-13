@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -134,6 +135,7 @@ public class Configuration {
     private VersioningPolicy versioningPolicy = VersioningPolicy.DISMISSIVE;
     private boolean firstLoadPassed = false;
     private boolean terminateNonInvokedKeys = false;
+    private Function<?, ?> validator = null;
 
     protected ConfigBeholder associatedBeholder = null;
 
@@ -186,6 +188,16 @@ public class Configuration {
         String was = this.pushSynchronized ? "yes" : "no";
         this.pushSynchronized = false;
         return was;
+    }
+
+    public <T> void pushValidator(Function<T, T> validator) {
+        this.validator = validator;
+    }
+
+    private Function<?, ?> pullValidator() {
+        Function<?, ?> validator = this.validator;
+        this.validator = null;
+        return validator;
     }
 
     private String getSynchronizedComment() {
@@ -1486,73 +1498,33 @@ public class Configuration {
 
 
     public <V extends Enum<V>> V getEnum(String name, String category, V defaultValue, String comment, V[] validValues) {
-        String[] values = new String[(validValues.length)];
+        String[] vvalues = new String[(validValues.length)];
 
         int i = 0;
         for (V val : validValues) {
-            values[i] = val.toString();
+            vvalues[i] = val.toString();
             i++;
         }
 
-        return Enum.valueOf(defaultValue.getDeclaringClass(), this.getString(name, category, defaultValue.toString(), comment, values));
-    }
+        Function<String, String> defaultValidator = (value) -> {
+            try {
+                V parsed = Enum.valueOf(defaultValue.getDeclaringClass(), value);
+                if (parsed != null) {
+                    for (V validValue : validValues) {
+                        if (validValue == parsed)
+                            return parsed.name();
+                    }
+                }
 
-    /**
-     * Creates a string property.
-     *
-     * @param name Name of the property.
-     * @param category Category of the property.
-     * @param defaultValue Default value of the property.
-     * @param comment A brief description what the property does.
-     * @return The value of the new string property.
-     */
-    public String getString(String name, String category, String defaultValue, String comment) {
-        return this.getString(name, category, defaultValue, comment, name, null);
-    }
+                return defaultValue.name();
+            } catch (Exception ex) {
+                return defaultValue.name();
+            }
+        };
 
-    /**
-     * Creates a string property.
-     *
-     * @param name Name of the property.
-     * @param category Category of the property.
-     * @param defaultValue Default value of the property.
-     * @param comment A brief description what the property does.
-     * @param langKey A language key used for localization of GUIs
-     * @return The value of the new string property.
-     */
-    public String getString(String name, String category, String defaultValue, String comment, String langKey) {
-        return this.getString(name, category, defaultValue, comment, langKey, null);
-    }
+        this.validator = this.validator != null ? defaultValidator.andThen((Function<String, String>) this.validator) : defaultValidator;
 
-    /**
-     * Creates a string property.
-     *
-     * @param name Name of the property.
-     * @param category Category of the property.
-     * @param defaultValue Default value of the property.
-     * @param comment A brief description what the property does.
-     * @return The value of the new string property.
-     */
-    public String getString(String name, String category, String defaultValue, String comment, Pattern pattern) {
-        return this.getString(name, category, defaultValue, comment, name, pattern);
-    }
-
-    /**
-     * Creates a string property.
-     *
-     * @param name Name of the property.
-     * @param category Category of the property.
-     * @param defaultValue Default value of the property.
-     * @param comment A brief description what the property does.
-     * @param langKey A language key used for localization of GUIs
-     * @return The value of the new string property.
-     */
-    public String getString(String name, String category, String defaultValue, String comment, String langKey, Pattern pattern) {
-        Property prop = this.get(category, name, defaultValue);
-        prop.setLanguageKey(langKey);
-        prop.setValidationPattern(pattern);
-        prop.comment = comment + " [default: " + defaultValue + this.getSynchronizedComment() + "]";
-        return prop.getString();
+        return Enum.valueOf(defaultValue.getDeclaringClass(), this.getString(name, category, defaultValue.name(), comment, vvalues));
     }
 
     /**
@@ -1590,6 +1562,23 @@ public class Configuration {
             prop.comment += NEW_LINE +
                     "Valid values: " + Arrays.stream(validValues).collect(Collectors.joining(", "));
         }
+
+        Function<String, String> defaultValidator = value -> {
+            if (validValues != null && validValues.length > 0) {
+                for (String validValue : validValues) {
+                    if (value.equals(validValue))
+                        return value;
+                }
+
+                return defaultValue;
+            }
+
+            return value;
+        };
+
+        defaultValidator = this.validator != null ? defaultValidator.andThen((Function<String, String>) this.validator) : defaultValidator;
+
+        prop.setValidator(defaultValidator);
 
         return prop.getString();
     }
@@ -1640,6 +1629,31 @@ public class Configuration {
                     "Valid values: " + Arrays.stream(validValues).collect(Collectors.joining(", "));
         }
 
+        Function<String[], String[]> defaultValidator = value -> {
+            if (validValues != null && validValues.length > 0) {
+                for (String str : value) {
+                    boolean valid = false;
+
+                    for (String validValue : validValues) {
+                        if (str.equals(validValue)) {
+                            valid = true;
+                        }
+                    }
+
+                    if (!valid)
+                        return defaultValue;
+                }
+
+
+                return value;
+            }
+
+            return value;
+        };
+
+        defaultValidator = this.validator != null ? defaultValidator.andThen((Function<String[], String[]>) this.validator) : defaultValidator;
+        prop.setValidator(defaultValidator);
+
         return prop.getStringList();
     }
 
@@ -1670,6 +1684,8 @@ public class Configuration {
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.comment = comment + " [default: " + defaultValue + this.getSynchronizedComment() + "]";
+
+        prop.setValidator(this.pullValidator());
         return prop.getBoolean(defaultValue);
     }
 
@@ -1707,7 +1723,15 @@ public class Configuration {
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + this.getSynchronizedComment() + "]";
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
-        return prop.getInt(defaultValue) < minValue ? minValue : (prop.getInt(defaultValue) > maxValue ? maxValue : prop.getInt(defaultValue));
+
+        Function<Integer, Integer> defaultValidator = (value) -> value < minValue ? minValue : value > maxValue ? maxValue : value;
+        if (this.validator != null) {
+            defaultValidator = defaultValidator.andThen((Function<Integer, Integer>) this.pullValidator());
+        }
+
+        prop.setValidator(defaultValidator);
+
+        return prop.getInt(defaultValue);
     }
 
     /**
@@ -1743,15 +1767,15 @@ public class Configuration {
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + this.getSynchronizedComment() + "]";
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
-        try {
-            return Double.parseDouble(prop.getString()) < minValue ? minValue : (Double.parseDouble(prop.getString()) > maxValue ? maxValue : Double.parseDouble(prop.getString()));
-        } catch (Exception e) {
-            OmniconfigCore.logger.warn("Invalid value specified for '" + name + "' in category '" + category + "': " + prop.getString());
-            OmniconfigCore.logger.warn("Default value will be used: " + defaultValue);
-            OmniconfigCore.logger.warn("Stacktrace: ");
-            OmniconfigCore.logger.catching(e);
+
+        Function<Double, Double> defaultValidator = (value) -> value < minValue ? minValue : value > maxValue ? maxValue : value;
+        if (this.validator != null) {
+            defaultValidator = defaultValidator.andThen((Function<Double, Double>) this.pullValidator());
         }
-        return defaultValue;
+
+        prop.setValidator(defaultValidator);
+
+        return prop.getDouble(defaultValue);
     }
 
     public File getConfigFile() {

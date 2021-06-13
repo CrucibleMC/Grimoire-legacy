@@ -1,5 +1,7 @@
 package io.github.crucible.omniconfig.wrappers.values;
 
+import java.util.function.Function;
+
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
 import io.github.crucible.omniconfig.wrappers.Omniconfig;
@@ -7,12 +9,14 @@ import io.github.crucible.omniconfig.wrappers.values.BooleanParameter.Builder;
 
 public class BooleanParameter extends AbstractParameter<BooleanParameter> {
     protected final boolean defaultValue;
+    protected final Function<Boolean, Boolean> validator;
     protected boolean value;
 
     public BooleanParameter(Builder builder) {
         super(builder);
 
         this.defaultValue = builder.defaultValue;
+        this.validator = builder.validator;
         this.finishConstruction(builder);
     }
 
@@ -29,6 +33,9 @@ public class BooleanParameter extends AbstractParameter<BooleanParameter> {
     @Override
     protected void load(Configuration config) {
         config.pushSynchronized(this.isSynchronized());
+        if (this.validator != null) {
+            config.pushValidator(this.validator);
+        }
         this.value = config.getBoolean(this.name, this.category, this.defaultValue, this.comment);
     }
 
@@ -57,10 +64,16 @@ public class BooleanParameter extends AbstractParameter<BooleanParameter> {
 
     public static class Builder extends AbstractParameter.Builder<BooleanParameter, Builder> {
         protected final boolean defaultValue;
+        protected Function<Boolean, Boolean> validator;
 
         protected Builder(Omniconfig.Builder parentBuilder, String name, boolean defaultValue) {
             super(parentBuilder, name);
             this.defaultValue = defaultValue;
+        }
+
+        public Builder validator(Function<Boolean, Boolean> validator) {
+            this.validator = validator;
+            return this;
         }
 
         @Override

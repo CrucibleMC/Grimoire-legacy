@@ -2,6 +2,7 @@ package io.github.crucible.omniconfig.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class Property {
@@ -45,6 +46,8 @@ public class Property {
     private boolean changed = false;
     public boolean initialized = false;
     private boolean allowReload = true;
+
+    private Function<?, ?> validator = null;
 
     public Property(String name, String value, Type type) {
         this(name, value, type, false, new String[0], name);
@@ -333,6 +336,10 @@ public class Property {
         return this.validationPattern;
     }
 
+    public void setValidator(Function<?, ?> validator) {
+        this.validator = validator;
+    }
+
     /**
      * Sets the localization language key for this Property so that the config GUI screens are nice and pretty <3. The string languageKey +
      * ".tooltip" is used for tooltips when a user hovers the mouse over a GUI property label.
@@ -517,6 +524,16 @@ public class Property {
      * @return current value
      */
     public String getString() {
+        if (this.validator != null) {
+            System.out.println("Property name: " + this.name);
+            Function<String, String> validator = (Function<String, String>) this.validator;
+            this.value = validator.apply(this.value);
+        }
+
+        return this.value;
+    }
+
+    protected String getRawValue() {
         return this.value;
     }
 
@@ -542,20 +559,6 @@ public class Property {
 
     /**
      * Returns the value in this property as an integer,
-     * if the value is not a valid integer, it will return the initially provided default.
-     *
-     * @return The value
-     */
-    public int getInt() {
-        try {
-            return Integer.parseInt(this.value);
-        } catch (NumberFormatException e) {
-            return Integer.parseInt(this.defaultValue);
-        }
-    }
-
-    /**
-     * Returns the value in this property as an integer,
      * if the value is not a valid integer, it will return the
      * provided default.
      *
@@ -564,8 +567,21 @@ public class Property {
      */
     public int getInt(int _default) {
         try {
-            return Integer.parseInt(this.value);
+            int value = Integer.parseInt(this.value);
+            int validValue = value;
+
+            if (this.validator != null) {
+                Function<Integer, Integer> validator = (Function<Integer, Integer>) this.validator;
+                validValue = validator.apply(value);
+
+                if (validValue != value) {
+                    this.value = String.valueOf(validValue);
+                }
+            }
+
+            return validValue;
         } catch (NumberFormatException e) {
+            this.value = String.valueOf(_default);
             return _default;
         }
     }
@@ -592,22 +608,25 @@ public class Property {
      * @return The value as a boolean, or the default
      */
     public boolean getBoolean(boolean _default) {
-        if (this.isBooleanValue())
-            return Boolean.parseBoolean(this.value);
-        else
-            return _default;
-    }
+        if (this.isBooleanValue()) {
+            boolean value = Boolean.parseBoolean(this.value);
+            boolean validValue = value;
 
-    /**
-     * Returns the value in this property as a boolean, if the value is not a valid boolean, it will return the provided default.
-     *
-     * @return The value as a boolean, or the default
-     */
-    public boolean getBoolean() {
-        if (this.isBooleanValue())
-            return Boolean.parseBoolean(this.value);
-        else
-            return Boolean.parseBoolean(this.defaultValue);
+            if (this.validator != null) {
+                Function<Boolean, Boolean> validator = (Function<Boolean, Boolean>) this.validator;
+                validValue = validator.apply(value);
+
+                if (validValue != value) {
+                    this.value = String.valueOf(validValue);
+                }
+            }
+
+
+            return validValue;
+        } else {
+            this.value = String.valueOf(_default);
+            return _default;
+        }
     }
 
     /**
@@ -642,27 +661,31 @@ public class Property {
      */
     public double getDouble(double _default) {
         try {
-            return Double.parseDouble(this.value);
+            double value = Double.parseDouble(this.value);
+            double validValue = value;
+
+            if (this.validator != null) {
+                Function<Double, Double> validator = (Function<Double, Double>) this.validator;
+                validValue = validator.apply(value);
+
+                if (validValue != value) {
+                    this.value = String.valueOf(validValue);
+                }
+            }
+
+            return validValue;
         } catch (NumberFormatException e) {
+            this.value = String.valueOf(_default);
             return _default;
         }
     }
 
-    /**
-     * Returns the value in this property as a double, if the value is not a valid double, it will return the provided default.
-     *
-     * @param _default The default to provide if the current value is not a valid double
-     * @return The value
-     */
-    public double getDouble() {
-        try {
-            return Double.parseDouble(this.value);
-        } catch (NumberFormatException e) {
-            return Double.parseDouble(this.defaultValue);
-        }
-    }
-
     public String[] getStringList() {
+        if (this.validator != null) {
+            Function<String[], String[]> validator = (Function<String[], String[]>) this.validator;
+            this.values = validator.apply(this.values);
+        }
+
         return this.values;
     }
 
