@@ -51,6 +51,7 @@ public class OmniconfigCore {
 
     public static final OmniconfigCore INSTANCE = new OmniconfigCore();
 
+    // TODO Remove .zip extension once we're finished with extensive testing
     private final File defaultConfigsArchive = new File(GrimoireCore.INSTANCE.getMCLocation(), "defaultconfigs.zip");
     private final File defaultConfigsJson = new File(GrimoireCore.INSTANCE.getMCLocation(), "defaultconfigs.json");
 
