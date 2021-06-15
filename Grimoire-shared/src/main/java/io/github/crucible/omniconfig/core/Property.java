@@ -533,8 +533,8 @@ public class Property {
         return this.value;
     }
 
-    protected String getRawValue() {
-        return this.value;
+    protected String getRawValue(boolean forceDefault) {
+        return forceDefault ? this.defaultValue : this.value;
     }
 
     /**
@@ -678,6 +678,10 @@ public class Property {
             this.value = String.valueOf(_default);
             return _default;
         }
+    }
+
+    public String[] getRawValues(boolean forceDefault) {
+        return forceDefault ? this.values : this.defaultValues;
     }
 
     public String[] getStringList() {

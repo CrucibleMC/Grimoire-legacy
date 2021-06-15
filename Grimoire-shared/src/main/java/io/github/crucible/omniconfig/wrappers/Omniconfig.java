@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -24,6 +25,7 @@ import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
 import io.github.crucible.omniconfig.core.Configuration.VersioningPolicy;
 import io.github.crucible.omniconfig.lib.Perhaps;
+import io.github.crucible.omniconfig.lib.Version;
 import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
 import io.github.crucible.omniconfig.wrappers.values.BooleanParameter;
 import io.github.crucible.omniconfig.wrappers.values.DoubleParameter;
@@ -49,6 +51,8 @@ public class Omniconfig {
         this.updateListeners = builder.updateListeners.build();
 
         this.config.save();
+
+        OmniconfigCore.INSTANCE.backUpDefaultCopy(this);
 
         if (this.reloadable || this.updateListeners.size() > 0) {
             this.config.attachBeholder();
@@ -87,7 +91,7 @@ public class Omniconfig {
         return this.fileID;
     }
 
-    public String getVersion() {
+    public Version getVersion() {
         return this.config.getLoadedConfigVersion();
     }
 
@@ -120,18 +124,18 @@ public class Omniconfig {
     // Builder starting methods
 
     public static Builder builder(String fileName) {
-        return builder(fileName, "1.0.0");
+        return builder(fileName, new Version("1.0.0"));
     }
 
-    public static Builder builder(String fileName, String version) {
+    public static Builder builder(String fileName, Version version) {
         return builder(fileName, version, false);
     }
 
-    public static Builder builder(String fileName, String version, boolean caseSensitive) {
+    public static Builder builder(String fileName, Version version, boolean caseSensitive) {
         return builder(fileName, version, caseSensitive, SidedConfigType.COMMON);
     }
 
-    public static Builder builder(String fileName, String version, boolean caseSensitive, SidedConfigType sidedType) {
+    public static Builder builder(String fileName, Version version, boolean caseSensitive, SidedConfigType sidedType) {
         try {
             File file = new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf");
             String filePath = file.getCanonicalPath();
@@ -153,26 +157,24 @@ public class Omniconfig {
 
     public static class Builder {
         protected final Configuration config;
-        protected String currentCategory = Configuration.CATEGORY_GENERAL;
-        protected String prefix = "";
-        protected boolean sync = false;
-        protected boolean reloadable = false;
         protected final String fileID;
         protected final ImmutableMap.Builder<String, AbstractParameter<?>> propertyMap = ImmutableMap.builder();
         protected final ImmutableList.Builder<Consumer<Omniconfig>> updateListeners = ImmutableList.builder();
         protected final List<AbstractParameter.Builder<?, ?>> incompleteBuilders = new ArrayList<>();
+
+        protected String currentCategory = Configuration.CATEGORY_GENERAL;
+        protected String prefix = "";
+        protected boolean reloadable = false;
+        protected boolean sync = false;
+
+        protected Function<Version, VersioningPolicy> versioningPolicyBackflips = null;
+        protected Configuration oldDefaultCopy = null;
 
         protected Builder(String fileID, Configuration config, SidedConfigType sidedType) {
             this.config = config;
             this.fileID = fileID;
 
             this.config.setSidedType(sidedType);
-        }
-
-        @PhaseOnly(BuildingPhase.INITIALIZATION)
-        public Builder synchronize(boolean sync) {
-            this.sync = sync;
-            return this;
         }
 
         @PhaseOnly(BuildingPhase.INITIALIZATION)
@@ -188,8 +190,43 @@ public class Omniconfig {
         }
 
         @PhaseOnly(BuildingPhase.INITIALIZATION)
+        public Builder versioningPolicyBackflips(Function<Version, VersioningPolicy> determinator) {
+            this.versioningPolicyBackflips = determinator;
+            return this;
+        }
+
+        @PhaseOnly(BuildingPhase.INITIALIZATION)
         public Builder loadFile() {
             this.config.load();
+
+            if (this.versioningPolicyBackflips != null) {
+                this.config.setVersioningPolicy(this.versioningPolicyBackflips.apply(this.config.getLoadedConfigVersion()));
+            }
+
+            if (this.config.loadingOutdatedFile()) {
+                VersioningPolicy policy = this.config.getVersioningPolicy();
+                if (policy == VersioningPolicy.RESPECTFUL || policy == VersioningPolicy.NOBLE) {
+                    try {
+                        File defaultCopy = OmniconfigCore.INSTANCE.extractDefaultCopy(this.fileID);
+
+                        if (defaultCopy != null && defaultCopy.exists() && defaultCopy.isFile()) {
+                            this.oldDefaultCopy = new Configuration(defaultCopy, this.config.getDefinedConfigVersion(), this.config.сaseSensitiveCustomCategories());
+                            this.oldDefaultCopy.setVersioningPolicy(VersioningPolicy.DISMISSIVE);
+                            this.oldDefaultCopy.markTemporary();
+                            this.oldDefaultCopy.load();
+                            this.oldDefaultCopy.resetFileVersion();
+
+                            OmniconfigCore.logger.info("Sucessfully loaded default backup file for omniconfig {}, file path: {}", this.fileID, defaultCopy.getCanonicalPath());
+                        } else {
+                            OmniconfigCore.logger.info("Could not extract default copy of config file {}", this.fileID);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+
+            this.config.resetFileVersion();
             return this;
         }
 
@@ -221,6 +258,12 @@ public class Omniconfig {
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public Builder resetCategory() {
             this.currentCategory = Configuration.CATEGORY_GENERAL;
+            return this;
+        }
+
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public Builder synchronize(boolean sync) {
+            this.sync = sync;
             return this;
         }
 
@@ -300,6 +343,13 @@ public class Omniconfig {
 
                 throw new RuntimeException("Error when building omniconfig file " + this.fileID + "; incomplete parameter builders remain.");
             }
+
+            if (this.oldDefaultCopy != null) {
+                this.oldDefaultCopy.getConfigFile().delete();
+                this.oldDefaultCopy = null;
+                OmniconfigCore.logger.info("Finished updating default values for config {}, deleted temporary default copy.", this.fileID);
+            }
+
             return new Omniconfig(this);
         }
 
@@ -330,6 +380,14 @@ public class Omniconfig {
             return this.config;
         }
 
+        public Configuration getDefaultConfigCopy() {
+            return this.oldDefaultCopy;
+        }
+
+        public boolean updatingOldConfig() {
+            return this.getDefaultConfigCopy() != null && this.config.loadingOutdatedFile();
+        }
+
         public ImmutableMap.Builder<String, AbstractParameter<?>> getPropertyMap() {
             return this.propertyMap;
         }
@@ -345,7 +403,7 @@ public class Omniconfig {
         @Target(ElementType.METHOD)
         @Retention(RetentionPolicy.CLASS)
         protected static @interface PhaseOnly {
-            BuildingPhase value();
+            BuildingPhase[] value();
         }
     }
 

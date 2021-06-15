@@ -65,8 +65,6 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
         }
         T[] checkType = Arrays.copyOf(this.enumClass.getEnumConstants(), 0);
         this.value = config.getEnum(this.name, this.category, this.defaultValue, this.comment, this.validValues.toArray(checkType));
-
-        System.out.println("Name: " + this.getID() + ", value: " + this.value);
     }
 
     @Override
@@ -83,6 +81,22 @@ public class EnumParameter<T extends Enum<T>> extends AbstractParameter<EnumPara
     public String toString() {
         return this.value.toString();
     }
+
+    @Override
+    protected boolean valueMatchesDefault(Configuration inConfig) {
+        this.load(inConfig);
+        return this.value == this.defaultValue;
+    }
+
+    @Override
+    protected boolean valuesMatchIn(Configuration one, Configuration two) {
+        this.load(one);
+        T valueOne = this.value;
+        this.load(two);
+
+        return valueOne == this.value;
+    }
+
 
     public static <T extends Enum<T>> Builder<T> builder(Omniconfig.Builder parent, String name, T defaultValue) {
         return new Builder<>(parent, name, defaultValue);

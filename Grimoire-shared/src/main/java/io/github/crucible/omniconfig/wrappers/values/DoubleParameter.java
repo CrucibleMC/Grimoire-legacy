@@ -72,6 +72,21 @@ public class DoubleParameter extends AbstractParameter<DoubleParameter> {
         return this.valueToString();
     }
 
+    @Override
+    protected boolean valueMatchesDefault(Configuration inConfig) {
+        this.load(inConfig);
+        return this.value == this.defaultValue;
+    }
+
+    @Override
+    protected boolean valuesMatchIn(Configuration one, Configuration two) {
+        this.load(one);
+        double valueOne = this.value;
+        this.load(two);
+
+        return valueOne == this.value;
+    }
+
     public static Builder builder(Omniconfig.Builder parent, String name, double defaultValue) {
         return new Builder(parent, name, defaultValue);
     }

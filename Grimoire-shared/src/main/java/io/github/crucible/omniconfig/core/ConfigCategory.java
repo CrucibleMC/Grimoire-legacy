@@ -203,7 +203,7 @@ public class ConfigCategory implements Map<String, Property> {
         }
     }
 
-    public void write(BufferedWriter out, int indent) throws IOException {
+    public void write(BufferedWriter out, int indent, boolean forceDefaultValues) throws IOException {
         String pad0 = this.getIndent(indent);
         String pad1 = this.getIndent(indent + 1);
         String pad2 = this.getIndent(indent + 2);
@@ -260,17 +260,17 @@ public class ConfigCategory implements Map<String, Property> {
 
                 this.write(out, pad1, String.valueOf(type), ":", propName, " <");
 
-                for (String line : prop.getStringList()) {
+                for (String line : prop.getRawValues(forceDefaultValues)) {
                     this.write(out, pad2, line);
                 }
 
                 this.write(out, pad1, " >");
             } else if (prop.getType() == null) {
-                this.write(out, pad1, propName, "=", prop.getRawValue());
+                this.write(out, pad1, propName, "=", prop.getRawValue(forceDefaultValues));
             } else {
                 char type = prop.getType().getID();
                 //System.out.println("Property: " + propName + ", value: " + prop.getString());
-                this.write(out, pad1, String.valueOf(type), ":", propName, "=", prop.getRawValue());
+                this.write(out, pad1, String.valueOf(type), ":", propName, "=", prop.getRawValue(forceDefaultValues));
             }
         }
 
@@ -280,7 +280,7 @@ public class ConfigCategory implements Map<String, Property> {
 
         for (ConfigCategory child : this.children) {
             if (child.initialized) {
-                child.write(out, indent + 1);
+                child.write(out, indent + 1, forceDefaultValues);
             }
         }
 

@@ -3,7 +3,9 @@ package io.github.crucible.omniconfig.wrappers.values;
 import java.util.function.Function;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.core.ConfigCategory;
 import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.core.Configuration.VersioningPolicy;
 import io.github.crucible.omniconfig.wrappers.Omniconfig;
 import io.github.crucible.omniconfig.wrappers.values.BooleanParameter.Builder;
 
@@ -17,6 +19,7 @@ public class BooleanParameter extends AbstractParameter<BooleanParameter> {
 
         this.defaultValue = builder.defaultValue;
         this.validator = builder.validator;
+
         this.finishConstruction(builder);
     }
 
@@ -56,6 +59,21 @@ public class BooleanParameter extends AbstractParameter<BooleanParameter> {
     @Override
     public String toString() {
         return this.valueToString();
+    }
+
+    @Override
+    protected boolean valueMatchesDefault(Configuration inConfig) {
+        this.load(inConfig);
+        return this.value == this.defaultValue;
+    }
+
+    @Override
+    protected boolean valuesMatchIn(Configuration one, Configuration two) {
+        this.load(one);
+        boolean valueOne = this.value;
+        this.load(two);
+
+        return valueOne == this.value;
     }
 
     public static Builder builder(Omniconfig.Builder parent, String name, boolean defaultValue) {

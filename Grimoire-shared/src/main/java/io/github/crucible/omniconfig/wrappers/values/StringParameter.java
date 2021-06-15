@@ -70,6 +70,22 @@ public class StringParameter extends AbstractParameter<StringParameter> {
         return super.toString();
     }
 
+    @Override
+    protected boolean valueMatchesDefault(Configuration inConfig) {
+        this.load(inConfig);
+        return this.value.equals(this.defaultValue);
+    }
+
+    @Override
+    protected boolean valuesMatchIn(Configuration one, Configuration two) {
+        this.load(one);
+        String valueOne = this.value;
+        this.load(two);
+
+        return valueOne.equals(this.value);
+    }
+
+
     public static Builder builder(Omniconfig.Builder parent, String name, String defaultValue) {
         return new Builder(parent, name, defaultValue);
     }

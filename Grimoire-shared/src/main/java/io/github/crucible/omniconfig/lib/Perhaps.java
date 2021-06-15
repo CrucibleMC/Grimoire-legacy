@@ -57,6 +57,16 @@ public class Perhaps {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Perhaps) {
+            Perhaps another = (Perhaps) obj;
+            return this.value == another.value;
+        }
+
+        return false;
+    }
+
+    @Override
     public String toString() {
         double percent = this.asPercent();
 

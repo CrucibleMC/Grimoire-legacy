@@ -15,6 +15,7 @@ import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration;
 import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
+import io.github.crucible.omniconfig.core.Configuration.VersioningPolicy;
 import io.github.crucible.omniconfig.wrappers.Omniconfig;
 
 @SuppressWarnings("unchecked")
@@ -68,6 +69,10 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
 
     protected abstract void load(Configuration config);
 
+    protected abstract boolean valuesMatchIn(Configuration one, Configuration two);
+
+    protected abstract boolean valueMatchesDefault(Configuration inConfig);
+
     public void reloadFrom(Omniconfig config) {
         this.sidedType.executeSided(() -> {
             this.load(config.getBackingConfig());
@@ -77,7 +82,26 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
 
     protected void finishConstruction(Builder<T, ?> builder) {
         this.sidedType.executeSided(() -> {
-            this.load(builder.getBackingConfig());
+            Omniconfig.Builder parentBuilder = builder.getParentBuilder();
+
+            if (parentBuilder.updatingOldConfig()) {
+                Configuration currentFile = parentBuilder.getBackingConfig();
+                Configuration oldDefaultFile = parentBuilder.getDefaultConfigCopy();
+
+                if (!this.valueMatchesDefault(oldDefaultFile)) {
+                    if (currentFile.getVersioningPolicy() == VersioningPolicy.RESPECTFUL) {
+                        OmniconfigCore.logger.info("Default value of property {} was updated in newest config version, discarding old property...", this.getID());
+                        currentFile.tryRemoveProperty(this.category, this.name);
+                    } else if (currentFile.getVersioningPolicy() == VersioningPolicy.NOBLE) {
+                        if (this.valuesMatchIn(currentFile, oldDefaultFile)) {
+                            OmniconfigCore.logger.info("Default value of property {} was updated in newest config version and value of that property was not modified by user. Discarding old property...", this.getID());
+                            currentFile.tryRemoveProperty(this.category, this.name);
+                        }
+                    }
+                }
+            }
+
+            this.load(parentBuilder.getBackingConfig());
             this.notifyListeners();
         });
         builder.getParentBuilder().getPropertyMap().put(this.getID(), this);
@@ -181,11 +205,11 @@ public abstract class AbstractParameter<T extends AbstractParameter<T>> {
 
         public abstract E build();
 
+        // Internal non-API methods
+
         protected void finishBuilding() {
             this.parentBuilder.markBuilderCompleted(this);
         }
-
-        // Internal non-API methods
 
         public String getParameterID() {
             return this.category + "$" + this.name;

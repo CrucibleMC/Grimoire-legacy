@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
 import java.io.Reader;
@@ -43,6 +44,7 @@ import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.lib.Side;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.lib.FileWatcher;
+import io.github.crucible.omniconfig.lib.Version;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -119,6 +121,7 @@ public class Configuration {
     private boolean pushSynchronized = false;
 
     private File file;
+    private boolean forceDefault = false;
 
     private Map<String, ConfigCategory> categories = new TreeMap<String, ConfigCategory>();
     private Map<String, Configuration> children = new TreeMap<String, Configuration>();
@@ -128,8 +131,8 @@ public class Configuration {
     private String fileName = null;
     public boolean isChild = false;
     private boolean changed = false;
-    private String definedConfigVersion = null;
-    private String loadedConfigVersion = null;
+    private Version definedConfigVersion = null;
+    private Version loadedConfigVersion = null;
     private Consumer<Configuration> overloadingAction = null;
     private SidedConfigType sidedType = SidedConfigType.COMMON;
     private VersioningPolicy versioningPolicy = VersioningPolicy.DISMISSIVE;
@@ -138,6 +141,8 @@ public class Configuration {
     private Function<?, ?> validator = null;
 
     protected ConfigBeholder associatedBeholder = null;
+    protected boolean loadingOutdatedFile = false;
+    protected boolean temporary = false;
 
     static {
         NEW_LINE = System.getProperty("line.separator");
@@ -157,7 +162,7 @@ public class Configuration {
     /**
      * Create a configuration file for the file given in parameter with the provided config version number.
      */
-    public Configuration(File file, String configVersion) {
+    public Configuration(File file, Version configVersion) {
         this.file = file;
         this.definedConfigVersion = configVersion;
 
@@ -171,13 +176,21 @@ public class Configuration {
         }
     }
 
-    public Configuration(File file, String configVersion, boolean caseSensitiveCustomCategories) {
-        this(file, configVersion);
+    public Configuration(File file, Version version, boolean caseSensitiveCustomCategories) {
+        this(file, version);
         this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
     }
 
     public Configuration(File file, boolean caseSensitiveCustomCategories) {
         this(file, null, caseSensitiveCustomCategories);
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public void forceDefault(boolean force) {
+        this.forceDefault = force;
     }
 
     public void pushSynchronized(boolean value) {
@@ -236,15 +249,27 @@ public class Configuration {
 
     @Override
     public String toString() {
-        return this.file.getAbsolutePath();
+        return this.file != null ? this.file.getAbsolutePath() : this.fileName;
     }
 
-    public String getDefinedConfigVersion() {
+    public Version getDefinedConfigVersion() {
         return this.definedConfigVersion;
     }
 
-    public String getLoadedConfigVersion() {
+    public Version getLoadedConfigVersion() {
         return this.loadedConfigVersion;
+    }
+
+    public boolean loadingOutdatedFile() {
+        return this.loadingOutdatedFile;
+    }
+
+    public boolean сaseSensitiveCustomCategories() {
+        return this.caseSensitiveCustomCategories;
+    }
+
+    public void markTemporary() {
+        this.temporary = true;
     }
 
     /******************************************************************************************************************
@@ -831,10 +856,24 @@ public class Configuration {
         return cat != null && cat.containsKey(key);
     }
 
+    public void tryRemoveProperty(String category, String name) {
+        if (this.hasCategory(category)) {
+            this.getCategory(category).remove(name);
+        }
+    }
 
-    public void loadFile() {
+
+    protected void loadFile() {
         if (PARENT != null && PARENT != this)
             return;
+
+        if (this.file == null) {
+            this.categories.clear();
+            this.children.clear();
+            this.loadedConfigVersion = this.definedConfigVersion;
+
+            return;
+        }
 
         BufferedReader buffer = null;
         UnicodeInputStreamReader input = null;
@@ -1019,7 +1058,7 @@ public class Configuration {
                                     if (line.startsWith(CONFIG_VERSION_MARKER)) {
                                         int colon = line.indexOf(':');
                                         if (colon != -1) {
-                                            this.loadedConfigVersion = line.substring(colon + 1).trim();
+                                            this.loadedConfigVersion = new Version(line.substring(colon + 1).trim());
                                         }
 
                                         skip = true;
@@ -1056,29 +1095,38 @@ public class Configuration {
                 try {
                     input.close();
                 } catch (IOException e) {
+                    // NO-OP
                 }
             }
 
         }
 
-        if (!Objects.equals(this.loadedConfigVersion, this.definedConfigVersion) && !this.firstLoadPassed) {
-            OmniconfigCore.logger.info("Loaded config version does not match defined version!");
-            OmniconfigCore.logger.info("Loaded version: " + this.loadedConfigVersion + ", provider-defined version: " + this.definedConfigVersion);
+        if (!this.temporary) {
+            if (!Objects.equals(this.loadedConfigVersion, this.definedConfigVersion) && !this.firstLoadPassed) {
+                OmniconfigCore.logger.info("Loaded config version of file {} does not match defined version!", this.fileName);
+                OmniconfigCore.logger.info("Loaded version: " + this.loadedConfigVersion + ", provider-defined version: " + this.definedConfigVersion);
 
-            if (this.versioningPolicy == VersioningPolicy.AGGRESSIVE) {
-                OmniconfigCore.logger.info("The config updating policy is defined as " + this.versioningPolicy.toString() + "; full reset of config file will be executed.");
+                if (this.versioningPolicy == VersioningPolicy.AGGRESSIVE) {
+                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy.toString() + "; "
+                            + "full reset of config file will be executed.");
 
-                this.categories.clear();
-                this.children.clear();
-            } else if (this.versioningPolicy == VersioningPolicy.DISMISSIVE) {
-                OmniconfigCore.logger.info("The config updating policy is defined as " + this.versioningPolicy.toString() + "; everythying in the config file will be left untouched, apart from config version parameter being updated.");
-            } else if (this.versioningPolicy == VersioningPolicy.RESPECTFUL) {
-                // NO-OP
-            } else if (this.versioningPolicy == VersioningPolicy.NOBLE) {
-                // NO-OP
+                    this.categories.clear();
+                    this.children.clear();
+                } else if (this.versioningPolicy == VersioningPolicy.DISMISSIVE) {
+                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy.toString() + "; "
+                            + "everythying in the config file will be left untouched, apart from config version parameter being updated.");
+                } else if (this.versioningPolicy == VersioningPolicy.RESPECTFUL) {
+                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy.toString() + "; "
+                            + "values of properties that had their defaults updated since old version will be discarded, everything else will persist.");
+                } else if (this.versioningPolicy == VersioningPolicy.NOBLE) {
+                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy.toString() + "; "
+                            + "values of properties that had their defaults updated since old version will be discarded if user did not modify them, everything else will persist.");
+                }
+
+                this.loadingOutdatedFile = true;
+            } else {
+                this.loadingOutdatedFile = false;
             }
-
-            this.loadedConfigVersion = this.definedConfigVersion;
         }
 
         if (!this.firstLoadPassed) {
@@ -1086,6 +1134,10 @@ public class Configuration {
         }
 
         this.resetChangedState();
+    }
+
+    public void resetFileVersion() {
+        this.loadedConfigVersion = this.definedConfigVersion;
     }
 
     public synchronized void load() {
@@ -1104,12 +1156,14 @@ public class Configuration {
             try {
                 this.loadFile();
             } catch (Throwable e) {
-                File fileBak = new File(this.file.getAbsolutePath() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".errored");
-                OmniconfigCore.logger.error("An exception occurred while loading config file " + this.file.getName() + ". This file will be renamed to " + fileBak.getName() +  " and a new config file will be generated.");
-                e.printStackTrace();
+                if (this.file != null) {
+                    File fileBak = new File(this.file.getAbsolutePath() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".errored");
+                    OmniconfigCore.logger.error("An exception occurred while loading config file " + this.file.getName() + ". This file will be renamed to " + fileBak.getName() +  " and a new config file will be generated.");
+                    e.printStackTrace();
 
-                this.file.renameTo(fileBak);
-                this.loadFile();
+                    this.file.renameTo(fileBak);
+                    this.loadFile();
+                }
             }
 
             // Just in case
@@ -1141,7 +1195,7 @@ public class Configuration {
         });
     }
 
-    private void saveFile() {
+    protected void saveFile() {
 
         if (PARENT != null && PARENT != this) {
             PARENT.saveFile();
@@ -1156,9 +1210,9 @@ public class Configuration {
             if (!this.file.exists() && !this.file.createNewFile())
                 return;
 
-            if (this.file.canWrite()) {
 
-                FileOutputStream fos = new FileOutputStream(this.file);
+            if (this.file.canWrite()) {
+                OutputStream fos = new FileOutputStream(this.file);
                 BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, this.defaultEncoding));
 
                 buffer.write("# Configuration File" + NEW_LINE + NEW_LINE);
@@ -1166,9 +1220,9 @@ public class Configuration {
                 String configVersion = null;
 
                 if (this.loadedConfigVersion != null) {
-                    configVersion = this.loadedConfigVersion;
+                    configVersion = this.loadedConfigVersion.asString();
                 } else if (this.definedConfigVersion != null) {
-                    configVersion = this.definedConfigVersion;
+                    configVersion = this.definedConfigVersion.asString();
                 }
 
                 if (configVersion != null) {
@@ -1201,7 +1255,7 @@ public class Configuration {
             }
 
             if (!cat.isChild()) {
-                cat.write(out, 0);
+                cat.write(out, 0, this.forceDefault);
                 out.newLine();
             }
         }
@@ -1522,7 +1576,7 @@ public class Configuration {
             }
         };
 
-        this.validator = this.validator != null ? defaultValidator.andThen((Function<String, String>) this.validator) : defaultValidator;
+        this.validator = this.validator != null ? defaultValidator.andThen((Function<String, String>) this.pullValidator()) : defaultValidator;
 
         return Enum.valueOf(defaultValue.getDeclaringClass(), this.getString(name, category, defaultValue.name(), comment, vvalues));
     }
@@ -1576,7 +1630,7 @@ public class Configuration {
             return value;
         };
 
-        defaultValidator = this.validator != null ? defaultValidator.andThen((Function<String, String>) this.validator) : defaultValidator;
+        defaultValidator = this.validator != null ? defaultValidator.andThen((Function<String, String>) this.pullValidator()) : defaultValidator;
 
         prop.setValidator(defaultValidator);
 
@@ -1651,7 +1705,7 @@ public class Configuration {
             return value;
         };
 
-        defaultValidator = this.validator != null ? defaultValidator.andThen((Function<String[], String[]>) this.validator) : defaultValidator;
+        defaultValidator = this.validator != null ? defaultValidator.andThen((Function<String[], String[]>) this.pullValidator()) : defaultValidator;
         prop.setValidator(defaultValidator);
 
         return prop.getStringList();
@@ -1725,9 +1779,7 @@ public class Configuration {
         prop.setMaxValue(maxValue);
 
         Function<Integer, Integer> defaultValidator = (value) -> value < minValue ? minValue : value > maxValue ? maxValue : value;
-        if (this.validator != null) {
-            defaultValidator = defaultValidator.andThen((Function<Integer, Integer>) this.pullValidator());
-        }
+        defaultValidator = this.validator != null ? defaultValidator.andThen((Function<Integer, Integer>) this.pullValidator()) : defaultValidator;
 
         prop.setValidator(defaultValidator);
 
@@ -1769,9 +1821,8 @@ public class Configuration {
         prop.setMaxValue(maxValue);
 
         Function<Double, Double> defaultValidator = (value) -> value < minValue ? minValue : value > maxValue ? maxValue : value;
-        if (this.validator != null) {
-            defaultValidator = defaultValidator.andThen((Function<Double, Double>) this.pullValidator());
-        }
+        defaultValidator = this.validator != null ? defaultValidator.andThen((Function<Double, Double>) this.pullValidator()) : defaultValidator;
+
 
         prop.setValidator(defaultValidator);
 

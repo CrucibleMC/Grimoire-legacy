@@ -2,6 +2,7 @@ package io.github.crucible.grimoire.common.test;
 
 import java.util.Arrays;
 
+import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
 import io.github.crucible.omniconfig.core.Configuration.VersioningPolicy;
 import io.github.crucible.omniconfig.wrappers.Omniconfig;
@@ -9,18 +10,20 @@ import io.github.crucible.omniconfig.wrappers.Omniconfig;
 public class OmniconfigTest {
 
     public static int exampleInt = 23;
-    public static double exampleDouble = 2.0;
+    public static double exampleDouble = 135.25;
     public static boolean exampleBoolean = false;
     public static String exampleString = "LOLOLOLOL";
     public static String[] exampleStringArray = { "LOL", "KEK", "MAN" };
-    public static RandomEnum randomEnum = RandomEnum.VALUE_3;
+    public static RandomEnum randomEnum = RandomEnum.VALUE_5;
 
     public static final OmniconfigTest INSTANCE = new OmniconfigTest();
 
     public OmniconfigTest() {
-        Omniconfig.Builder wrapper = Omniconfig.builder("omnitest", "1.0", true, SidedConfigType.COMMON);
+        String version = "1.8";
 
-        wrapper.versioningPolicy(VersioningPolicy.AGGRESSIVE);
+        Omniconfig.Builder wrapper = Omniconfig.builder("testdir" + OmniconfigCore.FILE_SEPARATOR + "omnitest", version, true, SidedConfigType.COMMON);
+
+        wrapper.versioningPolicy(VersioningPolicy.NOBLE);
         wrapper.terminateNonInvokedKeys(true);
 
         wrapper.loadFile();
@@ -49,7 +52,6 @@ public class OmniconfigTest {
 
         wrapper.getEnum("randomEnum", randomEnum).comment("Random enum bruh").sync()
         .validValues(RandomEnum.VALUE_1, RandomEnum.VALUE_3, RandomEnum.VALUE_5)
-        .validator(value -> value == RandomEnum.VALUE_5 ? RandomEnum.VALUE_4 : value)
         .uponLoad((value) -> randomEnum = value.getValue())
         .build();
 

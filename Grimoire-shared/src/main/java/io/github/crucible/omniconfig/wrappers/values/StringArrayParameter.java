@@ -109,6 +109,22 @@ public class StringArrayParameter extends AbstractParameter<StringArrayParameter
         return list.toArray(new String[0]);
     }
 
+    @Override
+    protected boolean valueMatchesDefault(Configuration inConfig) {
+        this.load(inConfig);
+        return this.value.equals(this.defaultValue);
+    }
+
+    @Override
+    protected boolean valuesMatchIn(Configuration one, Configuration two) {
+        this.load(one);
+        ImmutableList<String> valueOne = this.value;
+        this.load(two);
+
+        return valueOne.equals(this.value);
+    }
+
+
     public static Builder builder(Omniconfig.Builder parentBuilder, String name, String... defaultValue) {
         return new Builder(parentBuilder, name, defaultValue);
     }

@@ -72,6 +72,22 @@ public class IntegerParameter extends AbstractParameter<IntegerParameter> {
         return this.valueToString();
     }
 
+    @Override
+    protected boolean valueMatchesDefault(Configuration inConfig) {
+        this.load(inConfig);
+        return this.value == this.defaultValue;
+    }
+
+    @Override
+    protected boolean valuesMatchIn(Configuration one, Configuration two) {
+        this.load(one);
+        int valueOne = this.value;
+        this.load(two);
+
+        return valueOne == this.value;
+    }
+
+
     public static Builder builder(Omniconfig.Builder parent, String name, int defaultValue) {
         return new Builder(parent, name, defaultValue);
     }
