@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 
 import io.github.crucible.grimoire.common.GrimoireInternals;
@@ -108,7 +109,7 @@ public class Configuration {
     public static final String CATEGORY_GENERAL = "general";
     public static final String ALLOWED_CHARS = "._-";
     public static final String DEFAULT_ENCODING = "UTF-8";
-    public static final String CATEGORY_SPLITTER = ".";
+    public static final String CATEGORY_SPLITTER = "$";
     public static final String NEW_LINE;
     public static final String COMMENT_SEPARATOR = "##########################################################################################################";
     private static final String CONFIG_VERSION_MARKER = "@CONFIG_VERSION";
@@ -1245,20 +1246,22 @@ public class Configuration {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void save(BufferedWriter out) throws IOException {
-        for (ConfigCategory cat : this.categories.values()) {
-            if (!cat.initialized && this.terminateNonInvokedKeys) {
-                continue;
-            }
+    private void save(BufferedWriter out) {
+        this.categories.entrySet().removeIf(entry ->
+        !entry.getValue().initialized && this.terminateNonInvokedKeys);
 
-            if (!cat.isChild()) {
-                cat.write(out, 0, this.forceDefault);
-                out.newLine();
+        this.categories.values().forEach(category -> {
+            if (!category.isChild()) {
+                try {
+                    category.write(out, 0, this.forceDefault, this);
+                    out.newLine();
+                } catch (Exception ex) {
+                    Throwables.propagate(ex);
+                }
             }
-        }
+        });
     }
 
     public ConfigCategory getCategory(String category) {

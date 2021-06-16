@@ -3,8 +3,10 @@ package io.github.crucible.grimoire.common.test;
 import java.util.Arrays;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.core.Configuration;
 import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
 import io.github.crucible.omniconfig.core.Configuration.VersioningPolicy;
+import io.github.crucible.omniconfig.lib.Version;
 import io.github.crucible.omniconfig.wrappers.Omniconfig;
 
 public class OmniconfigTest {
@@ -21,13 +23,13 @@ public class OmniconfigTest {
     public OmniconfigTest() {
         String version = "1.8";
 
-        Omniconfig.Builder wrapper = Omniconfig.builder("testdir" + OmniconfigCore.FILE_SEPARATOR + "omnitest", version, true, SidedConfigType.COMMON);
+        Omniconfig.Builder wrapper = Omniconfig.builder("testdir" + OmniconfigCore.FILE_SEPARATOR + "omnitest", new Version(version), true, SidedConfigType.COMMON);
 
         wrapper.versioningPolicy(VersioningPolicy.NOBLE);
         wrapper.terminateNonInvokedKeys(true);
 
         wrapper.loadFile();
-        wrapper.category("Generic Config", "Just some generic stuff");
+        wrapper.pushCategory("Generic Config", "Just some generic stuff");
 
         wrapper.getInteger("exampleInt", exampleInt).comment("lol").minMax(100).sync()
         .uponLoad((value) -> {exampleInt = value.getValue(); System.out.println("Updated int: " + exampleInt);})
@@ -36,6 +38,8 @@ public class OmniconfigTest {
         wrapper.getDouble("exampleDouble", exampleDouble).comment("example double or smth").min(-1).max(120000)
         .uponLoad((value) -> exampleDouble = value.getValue())
         .build();
+
+        wrapper.pushCategory("Subcatt Thing", "Probably subcategory thing");
 
         wrapper.getBoolean("exampleBoolean", exampleBoolean).comment("aaaaaand example boolean thing").sync()
         .uponLoad((value) -> exampleBoolean = value.getValue())

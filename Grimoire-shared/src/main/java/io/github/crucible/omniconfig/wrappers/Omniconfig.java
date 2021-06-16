@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -162,7 +163,7 @@ public class Omniconfig {
         protected final ImmutableList.Builder<Consumer<Omniconfig>> updateListeners = ImmutableList.builder();
         protected final List<AbstractParameter.Builder<?, ?>> incompleteBuilders = new ArrayList<>();
 
-        protected String currentCategory = Configuration.CATEGORY_GENERAL;
+        protected String currentCategory = "";
         protected String prefix = "";
         protected boolean reloadable = false;
         protected boolean sync = false;
@@ -243,21 +244,40 @@ public class Omniconfig {
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
-        public Builder category(String category) {
-            this.currentCategory = category;
+        public Builder pushCategory(String category) {
+            return this.pushCategory(category, null);
+        }
+
+        @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
+        public Builder pushCategory(String category, String comment) {
+            category = this.clearCategorySplitters(category);
+
+            if (!this.currentCategory.isEmpty()) {
+                this.currentCategory += Configuration.CATEGORY_SPLITTER + category;
+            } else {
+                this.currentCategory = category;
+            }
+
+            if (comment != null) {
+                this.config.addCustomCategoryComment(this.currentCategory, comment);
+            }
+
             return this;
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
-        public Builder category(String category, String comment) {
-            this.currentCategory = category;
-            this.config.addCustomCategoryComment(category, comment);
+        public Builder popCategory() {
+            if (this.currentCategory.contains(Configuration.CATEGORY_SPLITTER)) {
+                this.currentCategory = this.currentCategory.substring(0, this.currentCategory.lastIndexOf(Configuration.CATEGORY_SPLITTER));
+            } else {
+                this.currentCategory = "";
+            }
             return this;
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public Builder resetCategory() {
-            this.currentCategory = Configuration.CATEGORY_GENERAL;
+            this.currentCategory = "";
             return this;
         }
 
@@ -269,41 +289,49 @@ public class Omniconfig {
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public BooleanParameter.Builder getBoolean(String name, boolean defaultValue) {
+            this.assertPushedCategory();
             return this.rememberBuilder(BooleanParameter.builder(this, name, defaultValue));
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public IntegerParameter.Builder getInteger(String name, int defaultValue) {
+            this.assertPushedCategory();
             return this.rememberBuilder(IntegerParameter.builder(this, name, defaultValue));
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public DoubleParameter.Builder getDouble(String name, double defaultValue) {
+            this.assertPushedCategory();
             return this.rememberBuilder(DoubleParameter.builder(this, name, defaultValue));
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public FloatParameter.Builder getFloat(String name, float defaultValue) {
+            this.assertPushedCategory();
             return this.rememberBuilder(FloatParameter.builder(this, name, defaultValue));
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public PerhapsParameter.Builder getPerhaps(String name, Perhaps defaultValue) {
+            this.assertPushedCategory();
             return this.rememberBuilder(PerhapsParameter.builder(this, name, defaultValue));
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public StringParameter.Builder getString(String name, String defaultValue) {
+            this.assertPushedCategory();
             return this.rememberBuilder(StringParameter.builder(this, name, defaultValue));
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public StringArrayParameter.Builder getStringArray(String name, String... defaultValue) {
+            this.assertPushedCategory();
             return this.rememberBuilder(StringArrayParameter.builder(this, name, defaultValue));
         }
 
         @PhaseOnly(BuildingPhase.PARAMETER_LOADING)
         public <T extends Enum<T>> EnumParameter.Builder<T> getEnum(String name, T defaultValue) {
+            this.assertPushedCategory();
             return this.rememberBuilder(EnumParameter.builder(this, name, defaultValue));
         }
 
@@ -354,6 +382,15 @@ public class Omniconfig {
         }
 
         // Internal methods that must not be exposed via API
+
+        private void assertPushedCategory() {
+            if (this.currentCategory.isEmpty())
+                throw new IllegalArgumentException("Cannot create config property without any category specified.");
+        }
+
+        private String clearCategorySplitters(String str) {
+            return str.replace(Configuration.CATEGORY_SPLITTER, "");
+        }
 
         private <T extends AbstractParameter.Builder<?, ?>> T rememberBuilder(T builder) {
             this.incompleteBuilders.add(builder);

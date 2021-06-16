@@ -30,6 +30,8 @@ import io.github.crucible.omniconfig.annotation.annotations.values.ConfigInt;
 import io.github.crucible.omniconfig.annotation.annotations.values.ConfigString;
 import io.github.crucible.omniconfig.annotation.annotations.values.ConfigStringCollection;
 import io.github.crucible.omniconfig.annotation.lib.ClassSet;
+import io.github.crucible.omniconfig.core.Configuration;
+import io.github.crucible.omniconfig.lib.Version;
 import io.github.crucible.omniconfig.wrappers.Omniconfig;
 import io.github.crucible.omniconfig.wrappers.values.EnumParameter;
 
@@ -53,7 +55,7 @@ public class AnnotationConfigReader {
 
         this.parseAnnotations();
 
-        Omniconfig.Builder wrapper = Omniconfig.builder(cfgName, annotation.version(), annotation.caseSensitiveCategories(), annotation.sidedType());
+        Omniconfig.Builder wrapper = Omniconfig.builder(cfgName, new Version(annotation.version()), annotation.caseSensitiveCategories(), annotation.sidedType());
         wrapper.versioningPolicy(annotation.versioningPolicy());
         wrapper.terminateNonInvokedKeys(annotation.terminateNonInvokedKeys());
 
@@ -84,7 +86,7 @@ public class AnnotationConfigReader {
 
                 boolean defaultValue = this.tryGetBoolean(field);
 
-                wrapper.category(configAnnotation.category())
+                this.forceCategories(wrapper, configAnnotation.category())
                 .getBoolean(name, defaultValue)
                 .comment(configAnnotation.comment())
                 .uponLoad(value -> this.trySetBoolean(field, value.getValue()))
@@ -98,10 +100,11 @@ public class AnnotationConfigReader {
 
                 float defaultValue = this.tryGetFloat(field);
 
-                wrapper.category(configAnnotation.category()).getDouble(name, defaultValue)
+                this.forceCategories(wrapper, configAnnotation.category())
+                .getFloat(name, defaultValue)
                 .comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
-                .uponLoad(value -> this.trySetFloat(field, (float)value.getValue()))
+                .uponLoad(value -> this.trySetFloat(field, value.getValue()))
                 .build();
             } else if (type == ConfigDouble.class) {
                 this.checkType(field, double.class);
@@ -112,7 +115,7 @@ public class AnnotationConfigReader {
 
                 double defaultValue = this.tryGetDouble(field);
 
-                wrapper.category(configAnnotation.category())
+                this.forceCategories(wrapper, configAnnotation.category())
                 .getDouble(name, defaultValue)
                 .comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
@@ -127,7 +130,7 @@ public class AnnotationConfigReader {
 
                 int defaultValue = this.tryGetInt(field);
 
-                wrapper.category(configAnnotation.category())
+                this.forceCategories(wrapper, configAnnotation.category())
                 .getInteger(name, defaultValue)
                 .comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
@@ -142,7 +145,7 @@ public class AnnotationConfigReader {
 
                 String defaultValue = this.tryGetString(field);
 
-                wrapper.category(configAnnotation.category())
+                this.forceCategories(wrapper, configAnnotation.category())
                 .getString(name, defaultValue)
                 .comment(configAnnotation.comment())
                 .uponLoad(value -> this.trySetString(field, value.getValue()))
@@ -156,7 +159,7 @@ public class AnnotationConfigReader {
                 ClassSet<?> classSet = (ClassSet<?>) this.tryGetValue(field);
                 Objects.requireNonNull(classSet, field + " value must not be null");
 
-                wrapper.category(configAnnotation.category())
+                this.forceCategories(wrapper, configAnnotation.category())
                 .getStringArray(name, classSet.getRaw().toArray(new String[0]))
                 .comment(configAnnotation.comment())
                 .uponLoad(value ->  {
@@ -174,7 +177,7 @@ public class AnnotationConfigReader {
                 Enum defaultValue = (Enum) this.tryGetValue(field);
                 Objects.requireNonNull(defaultValue, field + " value must not be null");
 
-                wrapper.category(configAnnotation.category())
+                this.forceCategories(wrapper, configAnnotation.category())
                 .getEnum(name, defaultValue)
                 .comment(configAnnotation.comment())
                 .uponLoad(value -> this.trySetValue(field, ((EnumParameter)value).getValue()))
@@ -188,7 +191,7 @@ public class AnnotationConfigReader {
                 Collection<String> collection = (Collection<String>) this.tryGetValue(field);
                 Objects.requireNonNull(collection, field + " value must not be null");
 
-                wrapper.category(configAnnotation.category())
+                this.forceCategories(wrapper, configAnnotation.category())
                 .getStringArray(name, collection.toArray(new String[0]))
                 .comment(configAnnotation.comment())
                 .uponLoad(value -> {
@@ -224,6 +227,23 @@ public class AnnotationConfigReader {
                 }
             }
         }
+    }
+
+    private Omniconfig.Builder forceCategories(Omniconfig.Builder builder, String categories) {
+        String[] array;
+        builder.resetCategory();
+
+        if (categories.contains(Configuration.CATEGORY_SPLITTER)) {
+            array = categories.split("\\" + Configuration.CATEGORY_SPLITTER);
+        } else {
+            array = new String[] { categories };
+        }
+
+        for (String str : array) {
+            builder.pushCategory(str);
+        }
+
+        return builder;
     }
 
     private void checkType(@NotNull Field field, @NotNull Class<?> expectedType) {

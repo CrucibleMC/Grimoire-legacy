@@ -203,7 +203,7 @@ public class ConfigCategory implements Map<String, Property> {
         }
     }
 
-    public void write(BufferedWriter out, int indent, boolean forceDefaultValues) throws IOException {
+    public void write(BufferedWriter out, int indent, boolean forceDefaultValues, Configuration owner) throws IOException {
         String pad0 = this.getIndent(indent);
         String pad1 = this.getIndent(indent + 1);
         String pad2 = this.getIndent(indent + 2);
@@ -221,22 +221,22 @@ public class ConfigCategory implements Map<String, Property> {
             this.write(out, pad0, COMMENT_SEPARATOR, NEW_LINE);
         }
 
-        String displayName = this.name;
-
-        if (!allowedProperties.matchesAllOf(this.name)) {
-            displayName = '"' + this.name + '"';
-        }
+        String displayName = '"' + this.name + '"';
 
         this.write(out, pad0, displayName, " {");
 
-        Property[] props = this.getOrderedValues().toArray(new Property[] {});
+
+        List<Property> orderedValues = new ArrayList<>();
+        this.getOrderedValues().forEach(value -> {
+            if (value.initialized || !owner.terminateNonInvokedKeys()) {
+                orderedValues.add(value);
+            }
+        });
+
+        Property[] props = orderedValues.toArray(new Property[0]);
 
         for (int x = 0; x < props.length; x++) {
             Property prop = props[x];
-
-            if (!prop.initialized) {
-                continue;
-            }
 
             if (prop.comment != null && !prop.comment.isEmpty()) {
                 if (x != 0) {
@@ -274,14 +274,19 @@ public class ConfigCategory implements Map<String, Property> {
             }
         }
 
+        this.children.removeIf(child -> !child.initialized && owner.terminateNonInvokedKeys());
+
         if (this.children.size() > 0) {
             out.newLine();
         }
 
         for (ConfigCategory child : this.children) {
-            if (child.initialized) {
-                child.write(out, indent + 1, forceDefaultValues);
+            if (!child.initialized && owner.terminateNonInvokedKeys()) {
+                continue;
             }
+
+            child.write(out, indent + 1, forceDefaultValues, owner);
+
         }
 
         this.write(out, pad0, "}", NEW_LINE);
