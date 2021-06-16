@@ -1,8 +1,12 @@
 package io.github.crucible.grimoire.common.test;
 
-import io.github.crucible.omniconfig.annotation.annotations.AnnotationConfig;
-import io.github.crucible.omniconfig.annotation.annotations.values.*;
-import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
+import io.github.crucible.omniconfig.api.annotation.AnnotationConfig;
+import io.github.crucible.omniconfig.api.annotation.properties.ConfigBoolean;
+import io.github.crucible.omniconfig.api.annotation.properties.ConfigDouble;
+import io.github.crucible.omniconfig.api.annotation.properties.ConfigEnum;
+import io.github.crucible.omniconfig.api.annotation.properties.ConfigInt;
+import io.github.crucible.omniconfig.api.annotation.properties.ConfigString;
+import io.github.crucible.omniconfig.api.core.SidedConfigType;
 
 @AnnotationConfig
 public class AnnotationConfigTest {

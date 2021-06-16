@@ -2,12 +2,11 @@ package io.github.crucible.grimoire.common.test;
 
 import java.util.Arrays;
 
-import io.github.crucible.omniconfig.OmniconfigCore;
-import io.github.crucible.omniconfig.core.Configuration;
-import io.github.crucible.omniconfig.core.Configuration.SidedConfigType;
-import io.github.crucible.omniconfig.core.Configuration.VersioningPolicy;
-import io.github.crucible.omniconfig.lib.Version;
-import io.github.crucible.omniconfig.wrappers.Omniconfig;
+import io.github.crucible.omniconfig.api.OmniconfigAPI;
+import io.github.crucible.omniconfig.api.builders.IOmniconfigBuilder;
+import io.github.crucible.omniconfig.api.core.SidedConfigType;
+import io.github.crucible.omniconfig.api.core.VersioningPolicy;
+import io.github.crucible.omniconfig.api.lib.Version;
 
 public class OmniconfigTest {
 
@@ -23,7 +22,7 @@ public class OmniconfigTest {
     public OmniconfigTest() {
         String version = "1.8";
 
-        Omniconfig.Builder wrapper = Omniconfig.builder("testdir" + OmniconfigCore.FILE_SEPARATOR + "omnitest", new Version(version), true, SidedConfigType.COMMON);
+        IOmniconfigBuilder wrapper = OmniconfigAPI.configBuilder("testdir" + OmniconfigAPI.getFileSeparator() + "omnitest", new Version(version), SidedConfigType.COMMON);
 
         wrapper.versioningPolicy(VersioningPolicy.NOBLE);
         wrapper.terminateNonInvokedKeys(true);
@@ -50,8 +49,8 @@ public class OmniconfigTest {
         .uponLoad((value) -> exampleString = value.getValue())
         .build();
 
-        wrapper.getStringArray("exampleStringArray", exampleStringArray).comment("some string array").sync()
-        .uponLoad((value) -> {exampleStringArray = value.getArrayValue(); System.out.println("Array now: " + Arrays.asList(exampleStringArray));})
+        wrapper.getStringList("exampleStringArray", exampleStringArray).comment("some string array").sync()
+        .uponLoad((value) -> {exampleStringArray = value.getValueAsArray(); System.out.println("Array now: " + Arrays.asList(exampleStringArray));})
         .build();
 
         wrapper.getEnum("randomEnum", randomEnum).comment("Random enum bruh").sync()

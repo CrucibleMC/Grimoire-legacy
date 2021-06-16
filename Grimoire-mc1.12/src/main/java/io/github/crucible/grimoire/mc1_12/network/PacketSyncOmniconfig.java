@@ -6,11 +6,11 @@ import javax.annotation.Nonnull;
 
 import io.github.crucible.grimoire.mc1_12.handlers.IncelPacketDispatcher;
 import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.api.lib.Either;
+import io.github.crucible.omniconfig.core.Omniconfig;
+import io.github.crucible.omniconfig.core.OmniconfigRegistry;
 import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.github.crucible.omniconfig.core.SynchronizationManager.SyncData;
-import io.github.crucible.omniconfig.lib.Either;
-import io.github.crucible.omniconfig.wrappers.Omniconfig;
-import io.github.crucible.omniconfig.wrappers.OmniconfigRegistry;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;

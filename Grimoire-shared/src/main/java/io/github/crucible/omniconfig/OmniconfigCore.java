@@ -34,14 +34,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import io.github.crucible.grimoire.common.core.GrimoireCore;
-import io.github.crucible.omniconfig.core.Configuration;
-import io.github.crucible.omniconfig.wrappers.Omniconfig;
+import io.github.crucible.omniconfig.backing.Configuration;
+import io.github.crucible.omniconfig.core.Omniconfig;
 
 public class OmniconfigCore {
     public static final Logger logger = LogManager.getLogger("Omniconfig");
-    public static final File CONFIG_DIR = new File(GrimoireCore.INSTANCE.getMCLocation(), "config");
-    public static final String FILE_SEPARATOR = File.separator;
     public static final int STANDART_INTEGER_LIMIT = 32768;
+    public static final String FILE_SEPARATOR = File.separator;
+    public static final File CONFIG_DIR = new File(GrimoireCore.INSTANCE.getMCLocation(), "config");
 
     /**
      * This must only ever true if we are in a client environment and
@@ -88,7 +88,7 @@ public class OmniconfigCore {
             backingConfig.forceDefault(true);
             backingConfig.save();
 
-            this.updateFileWithinArchive(this.defaultConfigsArchive, cfg.getFile(), cfg.getFileID().replace(FILE_SEPARATOR, "/"));
+            this.updateFileWithinArchive(this.defaultConfigsArchive, cfg.getFile(), cfg.getFileID().replace(OmniconfigCore.FILE_SEPARATOR, "/"));
 
             tempConfig.delete();
             backingConfig.setFile(trueConfig);
@@ -243,7 +243,7 @@ public class OmniconfigCore {
                     defaultCopy.delete();
 
                     ZipFile archive = new ZipFile(this.defaultConfigsArchive);
-                    ZipEntry entry = archive.getEntry(fileID.replace(FILE_SEPARATOR, "/"));
+                    ZipEntry entry = archive.getEntry(fileID.replace(OmniconfigCore.FILE_SEPARATOR, "/"));
 
                     if (entry != null) {
                         InputStream inputStream = archive.getInputStream(entry);

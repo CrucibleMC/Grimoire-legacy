@@ -6,7 +6,7 @@ import io.github.crucible.grimoire.common.integrations.IntegrationManager;
 import io.github.crucible.grimoire.common.test.AnnotationConfigTest;
 import io.github.crucible.grimoire.common.test.OmniconfigTest;
 import io.github.crucible.omniconfig.OmniconfigCore;
-import io.github.crucible.omniconfig.annotation.core.AnnotationConfigCore;
+import io.github.crucible.omniconfig.gconfig.AnnotationConfigCore;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

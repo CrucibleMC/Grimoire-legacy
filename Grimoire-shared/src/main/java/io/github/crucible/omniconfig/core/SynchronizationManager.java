@@ -9,13 +9,12 @@ import com.google.common.base.Preconditions;
 
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.api.properties.IAbstractProperty;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractBufferIO;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlayerMP;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractServer;
+import io.github.crucible.omniconfig.core.properties.AbstractParameter;
 import io.github.crucible.omniconfig.lib.Finalized;
-import io.github.crucible.omniconfig.wrappers.Omniconfig;
-import io.github.crucible.omniconfig.wrappers.OmniconfigRegistry;
-import io.github.crucible.omniconfig.wrappers.values.AbstractParameter;
 
 public class SynchronizationManager {
     private static AbstractPacketDispatcher<?, ? extends AbstractPlayerMP<?>> dispatcher = null;
@@ -78,7 +77,8 @@ public class SynchronizationManager {
     public static void writeData(Omniconfig wrapper, AbstractBufferIO<?> io) {
         Map<String, String> synchronizedParameters = new HashMap<>();
 
-        for (AbstractParameter<?> param : wrapper.getLoadedParameters()) {
+        for (IAbstractProperty prop : wrapper.getLoadedParameters()) {
+            AbstractParameter<?> param = (AbstractParameter<?>) prop;
             if (param.isSynchronized()) {
                 synchronizedParameters.put(param.getID(), param.valueToString());
             }
@@ -117,7 +117,7 @@ public class SynchronizationManager {
         OmniconfigCore.logger.info("Synchronizing values of " + data.fileID + " with ones dispatched by server...");
 
         for (Entry<String, String> entry : data.synchronizedParameters.entrySet()) {
-            AbstractParameter<?> parameter = wrapper.getParameter(entry.getKey()).orElse(null);
+            AbstractParameter<?> parameter = (AbstractParameter<?>) wrapper.getParameter(entry.getKey()).orElse(null);
 
             if (parameter != null) {
                 String oldValue = parameter.valueToString();
@@ -143,7 +143,9 @@ public class SynchronizationManager {
                 OmniconfigCore.logger.info("Dismissing values of " + wrapper.getFileID() + " in favor of local config...");
 
                 wrapper.forceReload();
-                for (AbstractParameter<?> param : wrapper.getLoadedParameters()) {
+                for (IAbstractProperty prop : wrapper.getLoadedParameters()) {
+                    AbstractParameter<?> param = (AbstractParameter<?>) prop;
+
                     if (param.isSynchronized()) {
                         String oldValue = param.valueToString();
                         param.reloadFrom(wrapper);
