@@ -24,7 +24,7 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
         GrimoireCore.INSTANCE.getClass(); // Make it construct
 
         MixinBootstrap.init();
-        Mixins.addConfiguration("grimoire/mixins.forge.json");
+        Mixins.addConfiguration("grimoire/mixins.forge.json"); // TODO Register internal GrimmixController for this
 
         LogManager.getLogger("GrimoireCore").info("Coremod construtced!");
     }

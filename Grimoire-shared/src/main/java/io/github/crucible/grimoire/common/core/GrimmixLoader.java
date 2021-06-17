@@ -1,13 +1,17 @@
 package io.github.crucible.grimoire.common.core;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
+import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.configurations.events.GrimoireConfigurationsEvent;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.omniconfig.api.lib.Either;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +20,7 @@ import org.spongepowered.asm.service.MixinService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URL;
@@ -24,11 +29,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class GrimmixLoader {
     public static Pattern classFile = Pattern.compile("[^\\s\\$]+(\\$[^\\s]+)?\\.class$");
@@ -66,13 +73,35 @@ public class GrimmixLoader {
         return classFile.matcher(fileName).matches();
     }
 
-    private boolean isMixinConfiguration(String fileName) {
-        // TODO Probably inspect actual .json file contents instead of making assumptions from its name
-
+    private boolean isJson(String fileName) {
         String splitName = ((fileName.contains("/")) ?
                 fileName.substring(fileName.lastIndexOf("/")).replace("/", "") : fileName);
 
-        return splitName.contains("mixins") && splitName.endsWith(".json");
+        return splitName.endsWith(".json");
+    }
+
+    @Nullable
+    private InputStream tryGetInputStream(ZipFile file, ZipEntry entry) {
+        try {
+            InputStream stream = file.getInputStream(entry);
+            return stream;
+        } catch (IOException ex) {
+            Throwables.propagate(ex);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private InputStream tryGetInputStream(File file) {
+        try {
+            InputStream stream = new FileInputStream(file);
+            return stream;
+        } catch (IOException ex) {
+            Throwables.propagate(ex);
+        }
+
+        return null;
     }
 
     private List<GrimmixAnnotationVisitor.GrimmixCandidate> examineForAnnotations(File file, List<GrimmixAnnotationVisitor.GrimmixCandidate> candidates, List<String> configList, String recursivePath) {
@@ -93,7 +122,7 @@ public class GrimmixLoader {
                         if (candidate.validate()) {
                             candidates.add(candidate);
                         }
-                    } else if (this.isMixinConfiguration(ze.getName())) {
+                    } else if (this.isJson(ze.getName()) && GrimoireInternals.isMixinConfiguration(() -> this.tryGetInputStream(jar, ze))) {
                         configList.add(ze.getName());
                     }
                 }
@@ -108,7 +137,7 @@ public class GrimmixLoader {
             if (candidate.validate()) {
                 candidates.add(candidate);
             }
-        } else if (this.isMixinConfiguration(file.getName())) {
+        } else if (this.isJson(file.getName()) && GrimoireInternals.isMixinConfiguration(() -> this.tryGetInputStream(file))) {
             configList.add(recursivePath + file.getName());
         }
 
