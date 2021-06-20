@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  *
  * @author Aizistral
  */
-public final class FileWatcher {
+public class FileWatcher {
     private static final long SLEEP_TIME_NANOS = 1000;
     private static volatile FileWatcher DEFAULT_INSTANCE;
 

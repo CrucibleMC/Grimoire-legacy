@@ -33,6 +33,7 @@ import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.omniconfig.backing.Configuration;
 import io.github.crucible.omniconfig.core.Omniconfig;
@@ -171,19 +172,7 @@ public class OmniconfigCore {
     }
 
     private String getArchiveMD5Digest() {
-        if (this.defaultConfigsArchive.exists() && this.defaultConfigsArchive.isFile()) {
-            try {
-                InputStream stream = new FileInputStream(this.defaultConfigsArchive);
-                String md5 = DigestUtils.md5Hex(stream);
-                stream.close();
-
-                return md5;
-            } catch (Exception ex) {
-                Throwables.propagate(ex);
-            }
-        }
-
-        return null;
+        return GrimoireInternals.getMD5Digest(this.defaultConfigsArchive);
     }
 
     @Nullable

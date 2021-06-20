@@ -1,5 +1,7 @@
 package io.github.crucible.grimoire.common.core;
 
+import com.gamerforea.eventhelper.config.ConfigBoolean;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
@@ -13,10 +15,14 @@ import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixValidationEv
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix {
     protected final List<IMixinConfiguration> ownedConfigurations = new ArrayList<>();
@@ -28,9 +34,8 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
 
     protected LoadingStage loadingStage = LoadingStage.PRE_CONSTRUCTION;
     protected GrimmixController controller = null;
-    protected boolean valid = true;
 
-    //protected List<>
+    protected boolean valid = true;
 
     public GrimmixContainer(File file, Constructor<? extends GrimmixController> constructor, List<String> configCandidates) {
         this.grimmixFile = file;
@@ -54,6 +59,17 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
         this.modid = modid.isEmpty() ? name.toLowerCase() : modid;
         this.version = version.isEmpty() ? "1.0.0" : version;
         this.priority = priority;
+
+        List<String> list = this.listClassesInPackage("io.github.crucible.grimoire.common.api");
+        String pattern = "configurations.*Mixin*";
+        pattern = pattern.replace(".", "\\.").replace("*", ".*");
+
+        System.out.println("Strings that match [" + pattern + "]:");
+        for (String str : list) {
+            if (str.matches(pattern)) {
+                System.out.println(str);
+            }
+        }
     }
 
     protected void constructController() {
@@ -93,6 +109,59 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
         }
 
         return coreConfigs;
+    }
+
+    private void recursiveClassScan(File dir, List<String> classList, String recursivePath) {
+        try {
+            String path = recursivePath != null ? recursivePath : "";
+            File[] files = dir.listFiles();
+
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    if (file.isFile() && file.getName().endsWith(".class") && !file.getName().equals("package-info.class")) {
+                        classList.add(path + file.getName().replace(".class", "").replace("$", "."));
+                    } else if (file.isDirectory()) {
+                        this.recursiveClassScan(file, classList, path + file.getName() + ".");
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Throwables.propagate(ex);
+        }
+    }
+
+    public List<String> listClassesInPackage(String packageName) {
+        List<String> classList = new ArrayList<>();
+
+        try {
+            if (this.grimmixFile.isFile() && this.grimmixFile.getName().endsWith(".jar")) {
+                // TODO Test this part
+                String packagePath = packageName.replace(".", "/");
+                JarFile jar = new JarFile(this.grimmixFile);
+                Enumeration<JarEntry> entries = jar.entries();
+
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    if (entry.getName().startsWith(packagePath) && GrimmixLoader.classFile.matcher(entry.getName()).matches()) {
+                        classList.add(entry.getName().replace(".class", "").replace("$", ".").replace("/", ".").replaceFirst(packageName.replace(".", "\\."), ""));
+                    }
+                }
+
+                jar.close();
+            } else if (this.grimmixFile.isDirectory()) {
+                File packageDir = new File(this.grimmixFile, packageName.replace(".", File.separator));
+                this.recursiveClassScan(packageDir, classList, null);
+            }
+
+            System.out.println("Listed classes: ");
+            for (String lClass : classList) {
+                System.out.println(lClass);
+            }
+        } catch (Exception ex) {
+            Throwables.propagate(ex);
+        }
+
+        return classList;
     }
 
     public boolean transition(LoadingStage to) {

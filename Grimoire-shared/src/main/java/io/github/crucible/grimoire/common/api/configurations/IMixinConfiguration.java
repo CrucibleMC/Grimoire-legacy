@@ -7,19 +7,19 @@ import java.util.Optional;
 
 public interface IMixinConfiguration {
 
-    Optional<IGrimmix> getOwner();
+    public Optional<IGrimmix> getOwner();
 
-    String getClasspath();
+    public String getClasspath();
 
-    ConfigurationType getConfigType();
+    public ConfigurationType getConfigType();
 
-    boolean isLoaded();
+    public boolean isLoaded();
 
-    boolean isValid();
+    public boolean isValid();
 
-    void load();
+    // public void load();
 
-    enum ConfigurationType {
+    public enum ConfigurationType {
         /**
          * Signifies this configuration as one targeting FML/MC core.<br/>
          * Core configurations are applied immediately after Grimoire coremod loading.<br/>
@@ -33,7 +33,7 @@ public interface IMixinConfiguration {
          */
         MOD;
 
-        ConfigurationType() {
+        private ConfigurationType() {
             // NO-OP
         }
 

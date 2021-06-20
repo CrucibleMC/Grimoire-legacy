@@ -2,7 +2,7 @@ package io.github.crucible.grimoire.mc1_7_10;
 
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import io.github.crucible.grimoire.common.api.lib.Side;
+import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher;
 import io.github.crucible.omniconfig.OmniconfigCore;
@@ -24,7 +24,7 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
         GrimoireCore.INSTANCE.getClass(); // Make it construct
 
         MixinBootstrap.init();
-        Mixins.addConfiguration("grimoire/mixins.forge.json"); // TODO Register internal GrimmixController for this
+        Mixins.addConfiguration("grimoire/mixins.forge.json"); // TODO Register internal GrimmixController for this... or no
 
         LogManager.getLogger("GrimoireCore").info("Coremod construtced!");
     }
@@ -33,7 +33,7 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
     public void injectData(Map<String, Object> data) {
         GrimoireCore.INSTANCE.configure((File) data.get("mcLocation"),
                 (Boolean) data.get("runtimeDeobfuscationEnabled"), "mods", "1.7.10",
-                FMLLaunchHandler.side() == cpw.mods.fml.relauncher.Side.CLIENT ? Side.CLIENT : Side.DEDICATED_SERVER);
+                FMLLaunchHandler.side() == cpw.mods.fml.relauncher.Side.CLIENT ? Environment.CLIENT : Environment.DEDICATED_SERVER);
 
         GrimoireCore.INSTANCE.init();
     }

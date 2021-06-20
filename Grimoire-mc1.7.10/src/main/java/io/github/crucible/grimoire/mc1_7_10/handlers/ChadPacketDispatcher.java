@@ -11,7 +11,7 @@ import com.google.common.base.Throwables;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.github.crucible.grimoire.common.GrimoireInternals;
-import io.github.crucible.grimoire.common.api.lib.Side;
+import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.mc1_7_10.GrimoireMod;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher;
@@ -71,7 +71,7 @@ public class ChadPacketDispatcher extends AbstractPacketDispatcher<ByteBuf, Chad
 
         @Override
         public boolean areWeRemoteServer() {
-            if (GrimoireInternals.getEnvironment() == Side.DEDICATED_SERVER)
+            if (GrimoireInternals.getEnvironment() == Environment.DEDICATED_SERVER)
                 return true;
             else
                 return this.player.mcServer != null && !this.player.getGameProfile().getName().equals(this.player.mcServer.getServerOwner());

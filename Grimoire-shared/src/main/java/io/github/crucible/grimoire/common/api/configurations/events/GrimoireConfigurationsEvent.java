@@ -7,6 +7,7 @@ import io.github.crucible.grimoire.common.api.events.GrimoireEvent;
 import io.github.crucible.grimoire.common.api.events.ICancelable;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
 
+import java.util.Collections;
 import java.util.List;
 
 public abstract class GrimoireConfigurationsEvent extends GrimoireEvent {
@@ -49,17 +50,17 @@ public abstract class GrimoireConfigurationsEvent extends GrimoireEvent {
 
         @Override
         public void cancel() {
-            isCancelled = true;
+            this.isCancelled = true;
         }
 
         @Override
         public boolean isCanceled() {
-            return isCancelled;
+            return this.isCancelled;
         }
 
         @Override
         public void setCanceled(boolean state) {
-            isCancelled = state;
+            this.isCancelled = state;
         }
     }
 
@@ -69,7 +70,7 @@ public abstract class GrimoireConfigurationsEvent extends GrimoireEvent {
         }
 
         public List<IMixinConfiguration> getLoadedConfigurations() {
-            return ImmutableList.copyOf(super.configurations);
+            return Collections.unmodifiableList(super.configurations);
         }
     }
 

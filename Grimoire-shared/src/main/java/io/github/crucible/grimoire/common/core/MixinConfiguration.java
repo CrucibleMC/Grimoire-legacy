@@ -1,13 +1,15 @@
 package io.github.crucible.grimoire.common.core;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
-import io.github.crucible.grimoire.common.api.configurations.events.MixinConfigurationEvent;
+import io.github.crucible.grimoire.common.api.configurations.events.MixinConfigurationLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import org.spongepowered.asm.mixin.Mixins;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,23 +23,39 @@ public class MixinConfiguration implements IMixinConfiguration {
     protected boolean isLoaded = false;
     protected boolean isValid = true;
 
+    protected MixinConfiguration duplicateOf = null;
+
     public MixinConfiguration(IGrimmix owner, ConfigurationType type, String classpath) {
-        this.owner = owner != null ? Optional.of(owner) : Optional.empty();
-        this.classpath = classpath;
-        this.configType = type;
-
-        MixinConfigurationEvent event = new MixinConfigurationEvent(owner, this);
-        GrimoireAPI.EVENT_BUS.post(event);
-
-        if (event.isCanceled()) {
-            this.isValid = false;
-            return;
-        }
+        this.owner = Optional.ofNullable(owner);
+        this.classpath = Preconditions.checkNotNull(classpath);
+        this.configType = Preconditions.checkNotNull(type);
 
         if (this.owner.isPresent()) {
-            ((GrimmixContainer) this.owner.get()).ownedConfigurations.add(this);
+            List<IMixinConfiguration> ownerConfigurations = ((GrimmixContainer) this.owner.get()).ownedConfigurations;
+
+            if (!ownerConfigurations.contains(this)) {
+                ownerConfigurations.add(this);
+            } else {
+                for (IMixinConfiguration another : ownerConfigurations) {
+                    if (another.equals(this)) {
+                        this.duplicateOf = (MixinConfiguration) another;
+                    }
+                }
+                this.isValid = false;
+                return;
+            }
         } else {
-            unclaimedConfigurations.add(this);
+            if (!unclaimedConfigurations.contains(this)) {
+                unclaimedConfigurations.add(this);
+            } else {
+                for (IMixinConfiguration another : unclaimedConfigurations) {
+                    if (another.equals(this)) {
+                        this.duplicateOf = (MixinConfiguration) another;
+                    }
+                }
+                this.isValid = false;
+                return;
+            }
         }
 
         GrimoireCore.logger.info("Registered new IMixinConfiguration, owner: {}, type: {}, paths: {}",
@@ -45,7 +63,7 @@ public class MixinConfiguration implements IMixinConfiguration {
     }
 
     public static List<IMixinConfiguration> getUnclaimedConfigurations() {
-        return ImmutableList.copyOf(unclaimedConfigurations);
+        return Collections.unmodifiableList(unclaimedConfigurations);
     }
 
     public static List<IMixinConfiguration> prepareUnclaimedConfigurations(ConfigurationType ofType) {
@@ -85,9 +103,37 @@ public class MixinConfiguration implements IMixinConfiguration {
         return this.isValid;
     }
 
-    @Override
+    public boolean isDuplicate() {
+        return this.duplicateOf != null;
+    }
+
+    public MixinConfiguration getDuplicateOf() {
+        return this.duplicateOf;
+    }
+
+    private void invalidate() {
+        if (this.isLoaded())
+            throw new UnsupportedOperationException("Cannot invalidate Mixin configuration " + this.classpath + "; already loaded!");
+
+        this.isValid = false;
+
+        if (this.owner.isPresent()) {
+            ((GrimmixContainer) this.owner.get()).ownedConfigurations.remove(this);
+        } else {
+            unclaimedConfigurations.remove(this);
+        }
+    }
+
     public void load() {
         if (!this.isLoaded && this.isValid) {
+            MixinConfigurationLoadEvent event = new MixinConfigurationLoadEvent(this.owner.orElse(null), this);
+            GrimoireAPI.EVENT_BUS.post(event);
+
+            if (event.isCanceled()) {
+                this.invalidate();
+                return;
+            }
+
             this.isLoaded = true;
             permitConfig = true;
 
@@ -95,6 +141,20 @@ public class MixinConfiguration implements IMixinConfiguration {
 
             permitConfig = false;
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof MixinConfiguration) {
+            MixinConfiguration another = (MixinConfiguration) obj;
+            return this.classpath.equals(another.classpath);
+        } else
+            return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.classpath.hashCode();
     }
 
 }

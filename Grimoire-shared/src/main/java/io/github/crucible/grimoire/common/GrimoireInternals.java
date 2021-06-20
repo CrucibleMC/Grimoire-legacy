@@ -1,5 +1,7 @@
 package io.github.crucible.grimoire.common;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -7,18 +9,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
+import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import io.github.crucible.grimoire.common.api.lib.Side;
+import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
-import io.github.crucible.grimoire.common.core.MixinJson;
+import io.github.crucible.grimoire.common.core.DeserializedMixinJson;
 
 public class GrimoireInternals {
 
-    public static void executeInEnvironment(Side side, Supplier<Runnable> supplier) {
+    public static void executeInEnvironment(Environment side, Supplier<Runnable> supplier) {
         if (side == getEnvironment()) {
             supplier.get().run();
         }
@@ -31,12 +36,12 @@ public class GrimoireInternals {
         }
     }
 
-    public static Side getEnvironment() {
+    public static Environment getEnvironment() {
         return GrimoireCore.INSTANCE.getEnvironment();
     }
 
     public static boolean isMixinConfiguration(Supplier<InputStream> streamSupplier) {
-        MixinJson result = null;
+        DeserializedMixinJson result = null;
 
         try {
             InputStream stream = streamSupplier.get();
@@ -46,7 +51,7 @@ public class GrimoireInternals {
 
             Gson gson = new GsonBuilder().create();
             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-            result = gson.fromJson(reader, MixinJson.class);
+            result = gson.fromJson(reader, DeserializedMixinJson.class);
             reader.close();
             stream.close();
         } catch (Exception ex) {
@@ -54,6 +59,22 @@ public class GrimoireInternals {
         }
 
         return result != null && result.isValidConfiguration();
+    }
+
+    public static String getMD5Digest(File file) {
+        if (file.exists() && file.isFile()) {
+            try {
+                InputStream stream = new FileInputStream(file);
+                String md5 = DigestUtils.md5Hex(stream);
+                stream.close();
+
+                return md5;
+            } catch (Exception ex) {
+                Throwables.propagate(ex);
+            }
+        }
+
+        return null;
     }
 
 }

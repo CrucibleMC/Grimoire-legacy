@@ -346,7 +346,7 @@ public class GrimmixLoader {
 
                 if (!event.isCanceled()) {
                     for (IMixinConfiguration config : event.getPreparedConfigurations()) {
-                        config.load();
+                        ((MixinConfiguration)config).load();
                     }
                 }
 

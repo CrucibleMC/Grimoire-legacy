@@ -1,7 +1,7 @@
 package io.github.crucible.grimoire.common.core;
 
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
-import io.github.crucible.grimoire.common.api.lib.Side;
+import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.integrations.IntegrationManager;
 import io.github.crucible.grimoire.common.test.AnnotationConfigTest;
 import io.github.crucible.grimoire.common.test.OmniconfigTest;
@@ -22,8 +22,10 @@ public class GrimoireCore {
     private final IntegrationManager grimmixIntegrations;
     private File mcLocation;
     private File mcModFolder;
+    private File configFolder;
+    private File dataFolder;
     private String version;
-    private Side side;
+    private Environment side;
 
     public GrimoireCore() {
         if (this.isDevEnvironment()) {
@@ -40,11 +42,16 @@ public class GrimoireCore {
         this.grimmixIntegrations = new IntegrationManager();
     }
 
-    public void configure(File mcLocation, boolean obfuscated, String mcModFolder, String version, Side onSide) {
+    public void configure(File mcLocation, boolean obfuscated, String mcModFolder, String version, Environment onSide) {
         this.side = onSide;
         this.version = version;
         this.mcLocation = mcLocation;
         this.mcModFolder = new File(this.mcLocation, mcModFolder);
+        this.configFolder = new File(this.mcLocation, "config");
+        this.dataFolder = new File(this.mcLocation, "mcdata");
+
+        this.configFolder.mkdirs();
+        this.dataFolder.mkdirs();
 
         OmniconfigCore.logger.info("Initializing omniconfig core...");
     }
@@ -72,7 +79,7 @@ public class GrimoireCore {
         return this.grimmixIntegrations;
     }
 
-    public Side getEnvironment() {
+    public Environment getEnvironment() {
         return this.side;
     }
 
@@ -80,8 +87,20 @@ public class GrimoireCore {
         return this.mcLocation;
     }
 
-    public File getMCModFolder() {
+    public File getModFolder() {
         return this.mcModFolder;
+    }
+
+    public File getDataFolder() {
+        return this.dataFolder;
+    }
+
+    public File getConfigFolder() {
+        return this.configFolder;
+    }
+
+    public LaunchClassLoader getClassLoader() {
+        return classLoader;
     }
 
     public boolean isDevEnvironment() {

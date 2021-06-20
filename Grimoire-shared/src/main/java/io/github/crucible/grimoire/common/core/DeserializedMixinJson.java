@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class MixinJson {
+public class DeserializedMixinJson {
+
+    // TODO forceLoadAtStage thing
 
     @SerializedName("package")
     private String mixinPackage;
@@ -18,7 +20,7 @@ public class MixinJson {
     @SerializedName("server")
     private List<String> mixinClassesServer;
 
-    private MixinJson() {
+    private DeserializedMixinJson() {
         // NO-OP
     }
 
@@ -26,8 +28,8 @@ public class MixinJson {
         boolean valid = this.mixinPackage != null && this.mixinClasses != null && this.mixinClassesClient != null && this.mixinClassesServer != null;
 
         if (valid) {
-            //GrimoireCore.logger.info("Serialized MixinJson. Package: {}, mixins: {}, client: {}, server: {}",
-            //        this.mixinPackage, this.mixinClasses, this.mixinClassesClient, this.mixinClassesServer);
+            GrimoireCore.logger.info("Deserialized MixinJson. Package: {}, mixins: {}, client: {}, server: {}",
+                    this.mixinPackage, this.mixinClasses, this.mixinClassesClient, this.mixinClassesServer);
         }
 
         return valid;

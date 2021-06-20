@@ -3,7 +3,7 @@ package io.github.crucible.omniconfig.api.core;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.crucible.grimoire.common.GrimoireInternals;
-import io.github.crucible.grimoire.common.api.lib.Side;
+import io.github.crucible.grimoire.common.api.lib.Environment;
 
 public enum SidedConfigType {
     CLIENT,
@@ -15,11 +15,11 @@ public enum SidedConfigType {
     }
 
     @Nullable
-    public Side getSide() {
+    public Environment getSide() {
         if (this == CLIENT)
-            return Side.CLIENT;
+            return Environment.CLIENT;
         else if (this == SERVER)
-            return Side.DEDICATED_SERVER;
+            return Environment.DEDICATED_SERVER;
         else
             return null;
     }

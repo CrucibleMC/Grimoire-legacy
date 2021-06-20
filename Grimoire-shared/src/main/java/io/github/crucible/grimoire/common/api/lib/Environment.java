@@ -1,6 +1,10 @@
 package io.github.crucible.grimoire.common.api.lib;
 
-public enum Side {
+import java.util.function.Supplier;
+
+import io.github.crucible.grimoire.common.core.GrimoireCore;
+
+public enum Environment {
 
     /**
      * The client side. Specifically, an environment where rendering capability exists.
@@ -16,16 +20,26 @@ public enum Side {
     /**
      * @return If this is the server environment
      */
-    public boolean isServer()
-    {
+    public boolean isServer() {
         return !this.isClient();
     }
 
     /**
      * @return if this is the Client environment
      */
-    public boolean isClient()
-    {
+    public boolean isClient() {
         return this == CLIENT;
+    }
+
+    /**
+     * Execute some arbitrary code if we are in this specific environment.
+     * Double lamda wrapping to avoid classloading the target.
+     * @param code
+     */
+
+    public void execute(Supplier<Runnable> code) {
+        if (GrimoireCore.INSTANCE.getEnvironment() == this) {
+            code.get().run();
+        }
     }
 }

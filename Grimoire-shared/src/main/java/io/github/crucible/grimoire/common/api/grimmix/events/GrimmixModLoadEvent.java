@@ -1,11 +1,14 @@
 package io.github.crucible.grimoire.common.api.grimmix.events;
 
 import com.google.common.collect.ImmutableList;
+
+import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,11 +30,11 @@ public class GrimmixModLoadEvent extends GrimmixLifecycleEvent implements IModLo
     @Override
     public IMixinConfiguration registerConfiguration(String path) {
         MixinConfiguration configuration = new MixinConfiguration(this.grimmix, IMixinConfiguration.ConfigurationType.MOD, path);
-        return configuration;
+        return configuration.isDuplicate() ? configuration.getDuplicateOf() : configuration;
     }
 
     @Override
     public List<String> getConfigurationCandidates() {
-        return ImmutableList.copyOf(this.configurationCandidates);
+        return Collections.unmodifiableList(this.configurationCandidates);
     }
 }
