@@ -1,10 +1,14 @@
 package io.github.crucible.grimoire.common.events;
 
 import java.lang.reflect.Method;
+import java.util.function.Function;
+
+import com.google.common.base.Preconditions;
 
 import io.github.crucible.grimoire.common.core.GrimoireCore;
 
 public abstract class SubscribeAnnotationWrapper {
+    private static Function<Method, SubscribeAnnotationWrapper> wrapperFactory = null;
 
     protected SubscribeAnnotationWrapper() {
         // NO-OP
@@ -16,59 +20,13 @@ public abstract class SubscribeAnnotationWrapper {
 
     public abstract int getEventPriorityOrdinal();
 
+    public static void setWrapperFactory(Function<Method, SubscribeAnnotationWrapper> factory) {
+        Preconditions.checkArgument(wrapperFactory == null, "Factory already set!");
+        wrapperFactory = factory;
+    }
+
     public static SubscribeAnnotationWrapper getWrapper(Method method) {
-        String mc = GrimoireCore.INSTANCE.getMCVersion();
-
-        if (mc.equals("1.7.10"))
-            return new ChadAnnotationWrapper(method.getAnnotation(cpw.mods.fml.common.eventhandler.SubscribeEvent.class));
-        else
-            return new IncelAnnotationWrapper(method.getAnnotation(net.minecraftforge.fml.common.eventhandler.SubscribeEvent.class));
-    }
-
-    private static class ChadAnnotationWrapper extends SubscribeAnnotationWrapper {
-        private final cpw.mods.fml.common.eventhandler.SubscribeEvent annotation;
-
-        private ChadAnnotationWrapper(cpw.mods.fml.common.eventhandler.SubscribeEvent annotation) {
-            this.annotation = annotation;
-        }
-
-        @Override
-        public boolean annotationPresent() {
-            return this.annotation != null;
-        }
-
-        @Override
-        public boolean receiveCanceled() {
-            return this.annotation.receiveCanceled();
-        }
-
-        @Override
-        public int getEventPriorityOrdinal() {
-            return this.annotation.priority().ordinal();
-        }
-    }
-
-    private static class IncelAnnotationWrapper extends SubscribeAnnotationWrapper {
-        private final net.minecraftforge.fml.common.eventhandler.SubscribeEvent annotation;
-
-        private IncelAnnotationWrapper(net.minecraftforge.fml.common.eventhandler.SubscribeEvent annotation) {
-            this.annotation = annotation;
-        }
-
-        @Override
-        public boolean annotationPresent() {
-            return this.annotation != null;
-        }
-
-        @Override
-        public boolean receiveCanceled() {
-            return this.annotation.receiveCanceled();
-        }
-
-        @Override
-        public int getEventPriorityOrdinal() {
-            return this.annotation.priority().ordinal();
-        }
+        return wrapperFactory.apply(method);
     }
 
 }

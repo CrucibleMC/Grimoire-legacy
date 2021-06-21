@@ -1,9 +1,12 @@
 package io.github.crucible.grimoire.mc1_7_10;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
+import io.github.crucible.grimoire.common.events.SubscribeAnnotationWrapper;
+import io.github.crucible.grimoire.mc1_7_10.handlers.ChadAnnotationWrapper;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher;
 import io.github.crucible.omniconfig.OmniconfigCore;
 
@@ -14,6 +17,7 @@ import org.spongepowered.asm.mixin.Mixins;
 import com.google.common.base.Charsets;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 @IFMLLoadingPlugin.Name("Grimoire")
@@ -34,8 +38,12 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
         GrimoireCore.INSTANCE.configure((File) data.get("mcLocation"),
                 (Boolean) data.get("runtimeDeobfuscationEnabled"), "mods", "1.7.10",
                 FMLLaunchHandler.side() == cpw.mods.fml.relauncher.Side.CLIENT ? Environment.CLIENT : Environment.DEDICATED_SERVER);
-
+        SubscribeAnnotationWrapper.setWrapperFactory(this::createWrapper);
         GrimoireCore.INSTANCE.init();
+    }
+
+    private SubscribeAnnotationWrapper createWrapper(Method method) {
+        return new ChadAnnotationWrapper(method.getAnnotation(cpw.mods.fml.common.eventhandler.SubscribeEvent.class));
     }
 
     @Override

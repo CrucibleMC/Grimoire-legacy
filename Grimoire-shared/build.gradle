@@ -20,7 +20,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.0-beta9")
     implementation("commons-codec:commons-codec:1.9")
     implementation('org.jetbrains:annotations:20.1.0')
-	implementation name: "forgeeventlib"
+	// implementation name: "forgeeventlib"
     compile('net.minecraft:launchwrapper:1.11') {
         exclude module: 'lwjgl'
     }
