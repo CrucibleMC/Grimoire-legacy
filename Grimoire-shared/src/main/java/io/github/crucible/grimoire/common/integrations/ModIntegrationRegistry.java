@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import com.google.common.base.Throwables;
 
+// TODO Make this a singleton instead of static class
 public class ModIntegrationRegistry {
     private static final List<Class<? extends IModIntegrationContainer<?>>> containerClasses = new ArrayList<>();
     private static final List<IModIntegrationContainer<?>> containers = new ArrayList<>();
@@ -58,6 +59,10 @@ public class ModIntegrationRegistry {
         }
 
         return null;
+    }
+
+    public static boolean isInitialized() {
+        return initialized;
     }
 
 }

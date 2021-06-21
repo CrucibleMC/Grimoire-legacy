@@ -12,6 +12,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
 public class EHIntegration {
+    static {
+        if (!ModIntegrationRegistry.isInitialized())
+            throw new IllegalStateException("Static class " + EHIntegration.class + " was loaded too early!");
+    }
+
     private static final IEventHelperIntegration integration = ModIntegrationRegistry.getIntegration(IEventHelperIntegration.class);
 
     public static boolean canBreak(EntityPlayer player, BlockPos pos) {
