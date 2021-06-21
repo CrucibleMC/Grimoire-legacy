@@ -32,22 +32,22 @@ public class SerializedMixinJson {
     private String compatibility = "JAVA_8";
 
     @SerializedName("required")
-    private boolean required = false;
+    private Boolean required = false;
 
     @SerializedName("priority")
-    private int priority = IMixinConfig.DEFAULT_PRIORITY;
+    private Integer priority = null;
 
     @SerializedName("mixinPriority")
-    private int mixinPriority = IMixinConfig.DEFAULT_PRIORITY;
+    private Integer mixinPriority = null;
 
     @SerializedName("setSourceFile")
-    private boolean setSourceFile = false;
+    private Boolean setSourceFile = null;
 
     @SerializedName("refmap")
     private String refMapperConfig = null;
 
     @SerializedName("verbose")
-    private boolean verboseLogging = false;
+    private Boolean verboseLogging = null;
 
     @SerializedName("plugin")
     private String pluginClassName = null;
