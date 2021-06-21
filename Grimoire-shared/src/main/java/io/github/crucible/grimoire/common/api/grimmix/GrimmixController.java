@@ -2,11 +2,11 @@ package io.github.crucible.grimoire.common.api.grimmix;
 
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.ICoreLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IFinishLoadEvent;
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IMixinConfigBuildingEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IValidationEvent;
 
 public abstract class GrimmixController {
-
     protected final GrimmixController instance;
 
     public GrimmixController() {
@@ -18,6 +18,8 @@ public abstract class GrimmixController {
     }
 
     public abstract void validateController(IValidationEvent event);
+
+    public void buildMixinConfigs(IMixinConfigBuildingEvent event) {};
 
     public abstract void coreLoad(ICoreLoadEvent event);
 

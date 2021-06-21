@@ -22,13 +22,6 @@ public class OmniconfigTest {
     public static final OmniconfigTest INSTANCE = new OmniconfigTest();
 
     public OmniconfigTest() {
-        MixinConfigBuilder builder = new MixinConfigBuilder(null, "randommixins.json");
-
-        builder.mixinPackage("lol.kek.integral").commonMixins("rand1", "rand2", "lolol.rand3").clientMixins("bruh", "blast")
-        .required(true).mixinPriority(1001).build();
-
-        ConfigBuildingManager.generateConfigurations();
-
         String version = "1.8";
 
         IOmniconfigBuilder wrapper = OmniconfigAPI.configBuilder("testdir" + OmniconfigAPI.getFileSeparator() + "omnitest", new Version(version), SidedConfigType.COMMON);

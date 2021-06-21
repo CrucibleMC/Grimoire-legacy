@@ -8,6 +8,7 @@ import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
+import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixConfigBuildingEvent;
 import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixCoreLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixFinishLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixModLoadEvent;
@@ -178,6 +179,13 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
                 GrimmixValidationEvent event = new GrimmixValidationEvent();
                 if (!GrimoireAPI.EVENT_BUS.post(event)) {
                     this.controller.validateController(event);
+                }
+
+                return !event.isCanceled();
+            } else if (to == LoadingStage.MIXIN_CONFIG_BUILDING) {
+                GrimmixConfigBuildingEvent event = new GrimmixConfigBuildingEvent();
+                if (!GrimoireAPI.EVENT_BUS.post(event)) {
+                    this.controller.buildMixinConfigs(event);
                 }
 
                 return !event.isCanceled();

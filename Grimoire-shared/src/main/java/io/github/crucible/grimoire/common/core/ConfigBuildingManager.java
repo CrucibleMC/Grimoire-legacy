@@ -58,7 +58,6 @@ public class ConfigBuildingManager {
 
             jarOutput.close();
 
-            // TODO Make this a config option
             RuntimeMixinsProtector.create(getArchiveMD5Digest()).attach();
 
             GrimoireCore.INSTANCE.getClassLoader().addURL(mixinConfigsArchive.toURI().toURL());

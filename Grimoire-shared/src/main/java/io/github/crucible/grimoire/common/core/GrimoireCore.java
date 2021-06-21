@@ -64,6 +64,7 @@ public class GrimoireCore {
 
         this.grimmixLoader.construct();
         this.grimmixLoader.validate();
+        this.grimmixLoader.buildRuntimeConfigs();
         this.grimmixLoader.coreLoad();
     }
 

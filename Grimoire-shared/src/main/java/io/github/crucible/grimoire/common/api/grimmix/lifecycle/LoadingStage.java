@@ -6,6 +6,7 @@ public enum LoadingStage {
     PRE_CONSTRUCTION,
     CONSTRUCTION,
     VALIDATION,
+    MIXIN_CONFIG_BUILDING,
     CORELOAD,
     MODLOAD,
     FINAL;

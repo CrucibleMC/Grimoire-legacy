@@ -14,13 +14,13 @@ public class SerializedMixinJson {
     private String mixinPackage = null;
 
     @SerializedName("mixins")
-    private List<String> mixinClassesCommon = new ArrayList<>();
+    public List<String> mixinClassesCommon = new ArrayList<>();
 
     @SerializedName("client")
-    private List<String> mixinClassesClient = new ArrayList<>();
+    public List<String> mixinClassesClient = new ArrayList<>();
 
     @SerializedName("server")
-    private List<String> mixinClassesServer = new ArrayList<>();
+    public List<String> mixinClassesServer = new ArrayList<>();
 
     @SerializedName("target")
     private String selector = null;
@@ -126,6 +126,10 @@ public class SerializedMixinJson {
 
     public boolean isValidConfiguration() {
         return this.mixinPackage != null;
+    }
+
+    public String getMixinPackage() {
+        return this.mixinPackage;
     }
 
     /**

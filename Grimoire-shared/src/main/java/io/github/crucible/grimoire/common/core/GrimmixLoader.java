@@ -285,6 +285,10 @@ public class GrimmixLoader {
         this.transition(LoadingStage.VALIDATION, true);
     }
 
+    public void buildRuntimeConfigs() {
+        this.transition(LoadingStage.MIXIN_CONFIG_BUILDING);
+    }
+
     public void coreLoad() {
         this.transition(LoadingStage.CORELOAD);
     }
@@ -337,7 +341,9 @@ public class GrimmixLoader {
 
         this.activeContainer = null;
 
-        if (to.isConfigurationStage()) {
+        if (to == LoadingStage.MIXIN_CONFIG_BUILDING) {
+            ConfigBuildingManager.generateRuntimeConfigurations();
+        } else if (to.isConfigurationStage()) {
             preparedConfigurations.addAll(MixinConfiguration.prepareUnclaimedConfigurations(to.getAssociatedConfigurationType()));
 
             if (preparedConfigurations.size() > 0) {
