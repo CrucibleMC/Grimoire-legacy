@@ -103,6 +103,10 @@ public class GrimoireCore {
         return classLoader;
     }
 
+    public String getMCVersion() {
+        return this.version;
+    }
+
     public boolean isDevEnvironment() {
         return Boolean.parseBoolean(System.getProperty("fml.isDevEnvironment"));
     }
