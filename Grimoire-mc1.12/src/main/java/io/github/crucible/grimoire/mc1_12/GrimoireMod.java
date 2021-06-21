@@ -1,8 +1,10 @@
 package io.github.crucible.grimoire.mc1_12;
 
 import io.github.crucible.grimoire.common.core.GrimoireCore;
+import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
 import io.github.crucible.grimoire.mc1_12.handlers.IncelEventHandler;
 import io.github.crucible.grimoire.mc1_12.handlers.IncelPacketDispatcher;
+import io.github.crucible.grimoire.mc1_12.integrations.eventhelper.EHIntegrationContainer;
 import io.github.crucible.grimoire.mc1_12.network.PacketSyncOmniconfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -39,12 +41,9 @@ public class GrimoireMod {
         packetPipeline = new SimpleNetworkWrapper("GrimoireChannel");
         packetPipeline.registerMessage(PacketSyncOmniconfig.Handler.class, PacketSyncOmniconfig.class, 0, Side.CLIENT);
 
-        //Register our embedded integrations
-        if (FMLCommonHandler.instance().getSide().isServer()) {
-            //GrimoireCore.INSTANCE.getGrimmixIntegrations().registerIntegration(new EventHelperIntegration());
-        }
-        //Init grimmix integrations
-        GrimoireCore.INSTANCE.getGrimmixIntegrations().init();
+        // Init grimmix integrations
+        ModIntegrationRegistry.registerIntegration(EHIntegrationContainer.class);
+        ModIntegrationRegistry.init();
     }
 
 }

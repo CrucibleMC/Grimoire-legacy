@@ -4,6 +4,8 @@ import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.grimoire.common.events.SubscribeAnnotationWrapper;
 import io.github.crucible.grimoire.mc1_12.handlers.IncelAnnotationWrapper;
+import io.github.crucible.grimoire.mc1_12.handlers.IncelOPChecker;
+import io.github.crucible.grimoire.mc1_12.handlers.IncelVersionHandler;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
@@ -45,6 +47,7 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
                 (Boolean) data.get("runtimeDeobfuscationEnabled"), "mods", "1.12",
                 FMLLaunchHandler.side() == net.minecraftforge.fml.relauncher.Side.CLIENT ? Environment.CLIENT : Environment.DEDICATED_SERVER);
         SubscribeAnnotationWrapper.setWrapperFactory(this::createWrapper);
+        IncelVersionHandler.init();
         GrimoireCore.INSTANCE.init();
     }
 

@@ -10,9 +10,6 @@ repositories {
         name = 'spongepowered-repo'
         url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
-	flarDir {
-		dirs 'libs'
-	}
 }
 
 dependencies {

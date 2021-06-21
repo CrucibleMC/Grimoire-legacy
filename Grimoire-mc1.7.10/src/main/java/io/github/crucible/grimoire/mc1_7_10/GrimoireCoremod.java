@@ -7,7 +7,9 @@ import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.grimoire.common.events.SubscribeAnnotationWrapper;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadAnnotationWrapper;
+import io.github.crucible.grimoire.mc1_7_10.handlers.ChadOPChecker;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher;
+import io.github.crucible.grimoire.mc1_7_10.handlers.ChadVersionHandler;
 import io.github.crucible.omniconfig.OmniconfigCore;
 
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +41,7 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
                 (Boolean) data.get("runtimeDeobfuscationEnabled"), "mods", "1.7.10",
                 FMLLaunchHandler.side() == cpw.mods.fml.relauncher.Side.CLIENT ? Environment.CLIENT : Environment.DEDICATED_SERVER);
         SubscribeAnnotationWrapper.setWrapperFactory(this::createWrapper);
+        ChadVersionHandler.init();
         GrimoireCore.INSTANCE.init();
     }
 

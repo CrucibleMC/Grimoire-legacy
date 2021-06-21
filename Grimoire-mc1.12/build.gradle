@@ -36,6 +36,9 @@ repositories {
         name = 'spongepowered-repo'
         url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
+	flatDir {
+		dirs 'libs'
+	}
     mavenCentral()
 }
 
@@ -52,7 +55,7 @@ dependencies {
     shadow(project(':Grimoire-shared'))
     annotationProcessor("org.spongepowered:mixin:0.8.3-SNAPSHOT:processor")
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2855'
-    implementation fileTree(dir: file('libs'), include: ['*.jar'])
+    implementation name: "EventHelper-1.12.2-2.8.1-dummydev"
 }
 
 mixin {

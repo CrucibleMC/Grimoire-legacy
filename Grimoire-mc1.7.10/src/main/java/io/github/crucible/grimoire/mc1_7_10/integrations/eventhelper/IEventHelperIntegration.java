@@ -5,13 +5,14 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.github.crucible.grimoire.common.integrations.IModIntegration;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public interface IEventHelperIntegration {
+public interface IEventHelperIntegration extends IModIntegration {
 
     public boolean canBreak(@Nonnull EntityPlayer player, int x, int y, int z);
 
@@ -50,7 +51,5 @@ public interface IEventHelperIntegration {
     public boolean hasPermission(@Nullable UUID playerId, @Nonnull String permission);
 
     public boolean hasPermission(@Nullable String playerName, @Nonnull String permission);
-
-    public void initInjections();
 
 }

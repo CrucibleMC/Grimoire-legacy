@@ -2,15 +2,16 @@ package io.github.crucible.grimoire.mc1_7_10.integrations.eventhelper;
 
 import java.util.UUID;
 
+import io.github.crucible.grimoire.mc1_7_10.handlers.ChadOPChecker;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class DummyEventHelperIntegration implements IEventHelperIntegration {
+public class DummyEHIntegration implements IEventHelperIntegration {
 
-    public DummyEventHelperIntegration() {
+    protected DummyEHIntegration() {
         // NO-OP
     }
 
@@ -96,22 +97,17 @@ public class DummyEventHelperIntegration implements IEventHelperIntegration {
 
     @Override
     public boolean hasPermission(EntityPlayer player, String permission) {
-        return true;
+        return ChadOPChecker.isPlayerOP(player);
     }
 
     @Override
     public boolean hasPermission(UUID playerId, String permission) {
-        return true;
+        return ChadOPChecker.isPlayerOP(playerId);
     }
 
     @Override
     public boolean hasPermission(String playerName, String permission) {
-        return true;
-    }
-
-    @Override
-    public void initInjections() {
-        // NO-OP
+        return ChadOPChecker.isPlayerOP(playerName);
     }
 
 }

@@ -50,6 +50,9 @@ repositories {
         name = "juanmuscaria"
         url = "https://github.com/juanmuscaria/maven/raw/master"
     }
+	flatDir {
+		dirs 'libs'
+	}
     mavenCentral()
 }
 
@@ -65,7 +68,7 @@ dependencies {
     }
     shade(project(':Grimoire-shared'))
     annotationProcessor("org.spongepowered:mixin:0.7.11-SNAPSHOT")
-    implementation fileTree(dir: file('libs'), include: ['*.jar'])
+    implementation name: "EventHelper-1.7.10-1.13.1-dummydev"
 }
 
 processResources {

@@ -2,7 +2,7 @@ package io.github.crucible.grimoire.common.core;
 
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.lib.Environment;
-import io.github.crucible.grimoire.common.integrations.IntegrationManager;
+import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
 import io.github.crucible.grimoire.common.test.AnnotationConfigTest;
 import io.github.crucible.grimoire.common.test.OmniconfigTest;
 import io.github.crucible.omniconfig.OmniconfigCore;
@@ -19,7 +19,6 @@ public class GrimoireCore {
     private static final LaunchClassLoader classLoader = (LaunchClassLoader) GrimoireCore.class.getClassLoader();
 
     private final GrimmixLoader grimmixLoader;
-    private final IntegrationManager grimmixIntegrations;
     private File mcLocation;
     private File mcModFolder;
     private File configFolder;
@@ -39,7 +38,6 @@ public class GrimoireCore {
         }
 
         this.grimmixLoader = GrimmixLoader.INSTANCE;
-        this.grimmixIntegrations = new IntegrationManager();
     }
 
     public void configure(File mcLocation, boolean obfuscated, String mcModFolder, String version, Environment onSide) {
@@ -74,10 +72,6 @@ public class GrimoireCore {
 
     public void finish() {
         this.grimmixLoader.finish();
-    }
-
-    public IntegrationManager getGrimmixIntegrations() {
-        return this.grimmixIntegrations;
     }
 
     public Environment getEnvironment() {

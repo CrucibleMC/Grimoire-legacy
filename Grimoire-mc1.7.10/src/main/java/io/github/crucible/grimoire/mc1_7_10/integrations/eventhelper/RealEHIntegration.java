@@ -1,6 +1,8 @@
 package io.github.crucible.grimoire.mc1_7_10.integrations.eventhelper;
 
+import com.gamerforea.eventhelper.EventHelper;
 import com.gamerforea.eventhelper.util.EventUtils;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -11,9 +13,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class RealEventHelperIntegration implements IEventHelperIntegration {
+public class RealEHIntegration implements IEventHelperIntegration {
 
-    public RealEventHelperIntegration() {
+    protected RealEHIntegration() {
         // NO-OP
     }
 
@@ -110,11 +112,6 @@ public class RealEventHelperIntegration implements IEventHelperIntegration {
     @Override
     public boolean hasPermission(@Nullable String playerName, @Nonnull String permission) {
         return EventUtils.hasPermission(playerName, permission);
-    }
-
-    @Override
-    public void initInjections() {
-        // NO-OP
     }
 
 }

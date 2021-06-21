@@ -1,6 +1,5 @@
 package io.github.crucible.grimoire.common.core;
 
-import com.gamerforea.eventhelper.config.ConfigBoolean;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;

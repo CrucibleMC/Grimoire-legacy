@@ -7,7 +7,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 
 import io.github.crucible.grimoire.common.GrimoireInternals;
-import io.github.crucible.grimoire.common.api.lib.Side;
+import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.mc1_12.GrimoireMod;
 import io.github.crucible.grimoire.mc1_12.network.PacketSyncOmniconfig;
 import io.github.crucible.omniconfig.OmniconfigCore;
@@ -66,7 +66,7 @@ public class IncelPacketDispatcher extends AbstractPacketDispatcher<ByteBuf, Inc
 
         @Override
         public boolean areWeRemoteServer() {
-            if (GrimoireInternals.getEnvironment() == Side.DEDICATED_SERVER)
+            if (GrimoireInternals.getEnvironment() == Environment.DEDICATED_SERVER)
                 return true;
             else
                 return this.player.mcServer != null && !this.player.getGameProfile().getName().equals(this.player.mcServer.getServerOwner());

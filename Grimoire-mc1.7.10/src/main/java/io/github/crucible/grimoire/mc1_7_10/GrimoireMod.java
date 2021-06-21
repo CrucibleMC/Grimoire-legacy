@@ -7,9 +7,10 @@ import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
+import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadEventHandler;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher;
-import io.github.crucible.grimoire.mc1_7_10.integrations.eventhelper.EventHelperIntegration;
+import io.github.crucible.grimoire.mc1_7_10.integrations.eventhelper.EHIntegrationContainer;
 import io.github.crucible.grimoire.mc1_7_10.network.PacketSyncOmniconfig;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -41,12 +42,9 @@ public class GrimoireMod {
         packetPipeline = new SimpleNetworkWrapper("GrimoireChannel");
         packetPipeline.registerMessage(PacketSyncOmniconfig.Handler.class, PacketSyncOmniconfig.class, 0, Side.CLIENT);
 
-        //Register our embedded integrations
-        if (FMLCommonHandler.instance().getSide().isServer()) {
-            GrimoireCore.INSTANCE.getGrimmixIntegrations().registerIntegration(new EventHelperIntegration());
-        }
-        //Init grimmix integrations
-        GrimoireCore.INSTANCE.getGrimmixIntegrations().init();
+        // Register our embedded integrations
+        ModIntegrationRegistry.registerIntegration(EHIntegrationContainer.class);
+        ModIntegrationRegistry.init();
     }
 
 }

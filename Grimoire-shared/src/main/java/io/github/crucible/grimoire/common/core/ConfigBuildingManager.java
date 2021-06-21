@@ -18,7 +18,6 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.backing.Configuration;
@@ -39,7 +38,7 @@ public class ConfigBuildingManager {
 
     public static void generateRuntimeConfigurations() {
         if (runtimeConfigsGenerated)
-            return;
+            throw new IllegalStateException("Runtime configurations were already generated!");
 
         runtimeConfigsGenerated = true;
 
@@ -106,7 +105,7 @@ public class ConfigBuildingManager {
                         this.archiveMD5, newDigest);
                 GrimoireCore.logger.fatal("Forcing JVM termination...");
 
-                FMLCommonHandler.instance().exitJava(-1711635183, false);
+                Runtime.getRuntime().exit(-1711635183);
             }
         }
 
