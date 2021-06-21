@@ -22,7 +22,7 @@ public class GrimoireAPI {
     public static final SimpleEventHandler EVENT_BUS = new SimpleEventHandler();
 
     public static IMixinConfiguration registerMixinConfiguration(String classpath, ConfigurationType type) {
-        return new MixinConfiguration(null, type, classpath);
+        return new MixinConfiguration(null, type, classpath, false);
     }
 
     public static List<IMixinConfiguration> registerMixinConfigurations(ConfigurationType type, String... classpaths) {

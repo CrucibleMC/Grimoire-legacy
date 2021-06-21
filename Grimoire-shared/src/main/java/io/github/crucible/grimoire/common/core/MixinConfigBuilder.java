@@ -119,9 +119,7 @@ public class MixinConfigBuilder implements IMixinConfigBuilder {
                 + "all mandatory arguments, like package name and stuff?");
 
         ConfigBuildingManager.builderRegistry.add(this);
-
-        MixinConfiguration config = new MixinConfiguration(this.owner, this.configType, this.classpath);
-        return config.isDuplicate() ? config.getDuplicateOf() : config;
+        return new MixinConfiguration(this.owner, this.configType, this.classpath, true);
     }
 
     // Internal methods that should not be exposed via API

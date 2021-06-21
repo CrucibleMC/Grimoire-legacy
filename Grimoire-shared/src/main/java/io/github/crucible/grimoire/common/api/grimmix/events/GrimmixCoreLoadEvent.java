@@ -28,8 +28,7 @@ public class GrimmixCoreLoadEvent extends GrimmixLifecycleEvent implements ICore
 
     @Override
     public IMixinConfiguration registerConfiguration(String path) {
-        MixinConfiguration configuration = new MixinConfiguration(this.grimmix, IMixinConfiguration.ConfigurationType.CORE, path);
-        return configuration.isDuplicate() ? configuration.getDuplicateOf() : configuration;
+        return new MixinConfiguration(this.grimmix, IMixinConfiguration.ConfigurationType.CORE, path, false);
     }
 
     @Override

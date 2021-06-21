@@ -20,15 +20,16 @@ public class MixinConfiguration implements IMixinConfiguration {
     protected final Optional<IGrimmix> owner;
     protected final String classpath;
     protected final ConfigurationType configType;
+    protected final boolean isRuntimeGenerated;
+
     protected boolean isLoaded = false;
     protected boolean isValid = true;
 
-    protected MixinConfiguration duplicateOf = null;
-
-    public MixinConfiguration(IGrimmix owner, ConfigurationType type, String classpath) {
+    public MixinConfiguration(IGrimmix owner, ConfigurationType type, String classpath, boolean isRuntimeGenerated) {
         this.owner = Optional.ofNullable(owner);
         this.classpath = Preconditions.checkNotNull(classpath);
         this.configType = Preconditions.checkNotNull(type);
+        this.isRuntimeGenerated = isRuntimeGenerated;
 
         if (this.owner.isPresent()) {
             List<IMixinConfiguration> ownerConfigurations = ((GrimmixContainer) this.owner.get()).ownedConfigurations;
@@ -36,25 +37,13 @@ public class MixinConfiguration implements IMixinConfiguration {
             if (!ownerConfigurations.contains(this)) {
                 ownerConfigurations.add(this);
             } else {
-                for (IMixinConfiguration another : ownerConfigurations) {
-                    if (another.equals(this)) {
-                        this.duplicateOf = (MixinConfiguration) another;
-                    }
-                }
-                this.isValid = false;
-                return;
+                this.duplicateException();
             }
         } else {
             if (!unclaimedConfigurations.contains(this)) {
                 unclaimedConfigurations.add(this);
             } else {
-                for (IMixinConfiguration another : unclaimedConfigurations) {
-                    if (another.equals(this)) {
-                        this.duplicateOf = (MixinConfiguration) another;
-                    }
-                }
-                this.isValid = false;
-                return;
+                this.duplicateException();
             }
         }
 
@@ -103,17 +92,13 @@ public class MixinConfiguration implements IMixinConfiguration {
         return this.isValid;
     }
 
-    public boolean isDuplicate() {
-        return this.duplicateOf != null;
-    }
-
-    public MixinConfiguration getDuplicateOf() {
-        return this.duplicateOf;
+    private void duplicateException() {
+        throw new RuntimeException("Tried to register duplicate mixin configuration: " + this.classpath);
     }
 
     private void invalidate() {
         if (this.isLoaded())
-            throw new UnsupportedOperationException("Cannot invalidate Mixin configuration " + this.classpath + "; already loaded!");
+            throw new IllegalStateException("Cannot invalidate Mixin configuration " + this.classpath + "; already loaded!");
 
         this.isValid = false;
 
@@ -124,8 +109,18 @@ public class MixinConfiguration implements IMixinConfiguration {
         }
     }
 
+    @Override
+    public boolean isRuntimeGenerated() {
+        return this.isRuntimeGenerated;
+    }
+
+    @Override
+    public boolean canLoad() {
+        return !this.isLoaded && this.isRuntimeGenerated() ? ConfigBuildingManager.areRuntimeConfigsGenerated() : true;
+    }
+
     public void load() {
-        if (!this.isLoaded && this.isValid) {
+        if (this.canLoad() && this.isValid) {
             MixinConfigurationLoadEvent event = new MixinConfigurationLoadEvent(this.owner.orElse(null), this);
             GrimoireAPI.EVENT_BUS.post(event);
 
@@ -140,6 +135,18 @@ public class MixinConfiguration implements IMixinConfiguration {
             Mixins.addConfiguration(this.classpath);
 
             permitConfig = false;
+        } else {
+            String error = "Cannot load mixin configuration " + this.classpath + "; ";
+
+            if (this.isLoaded) {
+                error += "already loaded!";
+            } else if (this.isRuntimeGenerated && !ConfigBuildingManager.areRuntimeConfigsGenerated()) {
+                error += "it is a runtime-generated configuration, and RuntimeMixinConfigs.jar was not generated yet!";
+            }  else if (!this.isValid) {
+                error += "configuration is invalid!";
+            }
+
+            throw new IllegalStateException(error);
         }
     }
 
@@ -156,5 +163,4 @@ public class MixinConfiguration implements IMixinConfiguration {
     public int hashCode() {
         return this.classpath.hashCode();
     }
-
 }

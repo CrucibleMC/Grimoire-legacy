@@ -15,6 +15,10 @@ public interface IMixinConfiguration {
 
     public boolean isLoaded();
 
+    public boolean isRuntimeGenerated();
+
+    public boolean canLoad();
+
     public boolean isValid();
 
     // public void load();

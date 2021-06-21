@@ -27,12 +27,22 @@ import io.github.crucible.omniconfig.lib.FileWatcher;
 public class ConfigBuildingManager {
     protected static final List<MixinConfigBuilder> builderRegistry = new ArrayList<>();
     private static final File mixinConfigsArchive = new File(GrimoireCore.INSTANCE.getDataFolder(), "RuntimeMixinConfigs.jar");
+    private static boolean runtimeConfigsGenerated = false;
 
     private ConfigBuildingManager() {
         // NO-OP
     }
 
+    public static boolean areRuntimeConfigsGenerated() {
+        return runtimeConfigsGenerated;
+    }
+
     public static void generateRuntimeConfigurations() {
+        if (runtimeConfigsGenerated)
+            return;
+
+        runtimeConfigsGenerated = true;
+
         try {
             if (mixinConfigsArchive.exists()) {
                 if (!mixinConfigsArchive.delete())

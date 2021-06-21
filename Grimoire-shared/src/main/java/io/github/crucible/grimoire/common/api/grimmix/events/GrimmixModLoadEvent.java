@@ -29,8 +29,7 @@ public class GrimmixModLoadEvent extends GrimmixLifecycleEvent implements IModLo
 
     @Override
     public IMixinConfiguration registerConfiguration(String path) {
-        MixinConfiguration configuration = new MixinConfiguration(this.grimmix, IMixinConfiguration.ConfigurationType.MOD, path);
-        return configuration.isDuplicate() ? configuration.getDuplicateOf() : configuration;
+        return new MixinConfiguration(this.grimmix, IMixinConfiguration.ConfigurationType.MOD, path, false);
     }
 
     @Override
