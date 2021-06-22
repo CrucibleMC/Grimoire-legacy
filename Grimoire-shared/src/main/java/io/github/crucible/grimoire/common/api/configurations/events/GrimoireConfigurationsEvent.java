@@ -1,6 +1,5 @@
 package io.github.crucible.grimoire.common.api.configurations.events;
 
-import com.google.common.collect.ImmutableList;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.api.events.GrimoireEvent;
@@ -30,7 +29,6 @@ public abstract class GrimoireConfigurationsEvent extends GrimoireEvent {
     }
 
     public static class Pre extends GrimoireConfigurationsEvent implements ICancelable {
-        protected boolean isCancelled;
 
         public Pre(List<IMixinConfiguration> configurations, LoadingStage stage) {
             super(configurations, stage);
@@ -48,20 +46,6 @@ public abstract class GrimoireConfigurationsEvent extends GrimoireEvent {
             super.configurations.add(configuration);
         }
 
-        @Override
-        public void cancel() {
-            this.isCancelled = true;
-        }
-
-        @Override
-        public boolean isCanceled() {
-            return this.isCancelled;
-        }
-
-        @Override
-        public void setCanceled(boolean state) {
-            this.isCancelled = state;
-        }
     }
 
     public static class Post extends GrimoireConfigurationsEvent {

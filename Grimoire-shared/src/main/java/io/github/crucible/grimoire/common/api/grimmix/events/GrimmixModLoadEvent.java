@@ -1,8 +1,5 @@
 package io.github.crucible.grimoire.common.api.grimmix.events;
 
-import com.google.common.collect.ImmutableList;
-
-import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;

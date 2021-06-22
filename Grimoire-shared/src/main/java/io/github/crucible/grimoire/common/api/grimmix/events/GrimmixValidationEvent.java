@@ -1,6 +1,5 @@
 package io.github.crucible.grimoire.common.api.grimmix.events;
 
-import io.github.crucible.grimoire.common.api.events.ICancelable;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IValidationEvent;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
 
@@ -13,8 +12,7 @@ import io.github.crucible.grimoire.common.core.GrimmixLoader;
  * @author Aizistral
  */
 
-public class GrimmixValidationEvent extends GrimmixLifecycleEvent implements IValidationEvent, ICancelable {
-    protected boolean isCancelled;
+public class GrimmixValidationEvent extends GrimmixLifecycleEvent implements IValidationEvent {
 
     public GrimmixValidationEvent() {
         super(GrimmixLoader.INSTANCE.getActiveContainer());
@@ -30,18 +28,4 @@ public class GrimmixValidationEvent extends GrimmixLifecycleEvent implements IVa
         return !this.isCanceled();
     }
 
-    @Override
-    public void cancel() {
-        isCancelled = true;
-    }
-
-    @Override
-    public boolean isCanceled() {
-        return isCancelled;
-    }
-
-    @Override
-    public void setCanceled(boolean state) {
-        isCancelled = state;
-    }
 }

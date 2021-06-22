@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.api.events.GrimoireEvent;
-import io.github.crucible.grimoire.common.api.events.SimpleEventHandler;
+import io.github.crucible.grimoire.common.api.events.GrimoireEventBus;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
@@ -19,7 +19,7 @@ public class GrimoireAPI {
      * General-purpose EventBus for posting any Grimoire-related events.<br/>
      * Any events posted via this bus must extend {@link GrimoireEvent}.
      */
-    public static final SimpleEventHandler EVENT_BUS = new SimpleEventHandler();
+    public static final GrimoireEventBus EVENT_BUS = new GrimoireEventBus();
 
     public static IMixinConfiguration registerMixinConfiguration(String classpath, ConfigurationType type) {
         return new MixinConfiguration(null, type, classpath, false);
