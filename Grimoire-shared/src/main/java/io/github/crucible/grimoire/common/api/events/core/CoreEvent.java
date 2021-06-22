@@ -15,6 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 public abstract class CoreEvent {
     private boolean isCanceled = false;
+    private Result result = Result.DEFAULT;
 
     /**
      * Determine if this function is cancelable at all.
@@ -47,10 +48,41 @@ public abstract class CoreEvent {
     public void setCanceled(boolean cancel) {
         if (!this.isCancelable())
             throw new UnsupportedOperationException(
-                    "Attempted to call Event#setCanceled() on a non-cancelable event of type: "
+                    "Attempted to call CoreEvent#setCanceled() on a non-cancelable event of type: "
                             + this.getClass().getCanonicalName());
 
         this.isCanceled = cancel;
     }
 
+    public boolean hasResult() {
+        return this instanceof IHasResult;
+    }
+
+    public Result getResult() {
+        return this.result;
+    }
+
+    public void setResult(Result result) {
+        if (!this.hasResult())
+            throw new UnsupportedOperationException(
+                    "Attempted to call CoreEvent#setCanceled() on a result-less event of type: "
+                            + this.getClass().getCanonicalName());
+
+        this.result = result;
+    }
+
+
+    public static enum Priority {
+        HIGHEST, // First to execute
+        HIGH,
+        NORMAL,
+        LOW,
+        LOWEST; // Last to execute
+    }
+
+    public static enum Result {
+        DENY,
+        DEFAULT,
+        ALLOW;
+    }
 }

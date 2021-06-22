@@ -6,6 +6,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
+
+import io.github.crucible.grimoire.common.api.events.core.CoreEvent.Priority;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.grimoire.common.events.SubscribeAnnotationWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +71,7 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
             return false;
 
         try {
-            Multimap<CoreEventPriority, EventReceiver> receiverMap = HashMultimap.create();
+            Multimap<Priority, EventReceiver> receiverMap = HashMultimap.create();
 
             for (CoreEventHandler handler : this.handlerList) {
                 for (EventReceiver receiver: handler.receiverList) {
@@ -79,7 +81,7 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
                 }
             }
 
-            for (CoreEventPriority priority : CoreEventPriority.values()) {
+            for (Priority priority : Priority.values()) {
                 for (EventReceiver receiver : receiverMap.get(priority)) {
                     if (!event.isCanceled() || receiver.receiveCanceled) {
                         receiver.invoke(event);
@@ -116,12 +118,12 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
         return wrapper.annotationPresent();
     }
 
-    protected static CoreEventPriority getPriority(Method method) {
+    protected static Priority getPriority(Method method) {
         if (method.isAnnotationPresent(SubscribeCoreEvent.class))
             return method.getAnnotation(SubscribeCoreEvent.class).priority();
         else {
             SubscribeAnnotationWrapper wrapper = SubscribeAnnotationWrapper.getWrapper(method);
-            return CoreEventPriority.values()[wrapper.getEventPriorityOrdinal()];
+            return Priority.values()[wrapper.getEventPriorityOrdinal()];
         }
     }
 
@@ -202,7 +204,7 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
         protected final Object handler;
         protected final Class<? extends T> eventClass;
         protected final Method receiverMethod;
-        protected final CoreEventPriority priority;
+        protected final Priority priority;
         protected final boolean receiveCanceled;
 
         public EventReceiver(Class<? extends T> eventClass, Method receiverMethod, Object handler) {

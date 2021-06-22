@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(value = METHOD)
 public @interface SubscribeCoreEvent {
 
-    CoreEventPriority priority() default CoreEventPriority.NORMAL;
+    CoreEvent.Priority priority() default CoreEvent.Priority.NORMAL;
     boolean receiveCanceled() default false;
 
 }
