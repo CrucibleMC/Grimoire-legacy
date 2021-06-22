@@ -73,7 +73,7 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
 
             for (CoreEventHandler handler : this.handlerList) {
                 for (EventReceiver receiver: handler.receiverList) {
-                    if (receiver.eventClass.isAssignableFrom(this.eventClass)) {
+                    if (receiver.eventClass.isAssignableFrom(event.getClass())) {
                         receiverMap.put(receiver.priority, receiver);
                     }
                 }
@@ -109,14 +109,14 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
         Throwables.propagate(exception);
     }
 
-    private static boolean hasAnnotation(Method method) {
+    protected static boolean hasAnnotation(Method method) {
         if (method.isAnnotationPresent(SubscribeCoreEvent.class))
             return true;
         SubscribeAnnotationWrapper wrapper = SubscribeAnnotationWrapper.getWrapper(method);
         return wrapper.annotationPresent();
     }
 
-    private static CoreEventPriority getPriority(Method method) {
+    protected static CoreEventPriority getPriority(Method method) {
         if (method.isAnnotationPresent(SubscribeCoreEvent.class))
             return method.getAnnotation(SubscribeCoreEvent.class).priority();
         else {
@@ -125,7 +125,7 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
         }
     }
 
-    private static boolean receiveCanceled(Method method) {
+    protected static boolean receiveCanceled(Method method) {
         if (method.isAnnotationPresent(SubscribeCoreEvent.class))
             return method.getAnnotation(SubscribeCoreEvent.class).receiveCanceled();
         else {
@@ -180,6 +180,7 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
 
                             if (CoreEventBus.this.eventClass.isAssignableFrom(eventType)) {
                                 valid = true;
+                                real.setAccessible(true);
                                 this.receiverList.add(new EventReceiver((Class<? extends T>) eventType, real, isStatic ? null : target));
                             }
 
