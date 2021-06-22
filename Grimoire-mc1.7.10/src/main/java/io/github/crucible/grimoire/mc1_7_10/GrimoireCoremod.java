@@ -26,13 +26,15 @@ import java.util.Map;
 @IFMLLoadingPlugin.MCVersion("1.7.10")
 @IFMLLoadingPlugin.SortingIndex(Integer.MIN_VALUE + 1000)
 public class GrimoireCoremod implements IFMLLoadingPlugin {
+
+    @SuppressWarnings("deprecation")
     public GrimoireCoremod() {
         GrimoireCore.INSTANCE.getClass(); // Make it construct
 
         MixinBootstrap.init();
-        Mixins.addConfiguration("grimoire/mixins.forge.json"); // TODO Register internal GrimmixController for this... or no
+        Mixins.addConfiguration("grimoire/mixins.grimoire.json"); // TODO Register internal GrimmixController for this... or no
 
-        LogManager.getLogger("GrimoireCore").info("Coremod construtced!");
+        LogManager.getLogger("GrimoireCore").info("Coremod constructed!");
     }
 
     @Override

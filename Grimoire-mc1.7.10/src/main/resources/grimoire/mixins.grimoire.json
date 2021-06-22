@@ -1,9 +1,9 @@
 {
   "required": true,
-  "package": "io.github.crucible.grimoire.mc1_7_10.mixins.forge",
+  "package": "io.github.crucible.grimoire.mc1_7_10.mixins",
   "mixins": [
-    "MixinLoader",
-    "MixinModDiscoverer"
+    "forge.MixinLoader",
+    "forge.MixinModDiscoverer"
   ],
   "server": [],
   "client": [],

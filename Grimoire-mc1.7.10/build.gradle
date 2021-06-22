@@ -16,29 +16,22 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.3.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.4.0-SNAPSHOT'
     }
 }
 
 apply plugin: 'forge'
 project.evaluationDependsOn(":Grimoire-shared")
 
-// Force java 8 features
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-// All files should support UTF-8
-compileJava.options.encoding = 'UTF-8'
 archivesBaseName = "Grimoire-mc1.7.10"
 
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
     //mappings = "stable_12"
     runDir = "minecraft"
-}
-
-configurations {
-    shade
-    compile.extendsFrom shade
 }
 
 repositories {
@@ -57,17 +50,11 @@ repositories {
 }
 
 dependencies {
-    shade("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
-        exclude module: "asm-commons"
-        exclude module: "asm-tree"
-        exclude module: "launchwrapper"
-        exclude module: "guava"
-        exclude module: "log4j-core"
-        exclude module: "gson"
-        exclude module: "commons-io"
-    }
-    shade(project(':Grimoire-shared'))
     annotationProcessor("org.spongepowered:mixin:0.7.11-SNAPSHOT")
+	
+	implementation(project(':Grimoire-shared'))
+	implementation('org.jetbrains:annotations:20.1.0')
+    implementation name: "mixin-0.7.11-SNAPSHOT-REPACK"
     implementation name: "EventHelper-1.7.10-1.13.1-dummydev"
 }
 
@@ -95,34 +82,94 @@ ext {
     mixinRefMap.createNewFile()
 }
 
+tasks.withType(Jar) {
+	if (name.equals('jar') || name.equals('devJar')) {
+		manifest {
+			attributes([
+					"Specification-Title": "io.github.crucible.grimoire",
+					"Specification-Vendor": "Grimoire",
+					"Specification-Version": "1", // We are version 1 of ourselves
+					"Implementation-Title": project.name,
+					"Implementation-Version": "${project.version}",
+					"Implementation-Vendor" :"Grimoire",
+					"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+					'FMLCorePlugin': "io.github.crucible.grimoire.mc1_7_10.GrimoireCoremod",
+					'FMLCorePluginContainsFMLMod': 'true',
+					"ForceLoadAsMod": "true",
+					'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
+			])
+		}
+	}
+}
+
 jar {
     from project.mixinRefMap
 
-    manifest {
-        attributes([
-                "Specification-Title": "io.github.crucible.grimoire",
-                "Specification-Vendor": "Grimoire",
-                "Specification-Version": "1", // We are version 1 of ourselves
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${project.version}",
-                "Implementation-Vendor" :"Grimoire",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'FMLCorePlugin': "io.github.crucible.grimoire.mc1_7_10.GrimoireCoremod",
-                'FMLCorePluginContainsFMLMod': 'true',
-                "ForceLoadAsMod": "true",
-                'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
-        ])
-    }
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from project(':Grimoire-shared').sourceSets.main.output
+	from zipTree('libs/mixin-0.7.11-SNAPSHOT-REPACK.jar')
 
-    configurations.shade.each { dep ->
-        from(project.zipTree(dep)) {
-            exclude 'META-INF', 'META-INF/**'
-        }
-        from(project.zipTree(dep)) {
-            include 'META-INF/services', 'META-INF/services/**'
-        }
-    }
+}
 
+task devJar(type: Jar) {
+	archiveClassifier = 'dev'
+	from sourceSets.main.output
+	from project.mixinRefMap
+	
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from project(':Grimoire-shared').sourceSets.main.output
+	from zipTree('libs/mixin-0.7.11-SNAPSHOT-REPACK.jar')
+}
+
+task sourcesJar(type: Jar) {
+	archiveClassifier = 'dev-sources'
+	
+	from sourceSets.main.allSource
+	from project(':Grimoire-shared').sourceSets.main.allSource
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from zipTree('libs/mixin-0.7.11-SNAPSHOT-REPACK-sources.jar')
+}
+
+task apiJar(type: Jar) {
+	archiveClassifier = 'api'
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	
+	from(project(':Grimoire-shared').sourceSets.main.output) {
+		include '**/api/**'
+	}	
+	
+	from(sourceSets.main.output) {
+		include '**/api/**'
+	}
+	
+	from(zipTree('libs/mixin-0.7.11-SNAPSHOT-REPACK.jar')) {
+		exclude 'org/spongepowered/asm/launch/MixinBootstrap**'
+		exclude 'org/spongepowered/asm/mixin/Mixins**'
+		exclude 'com/google/gson/**'
+		exclude 'org/apache/**'
+	}
+}
+
+task apiSourcesJar(type: Jar) {
+	archiveClassifier = 'api-sources'
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	
+	from(project(':Grimoire-shared').sourceSets.main.allSource) {
+		include '**/api/**'
+	}	
+	
+	from(sourceSets.main.allSource) {
+		include '**/api/**'
+	}
+	
+	from(zipTree('libs/mixin-0.7.11-SNAPSHOT-REPACK-sources.jar')) {
+		exclude 'org/spongepowered/asm/launch/MixinBootstrap**'
+		exclude 'org/spongepowered/asm/mixin/Mixins**'
+		exclude 'com/google/gson/**'
+		exclude 'org/apache/**'
+	}
 }
 
 reobf {
@@ -146,3 +193,10 @@ task copySrgs(type: Copy, dependsOn: 'genSrgs') {
 }
 
 compileJava.dependsOn copySrgs
+
+artifacts {
+	archives devJar
+	archives sourcesJar
+	archives apiJar
+	archives apiSourcesJar
+}
