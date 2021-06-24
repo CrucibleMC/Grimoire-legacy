@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        mavenLocal()
         jcenter()
         maven {
             name = "forge"
@@ -17,16 +18,24 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.4.0-SNAPSHOT'
+		classpath 'com.integral.grimoire:GrimoireShenanigans:[1.1.9,)'
     }
 }
 
+plugins {
+    id "com.jfrog.bintray" version "1.8.4"
+}
+
 apply plugin: 'forge'
+apply plugin: "maven"
+apply plugin: 'maven-publish'
+apply plugin: 'grimoire-shenanigans'
 project.evaluationDependsOn(":Grimoire-shared")
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-archivesBaseName = "Grimoire-mc1.7.10"
+archivesBaseName = project.name
 
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
@@ -35,14 +44,6 @@ minecraft {
 }
 
 repositories {
-    maven {
-        name = 'spongepowered-repo'
-        url = 'https://repo.spongepowered.org/repository/maven-public/'
-    }
-    maven {
-        name = "juanmuscaria"
-        url = "https://github.com/juanmuscaria/maven/raw/master"
-    }
 	flatDir {
 		dirs 'libs'
 	}
@@ -50,8 +51,6 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor("org.spongepowered:mixin:0.7.11-SNAPSHOT")
-	
 	implementation(project(':Grimoire-shared'))
 	implementation('org.jetbrains:annotations:20.1.0')
     implementation name: "mixin-0.7.11-SNAPSHOT-REPACK"
@@ -71,16 +70,8 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
     }
-
 }
 
-ext {
-    new File(project.buildDir, 'mixins').mkdirs()
-    mixinSrg = new File(project.buildDir, 'mixins/mixins.io.github.crucible.grimoire.srg')
-    mixinSrg.createNewFile()
-    mixinRefMap = new File(project.buildDir, "mixins/grimoire.refmap.json")
-    mixinRefMap.createNewFile()
-}
 
 tasks.withType(Jar) {
 	if (name.equals('jar') || name.equals('devJar')) {
@@ -104,18 +95,14 @@ tasks.withType(Jar) {
 }
 
 jar {
-    from project.mixinRefMap
-
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':Grimoire-shared').sourceSets.main.output
 	from zipTree('libs/mixin-0.7.11-SNAPSHOT-REPACK.jar')
-
 }
 
 task devJar(type: Jar) {
 	archiveClassifier = 'dev'
 	from sourceSets.main.output
-	from project.mixinRefMap
 	
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':Grimoire-shared').sourceSets.main.output
@@ -173,29 +160,90 @@ task apiSourcesJar(type: Jar) {
 	}
 }
 
-reobf {
-    addExtraSrgFile project.mixinSrg
+publishing {
+    publications {
+        origin(MavenPublication) {
+            from components.java
+
+            pom {
+                artifactId = project.name
+            }
+        }
+		
+		dev(MavenPublication) {
+            artifact devJar {
+				classifier = ""
+			}
+			
+			artifact sourcesJar {
+				classifier = "sources"
+			}
+
+            pom {
+                artifactId = project.name + "-dev"
+            }
+        }
+		
+		api(MavenPublication) {
+            artifact apiJar {
+				classifier = ""
+			}
+			
+			artifact apiSourcesJar {
+				classifier = "sources"
+			}
+
+            pom {
+                artifactId = project.name + "-api"
+            }
+        }
+		
+		all {
+            pom {
+                name = project.name
+                groupId = project.group
+                version = project.version
+                description = 'The almighty Grimoire framework'
+                url = 'https://github.com/CrucibleMC/Grimoire'
+
+                issueManagement {
+                    system = 'github'
+                    url = 'https://github.com/CrucibleMC/Grimoire/issues'
+                }
+
+                developers {
+                    developer {
+                        id = 'CrucibleMC'
+                        name = 'CrucibleMC Team'
+                        roles = ['developer']
+                    }
+                }
+							
+				withXml {
+					Node pomNode = asNode()
+					
+					pomNode.dependencies.'*'.findAll() {
+						it.artifactId.text() == 'forgeSrc' || it.artifactId.text() == 'Grimoire-shared' || it.artifactId.text() == 'mixin-0.7.11-SNAPSHOT-REPACK' || it.artifactId.text() == 'EventHelper-1.7.10-1.13.1-dummydev' || it.artifactId.text() == 'mixin'
+					}.each() {
+						it.parent().remove(it)
+					}
+				}
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = "$buildDir/repos/releases"
+            def snapshotsRepoUrl = "$buildDir/repos/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
 }
 
-compileJava {
-    options.compilerArgs += [
-            '-Xlint:-processing',
-            "-AoutSrgFile=${project.mixinSrg.canonicalPath}",
-            "-AoutRefMapFile=${project.mixinRefMap.canonicalPath}",
-            "-AreobfSrgFile=${project.file('build/srgs/mcp-srg.srg').canonicalPath}"
-    ]
-}
-
-task copySrgs(type: Copy, dependsOn: 'genSrgs') {
-    from plugins.getPlugin("forge").delayedFile('{SRG_DIR}')
-
-    include '**/*.srg'
-    into 'build/srgs'
-}
-
-compileJava.dependsOn copySrgs
+bintrayUpload.dependsOn assemble
 
 artifacts {
+	archives jar
 	archives devJar
 	archives sourcesJar
 	archives apiJar
