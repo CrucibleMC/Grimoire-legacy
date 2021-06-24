@@ -1,4 +1,4 @@
-package io.github.crucible.grimoire.common.core;
+package io.github.crucible.grimoire.common.core.runtimeconfig;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,11 +16,13 @@ import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfigurationBuilder;
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfigurationBuilder;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
+import io.github.crucible.grimoire.common.core.GrimmixContainer;
+import io.github.crucible.grimoire.common.core.MixinConfiguration;
 import io.github.crucible.omniconfig.api.OmniconfigAPI;
 import io.github.crucible.omniconfig.core.Omniconfig;
 

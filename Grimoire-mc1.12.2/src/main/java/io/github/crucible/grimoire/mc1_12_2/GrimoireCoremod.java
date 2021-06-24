@@ -8,6 +8,7 @@ import io.github.crucible.grimoire.mc1_12_2.handlers.IncelOPChecker;
 import io.github.crucible.grimoire.mc1_12_2.handlers.IncelVersionHandler;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
@@ -27,7 +28,7 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
 
     @SuppressWarnings("deprecation")
     public GrimoireCoremod() {
-        GrimoireCore.INSTANCE.getClass(); // Make it construct
+        GrimoireCore.INSTANCE.setCoremodManager(CoreModManager.class);
 
         MixinBootstrap.init();
         Mixins.addConfiguration("grimoire/mixins.grimoire.json");
@@ -50,8 +51,7 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-        GrimoireCore.INSTANCE.configure((File) data.get("mcLocation"),
-                (Boolean) data.get("runtimeDeobfuscationEnabled"), "mods", "1.12.2",
+        GrimoireCore.INSTANCE.configure((File) data.get("mcLocation"), "mods", "1.12.2",
                 FMLLaunchHandler.side() == net.minecraftforge.fml.relauncher.Side.CLIENT ? Environment.CLIENT : Environment.DEDICATED_SERVER);
         SubscribeAnnotationWrapper.setWrapperFactory(this::createWrapper);
         IncelVersionHandler.init();

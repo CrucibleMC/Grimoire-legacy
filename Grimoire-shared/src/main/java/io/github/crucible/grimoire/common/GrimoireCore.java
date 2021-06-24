@@ -11,7 +11,11 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
+
 import java.io.File;
+import java.lang.reflect.Field;
 
 public class GrimoireCore {
     public static final GrimoireCore INSTANCE = new GrimoireCore();
@@ -25,10 +29,13 @@ public class GrimoireCore {
     private File dataFolder;
     private String version;
     private Environment side;
-    private boolean obfuscated;
+    private Boolean obfuscated = null;
+    private Class<?> coremodManager = null;
 
     public GrimoireCore() {
         if (this.isDevEnvironment()) {
+            logger.info("Loading within deobfuscated environment...");
+
             System.setProperty("mixin.debug", "true");
             System.setProperty("mixin.hotSwap", "true");
             System.setProperty("mixin.env.disableRefMap", "true");
@@ -41,14 +48,17 @@ public class GrimoireCore {
         this.grimmixLoader = GrimmixLoader.INSTANCE;
     }
 
-    public void configure(File mcLocation, boolean obfuscated, String mcModFolder, String version, Environment onSide) {
+    public void setCoremodManager(Class<?> coreModManager) {
+        this.coremodManager = coreModManager;
+    }
+
+    public void configure(File mcLocation, String mcModFolder, String version, Environment onSide) {
         this.side = onSide;
         this.version = version;
         this.mcLocation = mcLocation;
         this.mcModFolder = new File(this.mcLocation, mcModFolder);
         this.configFolder = new File(this.mcLocation, "config");
         this.dataFolder = new File(this.mcLocation, "mcdata");
-        this.obfuscated = obfuscated;
 
         this.configFolder.mkdirs();
         this.dataFolder.mkdirs();
@@ -96,10 +106,6 @@ public class GrimoireCore {
         return this.configFolder;
     }
 
-    public boolean isObfuscatedEnvironment() {
-        return this.obfuscated;
-    }
-
     public LaunchClassLoader getClassLoader() {
         return classLoader;
     }
@@ -109,7 +115,17 @@ public class GrimoireCore {
     }
 
     public boolean isDevEnvironment() {
-        return Boolean.parseBoolean(System.getProperty("fml.isDevEnvironment"));
+        if (this.obfuscated == null) {
+            try {
+                Field envField = this.coremodManager.getDeclaredField("deobfuscatedEnvironment");
+                envField.setAccessible(true);
+                this.obfuscated = envField.getBoolean(null);
+            } catch (Exception ex) {
+                Throwables.propagate(ex);
+            }
+        }
+
+        return this.obfuscated.booleanValue();
     }
 
 }

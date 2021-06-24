@@ -27,8 +27,6 @@ public class OmniconfigRegistry implements IOmniconfigRegistry {
             throw new RuntimeException("Attempted to register two config files with the same location: " + config.getFile());
     }
 
-    // TODO Replace Immutables with Collections.unmodifiable where plausible
-
     @Override
     public Collection<Omniconfig> getRegisteredConfigs() {
         return Collections.unmodifiableCollection(this.registryMap.values());

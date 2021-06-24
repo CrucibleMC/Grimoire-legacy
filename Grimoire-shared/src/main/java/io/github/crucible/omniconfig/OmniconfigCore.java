@@ -42,7 +42,7 @@ public class OmniconfigCore {
     public static final Logger logger = LogManager.getLogger("Omniconfig");
     public static final int STANDART_INTEGER_LIMIT = 32768;
     public static final String FILE_SEPARATOR = File.separator;
-    public static final File CONFIG_DIR = new File(GrimoireCore.INSTANCE.getMCLocation(), "config");
+    public static final File CONFIG_DIR = GrimoireCore.INSTANCE.getConfigFolder();
 
     /**
      * This must only ever true if we are in a client environment and

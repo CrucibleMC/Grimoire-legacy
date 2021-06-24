@@ -1,6 +1,7 @@
 package io.github.crucible.grimoire.mc1_7_10;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import io.github.crucible.grimoire.common.GrimoireCore;
@@ -31,18 +32,15 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
 
     @SuppressWarnings("deprecation")
     public GrimoireCoremod() {
-        GrimoireCore.INSTANCE.getClass(); // Make it construct
+        GrimoireCore.INSTANCE.setCoremodManager(CoreModManager.class);
 
         MixinBootstrap.init();
         Mixins.addConfiguration("grimoire/mixins.grimoire.json");
-
-        LogManager.getLogger("GrimoireCore").info("Coremod constructed!");
     }
 
     @Override
     public void injectData(Map<String, Object> data) {
-        GrimoireCore.INSTANCE.configure((File) data.get("mcLocation"),
-                (Boolean) data.get("runtimeDeobfuscationEnabled"), "mods", "1.7.10",
+        GrimoireCore.INSTANCE.configure((File) data.get("mcLocation"), "mods", "1.7.10",
                 FMLLaunchHandler.side() == cpw.mods.fml.relauncher.Side.CLIENT ? Environment.CLIENT : Environment.DEDICATED_SERVER);
         SubscribeAnnotationWrapper.setWrapperFactory(this::createWrapper);
         ChadVersionHandler.init();

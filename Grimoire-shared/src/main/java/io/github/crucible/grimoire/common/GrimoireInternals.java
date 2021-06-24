@@ -13,6 +13,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -24,9 +25,7 @@ import io.github.crucible.grimoire.common.core.DeserializedMixinJson;
 public class GrimoireInternals {
 
     public static void executeInEnvironment(Environment side, Supplier<Runnable> supplier) {
-        if (side == getEnvironment()) {
-            supplier.get().run();
-        }
+        side.execute(supplier);
     }
 
     @SuppressWarnings("unchecked")

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IModIntegrationRegistry {
 
-    public void registerIntegration(Class<? extends ModIntegrationContainer<?>> integrationClass);
+    public void registerIntegration(Class<? extends ModIntegrationContainer<?>> containerClass);
 
     @Nullable
     public <T extends IModIntegration> T getIntegration(Class<T> integrationClass);

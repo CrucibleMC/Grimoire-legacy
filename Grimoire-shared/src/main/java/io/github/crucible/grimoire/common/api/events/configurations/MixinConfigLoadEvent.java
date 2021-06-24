@@ -1,10 +1,10 @@
 package io.github.crucible.grimoire.common.api.events.configurations;
 
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
 import io.github.crucible.grimoire.common.api.eventbus.ICancelable;
 import io.github.crucible.grimoire.common.api.events.GrimoireEvent;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 
 import java.util.Optional;
 

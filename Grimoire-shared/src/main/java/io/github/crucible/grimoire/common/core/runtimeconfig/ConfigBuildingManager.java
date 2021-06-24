@@ -1,4 +1,4 @@
-package io.github.crucible.grimoire.common.core;
+package io.github.crucible.grimoire.common.core.runtimeconfig;
 
 import java.io.File;
 import java.io.FileInputStream;

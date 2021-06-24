@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,7 +77,7 @@ public class ConfigCategory implements Map<String, Property> {
     }
 
     public Map<String, Property> getValues() {
-        return ImmutableMap.copyOf(this.properties);
+        return Collections.unmodifiableMap(this.properties);
     }
 
     public List<Property> getOrderedValues() {

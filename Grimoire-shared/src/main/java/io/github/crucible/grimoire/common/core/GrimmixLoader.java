@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEventBus;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEventHandler;
@@ -16,8 +15,10 @@ import io.github.crucible.grimoire.common.api.events.configurations.GrimoireConf
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.EventHandlerCandidate;
 import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.GrimmixCandidate;
+import io.github.crucible.grimoire.common.core.runtimeconfig.ConfigBuildingManager;
 import io.github.crucible.grimoire.common.modules.ForceLoadController;
 import io.github.crucible.omniconfig.api.lib.Either;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -73,11 +74,11 @@ public class GrimmixLoader {
     }
 
     public List<GrimmixContainer> getAllContainers() {
-        return ImmutableList.copyOf(this.containerList);
+        return Collections.unmodifiableList(this.containerList);
     }
 
     public List<IGrimmix> getAllActiveContainers() {
-        return ImmutableList.copyOf(this.activeContainerList);
+        return Collections.unmodifiableList(this.activeContainerList);
     }
 
     private boolean isClassFile(String fileName) {

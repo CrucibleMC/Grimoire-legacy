@@ -33,9 +33,9 @@ import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.mixin.transformer.Config;
 
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.ICoreLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
 
 /**
  * Entry point for registering global mixin resources. Compatibility with

@@ -1,4 +1,4 @@
-package io.github.crucible.grimoire.common.core;
+package io.github.crucible.grimoire.common.core.runtimeconfig;
 
 import java.util.ArrayList;
 import java.util.List;

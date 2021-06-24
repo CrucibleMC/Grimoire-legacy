@@ -10,12 +10,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(TYPE)
 public @interface Grimmix {
 
-    String modid();
+    public String id();
 
-    String name() default "";
+    public String name() default "";
 
-    String version() default "1.0.0";
+    public String version() default "1.0.0";
 
-    long priority() default 0L;
+    public long priority() default 0L;
 
 }

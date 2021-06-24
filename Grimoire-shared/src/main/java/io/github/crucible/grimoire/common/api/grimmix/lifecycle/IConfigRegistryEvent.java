@@ -3,7 +3,7 @@ package io.github.crucible.grimoire.common.api.grimmix.lifecycle;
 import java.util.List;
 import java.util.function.Predicate;
 
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 
 public abstract interface IConfigRegistryEvent extends ILifecycleEvent {
 

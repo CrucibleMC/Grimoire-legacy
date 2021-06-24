@@ -1,6 +1,6 @@
 package io.github.crucible.grimoire.common.api.events.grimmix;
 
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
 import io.github.crucible.grimoire.common.events.grimmix.ModLoadEvent;

@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
 
 public class DeserializedMixinJson {
 

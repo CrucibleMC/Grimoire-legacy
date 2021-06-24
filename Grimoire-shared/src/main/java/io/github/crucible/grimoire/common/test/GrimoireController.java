@@ -1,17 +1,17 @@
 package io.github.crucible.grimoire.common.test;
 
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IConfigBuildingEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IConfigRegistryEvent;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.events.grimmix.ConfigBuildingEvent;
 import io.github.crucible.grimoire.common.events.grimmix.CoreLoadEvent;
 import io.github.crucible.grimoire.common.events.grimmix.FinishLoadEvent;
 import io.github.crucible.grimoire.common.events.grimmix.ModLoadEvent;
 import io.github.crucible.grimoire.common.events.grimmix.ValidationEvent;
 
-@Grimmix(modid = "grimoire", name = "Grimoire", version = "1.0.0")
+@Grimmix(id = "grimoire", name = "Grimoire", version = "1.0.0")
 public class GrimoireController extends GrimmixController {
 
     public GrimoireController() {

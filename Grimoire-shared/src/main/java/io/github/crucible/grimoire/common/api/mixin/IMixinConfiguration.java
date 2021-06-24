@@ -1,4 +1,4 @@
-package io.github.crucible.grimoire.common.api.configurations;
+package io.github.crucible.grimoire.common.api.mixin;
 
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;

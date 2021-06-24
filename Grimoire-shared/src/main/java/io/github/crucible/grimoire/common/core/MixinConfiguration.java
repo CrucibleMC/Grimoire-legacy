@@ -5,9 +5,11 @@ import com.google.common.collect.ImmutableList;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.events.configurations.MixinConfigLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
+import io.github.crucible.grimoire.common.core.runtimeconfig.ConfigBuildingManager;
+
 import org.spongepowered.asm.mixin.Mixins;
 
 import java.util.ArrayList;

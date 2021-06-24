@@ -1,6 +1,6 @@
 package io.github.crucible.grimoire.common.api.grimmix.lifecycle;
 
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 
 public enum LoadingStage {
     PRE_CONSTRUCTION,

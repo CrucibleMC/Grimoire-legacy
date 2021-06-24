@@ -80,7 +80,7 @@ public class GrimoireAnnotationAnalyzer extends ClassVisitor {
             this.handlerCandidate.hasAnnotation = true;
         }
 
-        return new DataReader(this);
+        return this.grimmixCandidate.hasAnnotation ? new DataReader(this) : null;
     }
 
     @Override
@@ -100,11 +100,11 @@ public class GrimoireAnnotationAnalyzer extends ClassVisitor {
         }
 
         /**
-         * @see Grimmix#modid()
+         * @see Grimmix#id()
          */
         @Override
         public void visit(String name, Object value) {
-            if ("modid".equals(name)) {
+            if ("id".equals(name)) {
                 this.supervisitor.grimmixCandidate.name = String.valueOf(value);
             }
 

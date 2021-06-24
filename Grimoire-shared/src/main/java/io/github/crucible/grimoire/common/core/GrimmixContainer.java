@@ -3,7 +3,6 @@ package io.github.crucible.grimoire.common.core;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixConfigBuildingEvent;
 import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixCoreLoadEvent;
 import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixFinishLoadEvent;
@@ -13,6 +12,7 @@ import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.events.grimmix.ConfigBuildingEvent;
 import io.github.crucible.grimoire.common.events.grimmix.CoreLoadEvent;
 import io.github.crucible.grimoire.common.events.grimmix.FinishLoadEvent;
@@ -56,7 +56,7 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
         for (Annotation annotation : constructor.getDeclaringClass().getAnnotations()) {
             if (annotation.annotationType().equals(Grimmix.class)) {
                 Grimmix grimmix = (Grimmix) annotation;
-                modid = grimmix.modid();
+                modid = grimmix.id();
                 name = grimmix.name();
                 version = grimmix.version();
                 priority = grimmix.priority();
@@ -250,7 +250,7 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
     }
 
     @Override
-    public String getModID() {
+    public String getID() {
         return this.modid;
     }
 

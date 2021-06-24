@@ -39,16 +39,8 @@ public class OmniconfigAPI {
         return AnnotationConfigCore.INSTANCE;
     }
 
-    public static File getConfigDirectory() {
+    public static File getConfigFolder() {
         return OmniconfigCore.CONFIG_DIR;
-    }
-
-    public String getDefaultCategory() {
-        return Configuration.CATEGORY_GENERAL;
-    }
-
-    public static String getCategorySplitter() {
-        return Configuration.CATEGORY_SPLITTER;
     }
 
 }

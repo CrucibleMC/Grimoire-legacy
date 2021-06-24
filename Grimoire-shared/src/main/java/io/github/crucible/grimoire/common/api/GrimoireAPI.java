@@ -1,20 +1,26 @@
 package io.github.crucible.grimoire.common.api;
 
 import com.google.common.collect.ImmutableList;
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
-import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
+
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEventBus;
 import io.github.crucible.grimoire.common.api.events.GrimoireEvent;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
 import io.github.crucible.grimoire.common.api.integration.IModIntegrationRegistry;
+import io.github.crucible.grimoire.common.api.lib.Environment;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.core.GrimmixContainer;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
+import io.github.crucible.grimoire.common.core.VersionHandler;
 import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +49,9 @@ public class GrimoireAPI {
         return list;
     }
 
-    public static boolean isGrimmixLoaded(String name) {
+    public static boolean isGrimmixLoaded(String id) {
         for (IGrimmix grimmix : GrimmixLoader.INSTANCE.getAllActiveContainers()) {
-            if (grimmix.getName().equals(name))
+            if (grimmix.getID().equals(id))
                 return true;
         }
 
@@ -53,9 +59,9 @@ public class GrimoireAPI {
     }
 
     @Nullable
-    public static IGrimmix getGrimmix(String name) {
+    public static IGrimmix getGrimmix(String id) {
         for (IGrimmix grimmix : GrimmixLoader.INSTANCE.getAllActiveContainers()) {
-            if (grimmix.getName().equals(name))
+            if (grimmix.getID().equals(id))
                 return grimmix;
         }
 
@@ -81,9 +87,39 @@ public class GrimoireAPI {
         return builder.build();
     }
 
+    public static boolean isModLoaded(String modID) {
+        if (GrimmixLoader.INSTANCE.getInternalStage() != LoadingStage.FINAL)
+            return false;
+        else
+            return VersionHandler.instance().isModLoaded(modID);
+    }
+
     public static IModIntegrationRegistry getModIntegrationRegistry() {
         return ModIntegrationRegistry.INSTANCE;
     }
 
+    public static Environment getEnvironment() {
+        return GrimoireCore.INSTANCE.getEnvironment();
+    }
+
+    public static boolean isDevEnvironment() {
+        return GrimoireCore.INSTANCE.isDevEnvironment();
+    }
+
+    public static boolean isObfuscatedEnvironment() {
+        return !GrimoireCore.INSTANCE.isDevEnvironment();
+    }
+
+    public static File getMinecraftFolder() {
+        return GrimoireCore.INSTANCE.getMCLocation();
+    }
+
+    public static File getModFolder() {
+        return GrimoireCore.INSTANCE.getModFolder();
+    }
+
+    public static File getDataFolder() {
+        return GrimoireCore.INSTANCE.getDataFolder();
+    }
 
 }

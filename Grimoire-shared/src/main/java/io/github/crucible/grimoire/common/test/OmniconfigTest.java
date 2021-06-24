@@ -2,8 +2,8 @@ package io.github.crucible.grimoire.common.test;
 
 import java.util.Arrays;
 
-import io.github.crucible.grimoire.common.core.ConfigBuildingManager;
-import io.github.crucible.grimoire.common.core.MixinConfigBuilder;
+import io.github.crucible.grimoire.common.core.runtimeconfig.ConfigBuildingManager;
+import io.github.crucible.grimoire.common.core.runtimeconfig.MixinConfigBuilder;
 import io.github.crucible.omniconfig.api.OmniconfigAPI;
 import io.github.crucible.omniconfig.api.builders.IOmniconfigBuilder;
 import io.github.crucible.omniconfig.api.core.SidedConfigType;
