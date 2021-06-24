@@ -1,16 +1,22 @@
 package io.github.crucible.grimoire.common.core;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
 
-public class DeserializedMixinJson {
+class DeserializedMixinJson {
 
     @SerializedName("package")
     private String mixinPackage;
@@ -53,5 +59,35 @@ public class DeserializedMixinJson {
             }
         } else
             return null;
+    }
+
+    @Nullable
+    protected static DeserializedMixinJson deserialize(Supplier<InputStream> streamSupplier) {
+        DeserializedMixinJson result = null;
+        InputStream stream;
+        InputStreamReader reader;
+
+        try {
+            stream = streamSupplier.get();
+
+            if (stream == null)
+                return null;
+
+            Gson gson = new GsonBuilder().create();
+            reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+
+            try {
+                result = gson.fromJson(reader, DeserializedMixinJson.class);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            reader.close();
+            stream.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return result;
     }
 }

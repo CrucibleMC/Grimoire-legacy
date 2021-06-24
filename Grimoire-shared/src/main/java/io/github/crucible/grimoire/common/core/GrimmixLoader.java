@@ -64,6 +64,15 @@ public class GrimmixLoader {
         // NO-OP
     }
 
+    public boolean isGrimmix(String fileName) {
+        for (GrimmixContainer grimmix : this.containerList) {
+            if (grimmix.getGrimmixFile().getName().equals(fileName) && !grimmix.wasOnClasspath())
+                return true;
+        }
+
+        return false;
+    }
+
     public LoadingStage getInternalStage() {
         return this.internalStage;
     }
@@ -139,7 +148,7 @@ public class GrimmixLoader {
                             handlers.add(analyzer.getHandlerCandidate());
                         }
                     } else if (this.isJson(ze.getName())) {
-                        DeserializedMixinJson json = GrimoireInternals.deserializeMixinConfiguration(() -> this.tryGetInputStream(jar, ze));
+                        DeserializedMixinJson json = DeserializedMixinJson.deserialize(() -> this.tryGetInputStream(jar, ze));
 
                         if (json.isValidConfiguration()) {
                             if (json.getForceLoadType() != null) {
@@ -166,7 +175,7 @@ public class GrimmixLoader {
                 handlers.add(analyzer.getHandlerCandidate());
             }
         } else if (this.isJson(file.getName())) {
-            DeserializedMixinJson json = GrimoireInternals.deserializeMixinConfiguration(() -> this.tryGetInputStream(file));
+            DeserializedMixinJson json = DeserializedMixinJson.deserialize(() -> this.tryGetInputStream(file));
             String cfgPath = recursivePath + file.getName();
 
             if (json.isValidConfiguration()) {
@@ -223,10 +232,9 @@ public class GrimmixLoader {
                 List<String> configList = new ArrayList<>();
 
                 this.examineForAnnotations(candidateFile, candidateList, handlerList, configList, null);
+                boolean alreadyThere = false;
 
                 if (candidateList.size() > 0 && classLoader != null) {
-                    boolean alreadyThere = false;
-
                     for (URL classURL : classLoader.getURLs()) {
                         if (url.equals(classURL)) {
                             alreadyThere = true;
@@ -250,7 +258,7 @@ public class GrimmixLoader {
                         Constructor<? extends GrimmixController> controllerConstructor = (Constructor<? extends GrimmixController>) controllerClass.getConstructor();
                         controllerConstructor.setAccessible(true);
 
-                        GrimmixContainer container = new GrimmixContainer(candidateFile, controllerConstructor, new ArrayList<>(configList), isGrimoireGrimmix);
+                        GrimmixContainer container = new GrimmixContainer(candidateFile, controllerConstructor, new ArrayList<>(configList), isGrimoireGrimmix, alreadyThere);
                         this.containerList.add(container);
                         this.activeContainerList.add(container);
 

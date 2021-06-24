@@ -51,7 +51,7 @@ import io.github.crucible.omniconfig.lib.FileWatcher;
  */
 public class Configuration {
 
-    public static final String CATEGORY_GENERAL = "general";
+    public static final String CATEGORY_GENERAL = "General";
     public static final String ALLOWED_CHARS = "._-";
     public static final String DEFAULT_ENCODING = "UTF-8";
     public static final String CATEGORY_SPLITTER = "$";

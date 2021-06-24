@@ -20,7 +20,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 import io.github.crucible.grimoire.common.api.lib.Environment;
-import io.github.crucible.grimoire.common.core.DeserializedMixinJson;
 
 public class GrimoireInternals {
 
@@ -37,36 +36,6 @@ public class GrimoireInternals {
 
     public static Environment getEnvironment() {
         return GrimoireCore.INSTANCE.getEnvironment();
-    }
-
-    @Nullable
-    public static DeserializedMixinJson deserializeMixinConfiguration(Supplier<InputStream> streamSupplier) {
-        DeserializedMixinJson result = null;
-        InputStream stream;
-        InputStreamReader reader;
-
-        try {
-            stream = streamSupplier.get();
-
-            if (stream == null)
-                return null;
-
-            Gson gson = new GsonBuilder().create();
-            reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-
-            try {
-                result = gson.fromJson(reader, DeserializedMixinJson.class);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            reader.close();
-            stream.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return result;
     }
 
     public static String getMD5Digest(File file) {

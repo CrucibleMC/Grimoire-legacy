@@ -118,6 +118,10 @@ public class GrimoireAPI {
         return GrimoireCore.INSTANCE.getModFolder();
     }
 
+    public static File getVersionedModFolder() {
+        return GrimoireCore.INSTANCE.getVersionedModFolder();
+    }
+
     public static File getDataFolder() {
         return GrimoireCore.INSTANCE.getDataFolder();
     }

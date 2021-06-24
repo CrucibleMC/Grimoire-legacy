@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class GrimoireAnnotationAnalyzer extends ClassVisitor {
+class GrimoireAnnotationAnalyzer extends ClassVisitor {
     private final GrimmixCandidate grimmixCandidate = new GrimmixCandidate();
     private final EventHandlerCandidate handlerCandidate = new EventHandlerCandidate();
 

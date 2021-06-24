@@ -12,16 +12,16 @@ import io.github.crucible.omniconfig.api.core.VersioningPolicy;
 @Target(ElementType.TYPE)
 public @interface AnnotationConfig {
 
-    String name() default "";
+    public String name() default "";
 
-    String version() default "1.0";
+    public String version() default "1.0.0";
 
-    boolean terminateNonInvokedKeys() default true;
+    public boolean terminateNonInvokedKeys() default true;
 
-    boolean reloadable() default true;
+    public boolean reloadable() default true;
 
-    VersioningPolicy versioningPolicy() default VersioningPolicy.DISMISSIVE;
+    public VersioningPolicy policy() default VersioningPolicy.DISMISSIVE;
 
-    SidedConfigType sidedType() default SidedConfigType.COMMON;
+    public SidedConfigType sided() default SidedConfigType.COMMON;
 
 }

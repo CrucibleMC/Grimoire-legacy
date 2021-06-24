@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.InjectionPoint;
 
 import com.google.gson.annotations.SerializedName;
 
-public class SerializedMixinJson {
+class SerializedMixinJson {
 
     @SerializedName("package")
     private String mixinPackage = null;

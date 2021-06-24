@@ -58,8 +58,8 @@ public class AnnotationConfigReader {
 
         this.parseAnnotations();
 
-        IOmniconfigBuilder wrapper = OmniconfigAPI.configBuilder(cfgName, new Version(annotation.version()), annotation.sidedType());
-        wrapper.versioningPolicy(annotation.versioningPolicy());
+        IOmniconfigBuilder wrapper = OmniconfigAPI.configBuilder(cfgName, new Version(annotation.version()), annotation.sided());
+        wrapper.versioningPolicy(annotation.policy());
         wrapper.terminateNonInvokedKeys(annotation.terminateNonInvokedKeys());
 
         wrapper.loadFile();
@@ -79,13 +79,15 @@ public class AnnotationConfigReader {
             Field field = entry.getKey();
             Annotation annotation = entry.getValue();
             Class<? extends Annotation> type = annotation.annotationType();
+            String rawName = field.getName();
+            String fieldName = rawName.substring(0, 1).toUpperCase() + rawName.substring(1, rawName.length());
 
             if (type == ConfigBoolean.class) {
                 this.checkType(field, boolean.class);
                 this.checkFinal(field);
 
                 ConfigBoolean configAnnotation = (ConfigBoolean) annotation;
-                String name = configAnnotation.name().isEmpty() ? field.getName() : configAnnotation.name();
+                String name = configAnnotation.name().isEmpty() ? fieldName : configAnnotation.name();
 
                 boolean defaultValue = this.tryGetBoolean(field);
 
@@ -99,7 +101,7 @@ public class AnnotationConfigReader {
                 this.checkFinal(field);
 
                 ConfigFloat configAnnotation = (ConfigFloat) annotation;
-                String name = configAnnotation.name().isEmpty() ? field.getName() : configAnnotation.name();
+                String name = configAnnotation.name().isEmpty() ? fieldName : configAnnotation.name();
 
                 float defaultValue = this.tryGetFloat(field);
 
@@ -114,7 +116,7 @@ public class AnnotationConfigReader {
                 this.checkFinal(field);
 
                 ConfigDouble configAnnotation = (ConfigDouble) annotation;
-                String name = configAnnotation.name().isEmpty() ? field.getName() : configAnnotation.name();
+                String name = configAnnotation.name().isEmpty() ? fieldName : configAnnotation.name();
 
                 double defaultValue = this.tryGetDouble(field);
 
@@ -129,7 +131,7 @@ public class AnnotationConfigReader {
                 this.checkFinal(field);
 
                 ConfigInt configAnnotation = (ConfigInt) annotation;
-                String name = configAnnotation.name().isEmpty() ? field.getName() : configAnnotation.name();
+                String name = configAnnotation.name().isEmpty() ? fieldName : configAnnotation.name();
 
                 int defaultValue = this.tryGetInt(field);
 
@@ -144,7 +146,7 @@ public class AnnotationConfigReader {
                 this.checkFinal(field);
 
                 ConfigString configAnnotation = (ConfigString) annotation;
-                String name = configAnnotation.name().isEmpty() ? field.getName() : configAnnotation.name();
+                String name = configAnnotation.name().isEmpty() ? fieldName : configAnnotation.name();
 
                 String defaultValue = this.tryGetString(field);
 
@@ -157,7 +159,7 @@ public class AnnotationConfigReader {
                 this.checkType(field, ClassSet.class);
 
                 ConfigClassSet configAnnotation = (ConfigClassSet) annotation;
-                String name = configAnnotation.name().isEmpty() ? field.getName() : configAnnotation.name();
+                String name = configAnnotation.name().isEmpty() ? fieldName : configAnnotation.name();
 
                 ClassSet<?> classSet = (ClassSet<?>) this.tryGetValue(field);
                 Objects.requireNonNull(classSet, field + " value must not be null");
@@ -175,7 +177,7 @@ public class AnnotationConfigReader {
                 this.checkFinal(field);
 
                 ConfigEnum configAnnotation = (ConfigEnum) annotation;
-                String name = configAnnotation.name().isEmpty() ? field.getName() : configAnnotation.name();
+                String name = configAnnotation.name().isEmpty() ? fieldName : configAnnotation.name();
 
                 Enum defaultValue = (Enum) this.tryGetValue(field);
                 Objects.requireNonNull(defaultValue, field + " value must not be null");
@@ -189,7 +191,7 @@ public class AnnotationConfigReader {
                 this.checkType(field, Collection.class);
 
                 ConfigStringCollection configAnnotation = (ConfigStringCollection) annotation;
-                String name = configAnnotation.name().isEmpty() ? field.getName() : configAnnotation.name();
+                String name = configAnnotation.name().isEmpty() ? fieldName : configAnnotation.name();
 
                 Collection<String> collection = (Collection<String>) this.tryGetValue(field);
                 Objects.requireNonNull(collection, field + " value must not be null");

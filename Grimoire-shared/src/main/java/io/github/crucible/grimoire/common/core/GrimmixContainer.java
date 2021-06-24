@@ -38,17 +38,19 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
     protected final Constructor<? extends GrimmixController> constructor;
     protected final List<String> configCandidates;
     protected final boolean isGrimoireGrimmix;
+    protected final boolean wasOnClasspath;
 
     protected LoadingStage loadingStage = LoadingStage.PRE_CONSTRUCTION;
     protected GrimmixController controller = null;
 
     protected boolean valid = true;
 
-    public GrimmixContainer(File file, Constructor<? extends GrimmixController> constructor, List<String> configCandidates, boolean isGrimoire) {
+    public GrimmixContainer(File file, Constructor<? extends GrimmixController> constructor, List<String> configCandidates, boolean isGrimoire, boolean wasOnClasspath) {
         this.grimmixFile = file;
         this.constructor = constructor;
         this.configCandidates = configCandidates;
         this.isGrimoireGrimmix = isGrimoire;
+        this.wasOnClasspath = wasOnClasspath;
 
         String name = "", modid = "", version = "";
         long priority = 0L;
@@ -91,6 +93,10 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
     @Override
     public List<IMixinConfiguration> getOwnedConfigurations() {
         return Collections.unmodifiableList(this.ownedConfigurations);
+    }
+
+    public boolean wasOnClasspath() {
+        return this.wasOnClasspath;
     }
 
     @Override

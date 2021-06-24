@@ -1,5 +1,6 @@
 package io.github.crucible.omniconfig.api.core;
 
+// TODO Document two other policies, now that they actually work
 public enum VersioningPolicy {
     /**
      * This policy enforces full reset of config file if version does not match.

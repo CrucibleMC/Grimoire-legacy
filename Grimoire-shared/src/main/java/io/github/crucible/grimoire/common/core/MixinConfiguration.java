@@ -133,6 +133,7 @@ public class MixinConfiguration implements IMixinConfiguration {
                 return;
             }
 
+            GrimoireCore.logger.info("Loading configuration {}", this.classpath);
             this.isLoaded = true;
             permitConfig = true;
 
