@@ -56,8 +56,6 @@ dependencies {
 	implementation('org.jetbrains:annotations:20.1.0')
     implementation name: "mixin-0.7.11-SNAPSHOT-REPACK"
     implementation name: "EventHelper-1.7.10-1.13.1-dummydev"
-    implementation name: "bukkit-1.7.10"
-    implementation name: "Essentials"
 }
 
 processResources {
