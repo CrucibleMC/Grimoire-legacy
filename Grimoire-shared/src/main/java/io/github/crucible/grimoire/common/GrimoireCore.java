@@ -2,6 +2,7 @@ package io.github.crucible.grimoire.common;
 
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.lib.Environment;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.config.GrimoireConfig;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.test.AnnotationConfigTest;
@@ -18,6 +19,7 @@ import com.google.common.base.Throwables;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.List;
 
 public class GrimoireCore {
     public static final GrimoireCore INSTANCE = new GrimoireCore();
@@ -80,11 +82,18 @@ public class GrimoireCore {
         this.grimmixLoader.construct();
         this.grimmixLoader.validate();
         this.grimmixLoader.buildRuntimeConfigs();
-        this.grimmixLoader.coreLoad();
+
+        this.grimmixLoader.prepareCoreConfigs();
+        this.grimmixLoader.loadCoreConfigs();
     }
 
-    public void loadModMixins() {
-        this.grimmixLoader.modLoad();
+    public List<IMixinConfiguration> prepareModConfigs() {
+        this.grimmixLoader.prepareModConfigs();
+        return this.grimmixLoader.getPreparedConfigs();
+    }
+
+    public void loadModConfigs() {
+        this.grimmixLoader.loadModConfigs();
     }
 
     public void finish() {

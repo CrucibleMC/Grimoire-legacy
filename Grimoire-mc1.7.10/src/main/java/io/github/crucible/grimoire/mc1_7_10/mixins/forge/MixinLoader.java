@@ -4,6 +4,8 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
 import io.github.crucible.grimoire.common.GrimoireCore;
+import io.github.crucible.grimoire.common.api.GrimoireAPI;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -30,44 +32,54 @@ public class MixinLoader {
     @Shadow
     private ModClassLoader modClassLoader;
 
-    // TODO Don't do any of this if we have 0 mod-targeting configurations
-
     /**
      * @reason Load all mods now and load mod support mixin configs. This can't be done later
      * since constructing mods loads classes from them.
      */
     @Inject(method = "loadMods", at = @At(value = "INVOKE", target = "Lcpw/mods/fml/common/LoadController;transition(Lcpw/mods/fml/common/LoaderState;Z)V", ordinal = 1), remap = false)
     private void beforeConstructingMods(CallbackInfo callbackInfo) {
-        // Add all mods to class loader
 
-        for (ModContainer mod : this.mods) {
+        if (GrimoireCore.INSTANCE.prepareModConfigs().size() <= 0) {
+            GrimoireCore.logger.info("Since 0 mod-targeting configurations is present, skipping forced Mixin environment reload.");
+            GrimoireCore.INSTANCE.loadModConfigs();
+            GrimoireCore.INSTANCE.finish();
+            return;
+        } else {
+            // Add all mods to class loader
+            GrimoireCore.logger.info("Adding all mods to classpath...");
+
+            for (ModContainer mod : this.mods) {
+                try {
+                    this.modClassLoader.addFile(mod.getSource());
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            GrimoireCore.logger.info("Proccessing mod-targeting configurations...");
+            GrimoireCore.INSTANCE.loadModConfigs(); // Add all mod configurations
+
+            GrimoireCore.logger.info("Attempting to forcefully reload configurations for current Mixin environment...");
+            // Force configurations to load once more
+            Proxy mixinProxy = (Proxy) Launch.classLoader.getTransformers().stream().filter(transformer -> transformer instanceof Proxy).findFirst().get();
             try {
-                this.modClassLoader.addFile(mod.getSource());
-            } catch (MalformedURLException e) {
+                Field transformerField = Proxy.class.getDeclaredField("transformer");
+                transformerField.setAccessible(true);
+                MixinTransformer transformer = (MixinTransformer) transformerField.get(mixinProxy);
+
+                Method selectConfigsMethod = MixinTransformer.class.getDeclaredMethod("selectConfigs", MixinEnvironment.class);
+                selectConfigsMethod.setAccessible(true);
+                selectConfigsMethod.invoke(transformer, MixinEnvironment.getCurrentEnvironment());
+
+                Method prepareConfigsMethod = MixinTransformer.class.getDeclaredMethod("prepareConfigs", MixinEnvironment.class);
+                prepareConfigsMethod.setAccessible(true);
+                prepareConfigsMethod.invoke(transformer, MixinEnvironment.getCurrentEnvironment());
+            } catch (ReflectiveOperationException e) {
                 throw new RuntimeException(e);
             }
+
+            GrimoireCore.logger.info("Configurations reloaded successfully.");
+            GrimoireCore.INSTANCE.finish(); // Dispatch final lifecycle events
         }
-
-        GrimoireCore.INSTANCE.loadModMixins(); // Add all mod configurations
-
-        // Force configurations to load once more
-        Proxy mixinProxy = (Proxy) Launch.classLoader.getTransformers().stream().filter(transformer -> transformer instanceof Proxy).findFirst().get();
-        try {
-            Field transformerField = Proxy.class.getDeclaredField("transformer");
-            transformerField.setAccessible(true);
-            MixinTransformer transformer = (MixinTransformer) transformerField.get(mixinProxy);
-
-            Method selectConfigsMethod = MixinTransformer.class.getDeclaredMethod("selectConfigs", MixinEnvironment.class);
-            selectConfigsMethod.setAccessible(true);
-            selectConfigsMethod.invoke(transformer, MixinEnvironment.getCurrentEnvironment());
-
-            Method prepareConfigsMethod = MixinTransformer.class.getDeclaredMethod("prepareConfigs", MixinEnvironment.class);
-            prepareConfigsMethod.setAccessible(true);
-            prepareConfigsMethod.invoke(transformer, MixinEnvironment.getCurrentEnvironment());
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
-
-        GrimoireCore.INSTANCE.finish(); // Dispatch final lifecycle events
     }
 }

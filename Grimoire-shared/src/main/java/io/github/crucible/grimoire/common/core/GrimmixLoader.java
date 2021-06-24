@@ -15,6 +15,7 @@ import io.github.crucible.grimoire.common.api.events.configurations.GrimoireConf
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.EventHandlerCandidate;
 import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.GrimmixCandidate;
@@ -55,6 +56,7 @@ public class GrimmixLoader {
     protected final List<GrimmixContainer> containerList = new ArrayList<>();
     protected final List<GrimmixContainer> activeContainerList = new ArrayList<>();
     protected final List<Class<?>> staticEventHandlers = new ArrayList<>();
+    protected final List<IMixinConfiguration> preparedConfigs = new ArrayList<>();
 
     protected LoadingStage internalStage = LoadingStage.PRE_CONSTRUCTION;
     protected GrimmixContainer activeContainer = null;
@@ -373,16 +375,42 @@ public class GrimmixLoader {
         this.transition(LoadingStage.MIXIN_CONFIG_BUILDING);
     }
 
-    public void coreLoad() {
+    public void prepareCoreConfigs() {
         this.transition(LoadingStage.CORELOAD);
     }
 
-    public void modLoad() {
+    public void loadCoreConfigs() {
+        this.loadConfigs(ConfigurationType.CORE);
+    }
+
+    public void prepareModConfigs() {
         this.transition(LoadingStage.MODLOAD);
+    }
+
+    public void loadModConfigs() {
+        this.loadConfigs(ConfigurationType.MOD);
+    }
+
+    private void loadConfigs(ConfigurationType type) {
+        GrimoireConfigsEvent.Pre event = new GrimoireConfigsEvent.Pre(this.preparedConfigs, type.getAssociatedLoadingStage());
+        GrimoireAPI.EVENT_BUS.post(event);
+
+        if (!event.isCanceled()) {
+            for (IMixinConfiguration config : event.getPreparedConfigurations()) {
+                ((MixinConfiguration)config).load();
+            }
+        }
+
+        GrimoireAPI.EVENT_BUS.post(new GrimoireConfigsEvent.Post(event.getPreparedConfigurations(), type.getAssociatedLoadingStage()));
+        this.preparedConfigs.clear();
     }
 
     public void finish() {
         this.transition(LoadingStage.FINAL);
+    }
+
+    public List<IMixinConfiguration> getPreparedConfigs() {
+        return Collections.unmodifiableList(this.preparedConfigs);
     }
 
     protected void transition(LoadingStage to) {
@@ -397,9 +425,10 @@ public class GrimmixLoader {
         if (this.internalStage.ordinal() + 1 != to.ordinal())
             throw new IllegalStateException("Cannot transition from " + this.internalStage + " to " + to);
 
-        this.internalStage = to;
+        GrimoireCore.logger.info("Transitioning from loading stage {} to stage {}...", this.internalStage, to);
 
-        List<IMixinConfiguration> preparedConfigurations = new ArrayList<>();
+        this.internalStage = to;
+        this.preparedConfigs.clear();
 
         this.activeContainerList.removeIf((container) -> {
             this.activeContainer = container;
@@ -412,7 +441,7 @@ public class GrimmixLoader {
 
             if (valid) {
                 if (to.isConfigurationStage()) {
-                    preparedConfigurations.addAll(container.prepareConfigurations(to.getAssociatedConfigurationType()));
+                    this.preparedConfigs.addAll(container.prepareConfigurations(to.getAssociatedConfigurationType()));
                 }
             }
 
@@ -428,21 +457,10 @@ public class GrimmixLoader {
         if (to == LoadingStage.MIXIN_CONFIG_BUILDING) {
             ConfigBuildingManager.generateRuntimeConfigurations();
         } else if (to.isConfigurationStage()) {
-            preparedConfigurations.addAll(MixinConfiguration.prepareUnclaimedConfigurations(to.getAssociatedConfigurationType()));
-
-            if (preparedConfigurations.size() > 0) {
-                GrimoireConfigsEvent.Pre event = new GrimoireConfigsEvent.Pre(preparedConfigurations, to);
-                GrimoireAPI.EVENT_BUS.post(event);
-
-                if (!event.isCanceled()) {
-                    for (IMixinConfiguration config : event.getPreparedConfigurations()) {
-                        ((MixinConfiguration)config).load();
-                    }
-                }
-
-                GrimoireAPI.EVENT_BUS.post(new GrimoireConfigsEvent.Post(event.getPreparedConfigurations(), to));
-            }
+            this.preparedConfigs.addAll(MixinConfiguration.prepareUnclaimedConfigurations(to.getAssociatedConfigurationType()));
         }
+
+        GrimoireCore.logger.info("Sucessfully finished transition into {} loading stage.", this.internalStage);
     }
 
 }

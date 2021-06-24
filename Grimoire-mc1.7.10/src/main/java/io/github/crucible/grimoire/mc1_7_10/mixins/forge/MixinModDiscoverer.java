@@ -2,6 +2,7 @@ package io.github.crucible.grimoire.mc1_7_10.mixins.forge;
 
 import cpw.mods.fml.common.discovery.ModCandidate;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.core.GrimmixContainer;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
@@ -32,11 +33,18 @@ public class MixinModDiscoverer {
             value = "INVOKE"
             ))
     private boolean redirectCoremodCheck(List<?> loadedCoremods, Object fileName) {
-        if (GrimmixLoader.INSTANCE.isGrimmix(String.valueOf(fileName)))
-            return true;
-        else if (LegacyPatchController.instance().isLegacyPatch(String.valueOf(fileName)))
-            return true;
+        boolean contains = true;
 
+        if (GrimmixLoader.INSTANCE.isGrimmix(String.valueOf(fileName))) {
+            contains = true;
+        } else if (LegacyPatchController.instance().isLegacyPatch(String.valueOf(fileName))) {
+            contains = true;
+        }
+
+        if (contains) {
+            GrimoireCore.logger.info("File {} was discovered by Grimoire and added to classpath earlier, preventing re-addition by ModDiscovered.", fileName);
+            return contains;
+        }
 
         return loadedCoremods.contains(fileName);
     }

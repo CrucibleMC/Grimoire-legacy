@@ -72,17 +72,6 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
         this.modid = modid.isEmpty() ? name.toLowerCase() : modid;
         this.version = version.isEmpty() ? "1.0.0" : version;
         this.priority = priority;
-
-        List<String> list = this.listClassesInPackage("io.github.crucible.grimoire.common.api");
-        String pattern = "mixin.*Mixin*";
-        pattern = pattern.replace(".", "\\.").replace("*", ".*");
-
-        System.out.println("Strings that match [" + pattern + "]:");
-        for (String str : list) {
-            if (str.matches(pattern)) {
-                System.out.println(str);
-            }
-        }
     }
 
     protected void constructController() {
@@ -125,7 +114,7 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
         List<IMixinConfiguration> coreConfigs = new ArrayList<>();
 
         for (IMixinConfiguration config : this.ownedConfigurations) {
-            if (config.getConfigType() == ofType) {
+            if (config.getConfigurationType() == ofType) {
                 coreConfigs.add(config);
             }
         }
@@ -157,7 +146,6 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
 
         try {
             if (this.grimmixFile.isFile() && this.grimmixFile.getName().endsWith(".jar")) {
-                // TODO Test this part
                 String packagePath = packageName.replace(".", "/");
 
                 JarFile jar = new JarFile(this.grimmixFile);
@@ -174,11 +162,6 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
             } else if (this.grimmixFile.isDirectory()) {
                 File packageDir = new File(this.grimmixFile, packageName.replace(".", File.separator));
                 this.recursiveClassScan(packageDir, classList, null);
-            }
-
-            System.out.println("Listed classes: ");
-            for (String lClass : classList) {
-                System.out.println(lClass);
             }
         } catch (Exception ex) {
             Throwables.propagate(ex);

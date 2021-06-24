@@ -64,7 +64,7 @@ public class MixinConfiguration implements IMixinConfiguration {
         List<IMixinConfiguration> configList = new ArrayList<>();
 
         for (IMixinConfiguration config : unclaimedConfigurations) {
-            if (config.getConfigType() == ofType) {
+            if (config.getConfigurationType() == ofType) {
                 configList.add(config);
             }
         }
@@ -83,7 +83,7 @@ public class MixinConfiguration implements IMixinConfiguration {
     }
 
     @Override
-    public ConfigurationType getConfigType() {
+    public ConfigurationType getConfigurationType() {
         return this.configType;
     }
 

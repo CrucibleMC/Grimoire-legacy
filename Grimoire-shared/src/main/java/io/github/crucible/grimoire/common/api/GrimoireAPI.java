@@ -76,6 +76,26 @@ public class GrimoireAPI {
         return MixinConfiguration.getUnclaimedConfigurations();
     }
 
+    public static List<IMixinConfiguration> getAllConfigurations(ConfigurationType ofType) {
+        ImmutableList.Builder<IMixinConfiguration> builder = ImmutableList.builder();
+
+        getUnclaimedConfigurations().forEach(configuration -> {
+            if (configuration.getConfigurationType() == ofType) {
+                builder.add(configuration);
+            }
+        });
+
+        for (IGrimmix grimmix : getLoadedGrimmixes()) {
+            grimmix.getOwnedConfigurations().forEach(configuration -> {
+                if (configuration.getConfigurationType() == ofType) {
+                    builder.add(configuration);
+                }
+            });
+        }
+
+        return builder.build();
+    }
+
     public static List<IMixinConfiguration> getAllConfigurations() {
         ImmutableList.Builder<IMixinConfiguration> builder = ImmutableList.builder();
 

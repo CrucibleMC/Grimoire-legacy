@@ -10,7 +10,7 @@ public interface IMixinConfiguration {
 
     public String getClasspath();
 
-    public ConfigurationType getConfigType();
+    public ConfigurationType getConfigurationType();
 
     public boolean isLoaded();
 
