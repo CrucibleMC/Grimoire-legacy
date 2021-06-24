@@ -42,19 +42,28 @@ public class GrimoireInternals {
 
     public static boolean isMixinConfiguration(Supplier<InputStream> streamSupplier) {
         DeserializedMixinJson result = null;
+        InputStream stream;
+        InputStreamReader reader;
 
         try {
-            InputStream stream = streamSupplier.get();
+            stream = streamSupplier.get();
 
             if (stream == null)
                 return false;
 
             Gson gson = new GsonBuilder().create();
-            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-            result = gson.fromJson(reader, DeserializedMixinJson.class);
+            reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+
+            try {
+                result = gson.fromJson(reader, DeserializedMixinJson.class);
+            } catch (Exception ex) {
+                // NO-OP
+            }
+
             reader.close();
             stream.close();
         } catch (Exception ex) {
+
             ex.printStackTrace();
         }
 
@@ -75,6 +84,11 @@ public class GrimoireInternals {
         }
 
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> void cast(Object object, Class<T> castClass, Consumer<T> onCast) {
+        onCast.accept((T)object);
     }
 
 }

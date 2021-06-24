@@ -1,5 +1,6 @@
 package io.github.crucible.grimoire.common.core;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -7,7 +8,7 @@ import com.google.common.collect.Lists;
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
-import io.github.crucible.grimoire.common.api.configurations.events.GrimoireConfigurationsEvent;
+import io.github.crucible.grimoire.common.api.events.configurations.GrimoireConfigsEvent;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
@@ -173,8 +174,13 @@ public class GrimmixLoader {
                     jar.close();
                 }
 
-                // if (manifest != null)
-                //String controllerPath = manifest.getMainAttributes().getValue("GrimmixController");
+                boolean isGrimoireGrimmix = false;
+                if (manifest != null) {
+                    String controllerPath = manifest.getMainAttributes().getValue("FMLCorePlugin");
+                    if (Objects.equal(controllerPath, "io.github.crucible.grimoire.mc1_7_10.GrimoireCoremod")) {
+                        isGrimoireGrimmix = true;
+                    }
+                }
 
                 List<GrimmixAnnotationVisitor.GrimmixCandidate> candidateList = new ArrayList<>();
                 List<String> configList = new ArrayList<>();
@@ -207,12 +213,12 @@ public class GrimmixLoader {
                         Constructor<? extends GrimmixController> controllerConstructor = (Constructor<? extends GrimmixController>) controllerClass.getConstructor();
                         controllerConstructor.setAccessible(true);
 
-                        GrimmixContainer container = new GrimmixContainer(candidateFile, controllerConstructor, new ArrayList<>(configList));
+                        GrimmixContainer container = new GrimmixContainer(candidateFile, controllerConstructor, new ArrayList<>(configList), isGrimoireGrimmix);
                         this.containerList.add(container);
                         this.activeContainerList.add(container);
 
                         GrimoireCore.logger.info("Sucessfully collected controller constructor: " + controllerConstructor);
-                        GrimoireCore.logger.info("Configuration candidates for Grimmix {}: {}", candidate.getClassName(), configList);
+                        GrimoireCore.logger.info("Configuration candidates for {} Grimmix {}: {}", isGrimoireGrimmix ? "integrated" : "", candidate.getClassName(), configList);
                     } catch (Exception ex) {
                         throw new RuntimeException("Failed to collect controller constructor: " + candidate.getClassName(), ex);
                     }
@@ -347,7 +353,7 @@ public class GrimmixLoader {
             preparedConfigurations.addAll(MixinConfiguration.prepareUnclaimedConfigurations(to.getAssociatedConfigurationType()));
 
             if (preparedConfigurations.size() > 0) {
-                GrimoireConfigurationsEvent.Pre event = new GrimoireConfigurationsEvent.Pre(preparedConfigurations, to);
+                GrimoireConfigsEvent.Pre event = new GrimoireConfigsEvent.Pre(preparedConfigurations, to);
                 GrimoireAPI.EVENT_BUS.post(event);
 
                 if (!event.isCanceled()) {
@@ -356,7 +362,7 @@ public class GrimmixLoader {
                     }
                 }
 
-                GrimoireAPI.EVENT_BUS.post(new GrimoireConfigurationsEvent.Post(event.getPreparedConfigurations(), to));
+                GrimoireAPI.EVENT_BUS.post(new GrimoireConfigsEvent.Post(event.getPreparedConfigurations(), to));
             }
         }
     }

@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
-import io.github.crucible.grimoire.common.api.configurations.events.MixinConfigurationLoadEvent;
+import io.github.crucible.grimoire.common.api.events.configurations.MixinConfigLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import org.spongepowered.asm.mixin.Mixins;
 
@@ -121,7 +121,7 @@ public class MixinConfiguration implements IMixinConfiguration {
 
     public void load() {
         if (this.canLoad() && this.isValid) {
-            MixinConfigurationLoadEvent event = new MixinConfigurationLoadEvent(this.owner.orElse(null), this);
+            MixinConfigLoadEvent event = new MixinConfigLoadEvent(this.owner.orElse(null), this);
             GrimoireAPI.EVENT_BUS.post(event);
 
             if (event.isCanceled()) {

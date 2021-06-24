@@ -9,20 +9,20 @@ import java.util.Objects;
 
 import com.google.common.base.Throwables;
 
-// TODO Make this a singleton instead of static class
+// TODO Make this a singleton instead of static class, API exposure
 public class ModIntegrationRegistry {
-    private static final List<Class<? extends IModIntegrationContainer<?>>> containerClasses = new ArrayList<>();
-    private static final List<IModIntegrationContainer<?>> containers = new ArrayList<>();
+    private static final List<Class<? extends ModIntegrationContainer<?>>> containerClasses = new ArrayList<>();
+    private static final List<ModIntegrationContainer<?>> containers = new ArrayList<>();
     private static boolean initialized = false;
 
     private ModIntegrationRegistry() {
         // NO-OP
     }
 
-    public static void registerIntegration(Class<? extends IModIntegrationContainer<?>> integrationClass) {
+    public static void registerIntegration(Class<? extends ModIntegrationContainer<?>> integrationClass) {
         if (initialized) {
             try {
-                IModIntegrationContainer<?> container = integrationClass.getConstructor().newInstance();
+                ModIntegrationContainer<?> container = integrationClass.getConstructor().newInstance();
                 containers.add(container);
             } catch (Exception ex) {
                 GrimoireCore.logger.fatal("Could not instantiate mod integration: " + integrationClass);
@@ -37,9 +37,9 @@ public class ModIntegrationRegistry {
         if (!initialized) {
             initialized = true;
 
-            for (Class<? extends IModIntegrationContainer<?>> integrationClass : containerClasses) {
+            for (Class<? extends ModIntegrationContainer<?>> integrationClass : containerClasses) {
                 try {
-                    IModIntegrationContainer<?> container = integrationClass.getConstructor().newInstance();
+                    ModIntegrationContainer<?> container = integrationClass.getConstructor().newInstance();
                     containers.add(container);
                 } catch (Throwable ex) {
                     GrimoireCore.logger.fatal("Could not instantiate mod integration: " + integrationClass);
@@ -53,7 +53,7 @@ public class ModIntegrationRegistry {
 
     @SuppressWarnings("unchecked")
     public static <T extends IModIntegration> T getIntegration(Class<T> integrationClass) {
-        for (IModIntegrationContainer<?> integration : containers) {
+        for (ModIntegrationContainer<?> integration : containers) {
             if (integration.getIntegrationClass().equals(integrationClass))
                 return (T) integration.getIntegration();
         }

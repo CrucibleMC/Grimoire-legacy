@@ -9,20 +9,22 @@ import java.util.List;
 
 public interface IGrimmix {
 
-    String getModID();
+    public String getModID();
 
-    String getName();
+    public String getName();
 
-    long getPriority();
+    public long getPriority();
 
-    String getVersion();
+    public String getVersion();
 
-    LoadingStage getLoadingStage();
+    public LoadingStage getLoadingStage();
 
-    boolean isValid();
+    public boolean isValid();
 
-    List<IMixinConfiguration> getOwnedConfigurations();
+    public boolean isGrimoireGrimmix();
 
-    File getGrimmixFile();
+    public List<IMixinConfiguration> getOwnedConfigurations();
+
+    public File getGrimmixFile();
 
 }

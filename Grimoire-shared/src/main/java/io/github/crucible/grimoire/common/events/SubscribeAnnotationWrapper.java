@@ -7,8 +7,9 @@ import com.google.common.base.Preconditions;
 
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
-import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixCoreLoadEvent;
-import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixModLoadEvent;
+import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixCoreLoadEvent;
+import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixModLoadEvent;
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IConfigRegistryEvent;
 import io.github.crucible.grimoire.common.core.GrimoireCore;
 
 public abstract class SubscribeAnnotationWrapper {

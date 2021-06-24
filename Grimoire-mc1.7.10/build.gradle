@@ -56,6 +56,8 @@ dependencies {
 	implementation('org.jetbrains:annotations:20.1.0')
     implementation name: "mixin-0.7.11-SNAPSHOT-REPACK"
     implementation name: "EventHelper-1.7.10-1.13.1-dummydev"
+    implementation name: "bukkit-1.7.10"
+    implementation name: "Essentials"
 }
 
 processResources {
@@ -78,7 +80,7 @@ ext {
     new File(project.buildDir, 'mixins').mkdirs()
     mixinSrg = new File(project.buildDir, 'mixins/mixins.io.github.crucible.grimoire.srg')
     mixinSrg.createNewFile()
-    mixinRefMap = new File(project.buildDir, "mixins/io.github.crucible.grimoire.refmap.json")
+    mixinRefMap = new File(project.buildDir, "mixins/grimoire.refmap.json")
     mixinRefMap.createNewFile()
 }
 

@@ -30,6 +30,8 @@ public class MixinLoader {
     @Shadow
     private ModClassLoader modClassLoader;
 
+    // TODO Don't do any of this if we have 0 mod-targeting configurations
+
     /**
      * @reason Load all mods now and load mod support mixin configs. This can't be done later
      * since constructing mods loads classes from them.

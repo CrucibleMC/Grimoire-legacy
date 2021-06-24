@@ -1,9 +1,9 @@
 package io.github.crucible.grimoire.mc1_7_10.test;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import io.github.crucible.grimoire.common.api.events.core.SubscribeCoreEvent;
-import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixConfigBuildingEvent;
-import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixValidationEvent;
+import io.github.crucible.grimoire.common.api.eventbus.SubscribeCoreEvent;
+import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixConfigBuildingEvent;
+import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixValidationEvent;
 
 public class TestEventHandler {
 

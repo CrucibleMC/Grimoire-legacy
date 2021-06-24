@@ -16,15 +16,15 @@ import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.github.crucible.grimoire.common.api.configurations.IMixinConfigurationBuilder;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
-import io.github.crucible.grimoire.common.api.configurations.building.IMixinConfigBuilder;
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.omniconfig.api.OmniconfigAPI;
 import io.github.crucible.omniconfig.core.Omniconfig;
 
-public class MixinConfigBuilder implements IMixinConfigBuilder {
+public class MixinConfigBuilder implements IMixinConfigurationBuilder {
     private final SerializedMixinJson json = new SerializedMixinJson();
     private ConfigurationType configType = ConfigurationType.CORE;
     private final String classpath;

@@ -4,7 +4,7 @@ import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
 import io.github.crucible.grimoire.mc1_12.handlers.IncelEventHandler;
 import io.github.crucible.grimoire.mc1_12.handlers.IncelPacketDispatcher;
-import io.github.crucible.grimoire.mc1_12.integrations.eventhelper.EHIntegrationContainer;
+import io.github.crucible.grimoire.mc1_12.integration.eventhelper.EHIntegrationContainer;
 import io.github.crucible.grimoire.mc1_12.network.PacketSyncOmniconfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;

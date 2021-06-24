@@ -4,15 +4,20 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
+import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixConfigBuildingEvent;
+import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixCoreLoadEvent;
+import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixFinishLoadEvent;
+import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixModLoadEvent;
+import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixValidationEvent;
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
-import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixConfigBuildingEvent;
-import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixCoreLoadEvent;
-import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixFinishLoadEvent;
-import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixModLoadEvent;
-import io.github.crucible.grimoire.common.api.grimmix.events.GrimmixValidationEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.grimoire.common.events.grimmix.ConfigBuildingEvent;
+import io.github.crucible.grimoire.common.events.grimmix.CoreLoadEvent;
+import io.github.crucible.grimoire.common.events.grimmix.FinishLoadEvent;
+import io.github.crucible.grimoire.common.events.grimmix.ModLoadEvent;
+import io.github.crucible.grimoire.common.events.grimmix.ValidationEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,16 +36,18 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
     protected final File grimmixFile;
     protected final Constructor<? extends GrimmixController> constructor;
     protected final List<String> configCandidates;
+    protected final boolean isGrimoireGrimmix;
 
     protected LoadingStage loadingStage = LoadingStage.PRE_CONSTRUCTION;
     protected GrimmixController controller = null;
 
     protected boolean valid = true;
 
-    public GrimmixContainer(File file, Constructor<? extends GrimmixController> constructor, List<String> configCandidates) {
+    public GrimmixContainer(File file, Constructor<? extends GrimmixController> constructor, List<String> configCandidates, boolean isGrimoire) {
         this.grimmixFile = file;
         this.constructor = constructor;
         this.configCandidates = configCandidates;
+        this.isGrimoireGrimmix = isGrimoire;
 
         String name = "", modid = "", version = "";
         long priority = 0L;
@@ -83,6 +90,11 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
     @Override
     public List<IMixinConfiguration> getOwnedConfigurations() {
         return ImmutableList.copyOf(this.ownedConfigurations);
+    }
+
+    @Override
+    public boolean isGrimoireGrimmix() {
+        return this.isGrimoireGrimmix;
     }
 
     @Override
@@ -175,38 +187,48 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
                 this.constructController();
                 return true;
             } else if (to == LoadingStage.VALIDATION) {
-                GrimmixValidationEvent event = new GrimmixValidationEvent();
-                if (!GrimoireAPI.EVENT_BUS.post(event)) {
+                ValidationEvent event = new ValidationEvent(this);
+
+                if (!GrimoireAPI.EVENT_BUS.post(new GrimmixValidationEvent(event))) {
                     this.controller.validateController(event);
-                }
+                } else
+                    return false;
 
                 return !event.isCanceled();
             } else if (to == LoadingStage.MIXIN_CONFIG_BUILDING) {
-                GrimmixConfigBuildingEvent event = new GrimmixConfigBuildingEvent();
-                if (!GrimoireAPI.EVENT_BUS.post(event)) {
+                ConfigBuildingEvent event = new ConfigBuildingEvent(this);
+
+                if (!GrimoireAPI.EVENT_BUS.post(new GrimmixConfigBuildingEvent(event))) {
                     this.controller.buildMixinConfigs(event);
-                }
+                } else
+                    return false;
 
                 return !event.isCanceled();
             } else if (to == LoadingStage.CORELOAD) {
-                GrimmixCoreLoadEvent event = new GrimmixCoreLoadEvent(this.configCandidates);
-                if (!GrimoireAPI.EVENT_BUS.post(event)) {
+                CoreLoadEvent event = new CoreLoadEvent(this, this.configCandidates);
+
+                if (!GrimoireAPI.EVENT_BUS.post(new GrimmixCoreLoadEvent(event))) {
                     this.controller.coreLoad(event);
-                }
+                } else
+                    return false;
 
                 return !event.isCanceled();
             } else if (to == LoadingStage.MODLOAD) {
-                GrimmixModLoadEvent event = new GrimmixModLoadEvent(this.configCandidates);
-                if (!GrimoireAPI.EVENT_BUS.post(event)) {
+                ModLoadEvent event = new ModLoadEvent(this, this.configCandidates);
+
+                if (!GrimoireAPI.EVENT_BUS.post(new GrimmixModLoadEvent(event))) {
                     this.controller.modLoad(event);
-                }
+                } else
+                    return false;
 
                 return !event.isCanceled();
             } else if (to == LoadingStage.FINAL) {
-                GrimmixFinishLoadEvent event = new GrimmixFinishLoadEvent();
-                if (!GrimoireAPI.EVENT_BUS.post(event)) {
+                FinishLoadEvent event = new FinishLoadEvent(this);
+
+                if (!GrimoireAPI.EVENT_BUS.post(new GrimmixFinishLoadEvent(event))) {
                     this.controller.finish(event);
-                }
+                } else
+                    return false;
 
                 return !event.isCanceled();
             }

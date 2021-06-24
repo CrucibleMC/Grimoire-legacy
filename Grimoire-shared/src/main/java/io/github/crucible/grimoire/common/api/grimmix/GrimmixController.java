@@ -1,30 +1,35 @@
 package io.github.crucible.grimoire.common.api.grimmix;
 
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IConfigBuildingEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.ICoreLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IFinishLoadEvent;
-import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IMixinConfigBuildingEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IValidationEvent;
 
 public abstract class GrimmixController {
-    protected final GrimmixController instance;
 
     public GrimmixController() {
-        this.instance = this;
+        // NO-OP
     }
 
-    public GrimmixController getInstance() {
-        return this.instance;
+    public void validateController(IValidationEvent event) {
+        // NO-OP
     }
 
-    public abstract void validateController(IValidationEvent event);
+    public void buildMixinConfigs(IConfigBuildingEvent event) {
+        // NO-OP
+    }
 
-    public void buildMixinConfigs(IMixinConfigBuildingEvent event) {};
+    public void coreLoad(ICoreLoadEvent event) {
+        // NO-OP
+    }
 
-    public abstract void coreLoad(ICoreLoadEvent event);
+    public void modLoad(IModLoadEvent event) {
+        // NO-OP
+    }
 
-    public abstract void modLoad(IModLoadEvent event);
-
-    public abstract void finish(IFinishLoadEvent event);
+    public void finish(IFinishLoadEvent event) {
+        // NO-OP
+    }
 
 }
