@@ -150,7 +150,7 @@ public class GrimmixLoader {
                     } else if (this.isJson(ze.getName())) {
                         DeserializedMixinJson json = DeserializedMixinJson.deserialize(() -> this.tryGetInputStream(jar, ze));
 
-                        if (json.isValidConfiguration()) {
+                        if (json != null && json.isValidConfiguration()) {
                             if (json.getForceLoadType() != null) {
                                 ForceLoadController.addForcedConfiguration(json.getForceLoadType(), ze.getName());
                             } else {
@@ -178,7 +178,7 @@ public class GrimmixLoader {
             DeserializedMixinJson json = DeserializedMixinJson.deserialize(() -> this.tryGetInputStream(file));
             String cfgPath = recursivePath + file.getName();
 
-            if (json.isValidConfiguration()) {
+            if (json != null && json.isValidConfiguration()) {
                 if (json.getForceLoadType() != null) {
                     ForceLoadController.addForcedConfiguration(json.getForceLoadType(), cfgPath);
                 } else {

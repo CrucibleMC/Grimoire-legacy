@@ -2,6 +2,8 @@ package io.github.crucible.grimoire.common.core;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixConfigBuildingEvent;
 import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixCoreLoadEvent;
@@ -71,7 +73,7 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
         this.priority = priority;
 
         List<String> list = this.listClassesInPackage("io.github.crucible.grimoire.common.api");
-        String pattern = "configurations.*Mixin*";
+        String pattern = "mixin.*Mixin*";
         pattern = pattern.replace(".", "\\.").replace("*", ".*");
 
         System.out.println("Strings that match [" + pattern + "]:");
@@ -156,13 +158,14 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
             if (this.grimmixFile.isFile() && this.grimmixFile.getName().endsWith(".jar")) {
                 // TODO Test this part
                 String packagePath = packageName.replace(".", "/");
+
                 JarFile jar = new JarFile(this.grimmixFile);
                 Enumeration<JarEntry> entries = jar.entries();
 
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
                     if (entry.getName().startsWith(packagePath) && GrimmixLoader.classFile.matcher(entry.getName()).matches()) {
-                        classList.add(entry.getName().replace(".class", "").replace("$", ".").replace("/", ".").replaceFirst(packageName.replace(".", "\\."), ""));
+                        classList.add(entry.getName().replace(".class", "").replace("$", ".").replace("/", ".").replaceFirst(packageName.replace(".", "\\.") + "\\.", ""));
                     }
                 }
 

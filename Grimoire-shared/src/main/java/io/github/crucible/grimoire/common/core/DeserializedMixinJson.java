@@ -77,9 +77,10 @@ class DeserializedMixinJson {
             reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
 
             try {
-                result = gson.fromJson(reader, DeserializedMixinJson.class);
+                DeserializedMixinJson deserialized = gson.fromJson(reader, DeserializedMixinJson.class);
+                result = deserialized;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                // Likely we got invalid json, just proceed with out lifes
             }
 
             reader.close();

@@ -28,7 +28,7 @@ public class ForceLoadController extends GrimmixController {
         // TODO Maybe config option to disable this module
         initialized = true;
 
-        GrimoireCore.logger.info("Grand total of {} forced mixin configuration was detected. List goes as following: ", forcedConfigurations.size());
+        GrimoireCore.logger.info("Grand total of {} forced mixin configurations was detected. List goes as following: ", forcedConfigurations.size());
         for (Entry<ConfigurationType, String> entry : forcedConfigurations.entries()) {
             GrimoireCore.logger.info("Path: {}, type: {}", entry.getValue(), entry.getKey());
         }
