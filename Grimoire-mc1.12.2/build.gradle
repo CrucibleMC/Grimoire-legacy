@@ -17,7 +17,7 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-		classpath 'com.integral.grimoire:GrimoireShenanigans:[1.1.9,)'
+		classpath 'com.integral.grimoire:GrimoireShenanigans:[1.2.3,)'
     }
 }
 
@@ -257,12 +257,5 @@ publishing {
 }
 
 bintrayUpload.dependsOn assemble
-
-artifacts {
-	archives devJar
-	archives sourcesJar
-	archives apiJar
-	archives apiSourcesJar
-}
 
 jar.finalizedBy('reobfJar')

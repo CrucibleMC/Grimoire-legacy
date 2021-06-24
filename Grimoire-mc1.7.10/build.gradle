@@ -18,7 +18,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.4.0-SNAPSHOT'
-		classpath 'com.integral.grimoire:GrimoireShenanigans:[1.1.9,)'
+		classpath 'com.integral.grimoire:GrimoireShenanigans:[1.2.3,)'
     }
 }
 
@@ -241,11 +241,3 @@ publishing {
 }
 
 bintrayUpload.dependsOn assemble
-
-artifacts {
-	archives jar
-	archives devJar
-	archives sourcesJar
-	archives apiJar
-	archives apiSourcesJar
-}
