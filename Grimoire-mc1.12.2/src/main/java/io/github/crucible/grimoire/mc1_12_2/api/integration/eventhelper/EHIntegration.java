@@ -2,7 +2,7 @@ package io.github.crucible.grimoire.mc1_12_2.api.integration.eventhelper;
 
 import java.util.UUID;
 
-import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
+import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,11 +12,11 @@ import net.minecraft.util.math.BlockPos;
 
 public class EHIntegration {
     static {
-        if (!ModIntegrationRegistry.isInitialized())
+        if (!ModIntegrationRegistry.INSTANCE.isInitialized())
             throw new IllegalStateException("Static class " + EHIntegration.class + " was loaded too early!");
     }
 
-    private static final IEventHelperIntegration integration = ModIntegrationRegistry.getIntegration(IEventHelperIntegration.class);
+    private static final IEventHelperIntegration integration = ModIntegrationRegistry.INSTANCE.getIntegration(IEventHelperIntegration.class);
 
     public static boolean canBreak(EntityPlayer player, BlockPos pos) {
         return integration.canBreak(player, pos);

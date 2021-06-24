@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -89,7 +90,7 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
 
     @Override
     public List<IMixinConfiguration> getOwnedConfigurations() {
-        return ImmutableList.copyOf(this.ownedConfigurations);
+        return Collections.unmodifiableList(this.ownedConfigurations);
     }
 
     @Override

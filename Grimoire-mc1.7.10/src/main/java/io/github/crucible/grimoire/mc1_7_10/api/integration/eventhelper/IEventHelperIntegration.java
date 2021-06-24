@@ -5,7 +5,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.github.crucible.grimoire.common.integrations.IModIntegration;
+import io.github.crucible.grimoire.common.api.integration.IModIntegration;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

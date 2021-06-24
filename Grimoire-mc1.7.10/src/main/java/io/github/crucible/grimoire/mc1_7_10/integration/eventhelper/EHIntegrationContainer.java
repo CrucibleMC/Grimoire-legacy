@@ -1,7 +1,7 @@
 package io.github.crucible.grimoire.mc1_7_10.integration.eventhelper;
 
 import cpw.mods.fml.common.Loader;
-import io.github.crucible.grimoire.common.integrations.ModIntegrationContainer;
+import io.github.crucible.grimoire.common.api.integration.ModIntegrationContainer;
 import io.github.crucible.grimoire.mc1_7_10.api.integration.eventhelper.IEventHelperIntegration;
 
 public class EHIntegrationContainer extends ModIntegrationContainer<IEventHelperIntegration> {
@@ -31,7 +31,7 @@ public class EHIntegrationContainer extends ModIntegrationContainer<IEventHelper
     }
 
     @Override
-    protected Class<IEventHelperIntegration> getIntegrationClass() {
+    public Class<IEventHelperIntegration> getIntegrationClass() {
         return IEventHelperIntegration.class;
     }
 }

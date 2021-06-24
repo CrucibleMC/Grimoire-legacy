@@ -3,7 +3,6 @@ package io.github.crucible.grimoire.common;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
-import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
 import io.github.crucible.grimoire.common.test.AnnotationConfigTest;
 import io.github.crucible.grimoire.common.test.OmniconfigTest;
 import io.github.crucible.omniconfig.OmniconfigCore;

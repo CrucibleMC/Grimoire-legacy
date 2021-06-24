@@ -11,7 +11,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.GrimoireInternals;
-import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
+import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
 import io.github.crucible.grimoire.mc1_7_10.api.integration.eventhelper.IEventHelperIntegration;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher.ChadPlayerMP;
 import io.github.crucible.omniconfig.OmniconfigCore;

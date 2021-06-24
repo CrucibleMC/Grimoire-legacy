@@ -7,8 +7,11 @@ import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEventBus;
 import io.github.crucible.grimoire.common.api.events.GrimoireEvent;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
+import io.github.crucible.grimoire.common.api.integration.IModIntegrationRegistry;
+import io.github.crucible.grimoire.common.core.GrimmixContainer;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
+import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -77,4 +80,10 @@ public class GrimoireAPI {
 
         return builder.build();
     }
+
+    public static IModIntegrationRegistry getModIntegrationRegistry() {
+        return ModIntegrationRegistry.INSTANCE;
+    }
+
+
 }

@@ -1,6 +1,6 @@
 package io.github.crucible.grimoire.mc1_12_2;
 
-import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
+import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
 import io.github.crucible.grimoire.mc1_12_2.handlers.IncelEventHandler;
 import io.github.crucible.grimoire.mc1_12_2.handlers.IncelPacketDispatcher;
 import io.github.crucible.grimoire.mc1_12_2.integration.eventhelper.EHIntegrationContainer;
@@ -41,8 +41,8 @@ public class GrimoireMod {
         packetPipeline.registerMessage(PacketSyncOmniconfig.Handler.class, PacketSyncOmniconfig.class, 0, Side.CLIENT);
 
         // Init grimmix integrations
-        ModIntegrationRegistry.registerIntegration(EHIntegrationContainer.class);
-        ModIntegrationRegistry.init();
+        ModIntegrationRegistry.INSTANCE.registerIntegration(EHIntegrationContainer.class);
+        ModIntegrationRegistry.INSTANCE.init();
     }
 
 }

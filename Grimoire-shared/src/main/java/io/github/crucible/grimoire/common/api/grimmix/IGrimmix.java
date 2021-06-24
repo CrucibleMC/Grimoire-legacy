@@ -2,7 +2,6 @@ package io.github.crucible.grimoire.common.api.grimmix;
 
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
-import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
 
 import java.io.File;
 import java.util.List;

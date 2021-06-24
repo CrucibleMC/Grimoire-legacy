@@ -5,7 +5,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
+import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,11 +14,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class EHIntegration {
     static {
-        if (!ModIntegrationRegistry.isInitialized())
+        if (!ModIntegrationRegistry.INSTANCE.isInitialized())
             throw new IllegalStateException("Static class " + EHIntegration.class + " was loaded too early!");
     }
 
-    private static final IEventHelperIntegration integration = ModIntegrationRegistry.getIntegration(IEventHelperIntegration.class);
+    private static final IEventHelperIntegration integration = ModIntegrationRegistry.INSTANCE.getIntegration(IEventHelperIntegration.class);
 
     public static boolean canBreak(@Nonnull EntityPlayer player, int x, int y, int z) {
         return integration.canBreak(player, x, y, z);

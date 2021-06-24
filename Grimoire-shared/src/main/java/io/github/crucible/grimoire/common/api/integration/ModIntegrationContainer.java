@@ -1,4 +1,4 @@
-package io.github.crucible.grimoire.common.integrations;
+package io.github.crucible.grimoire.common.api.integration;
 
 import io.github.crucible.grimoire.common.core.VersionHandler;
 
@@ -24,7 +24,7 @@ public abstract class ModIntegrationContainer<T extends IModIntegration> {
 
     protected abstract T createDummyIntegration();
 
-    protected abstract Class<T> getIntegrationClass();
+    public abstract Class<T> getIntegrationClass();
 
     public abstract String getModID();
 

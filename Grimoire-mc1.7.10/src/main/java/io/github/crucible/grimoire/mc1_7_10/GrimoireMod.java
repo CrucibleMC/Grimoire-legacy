@@ -7,7 +7,7 @@ import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import io.github.crucible.grimoire.common.GrimoireCore;
-import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
+import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadEventHandler;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher;
 import io.github.crucible.grimoire.mc1_7_10.integration.eventhelper.EHIntegrationContainer;
@@ -47,8 +47,8 @@ public class GrimoireMod {
         packetPipeline.registerMessage(PacketSyncOmniconfig.Handler.class, PacketSyncOmniconfig.class, 0, Side.CLIENT);
 
         // Register our embedded integrations
-        ModIntegrationRegistry.registerIntegration(EHIntegrationContainer.class);
-        ModIntegrationRegistry.init();
+        ModIntegrationRegistry.INSTANCE.registerIntegration(EHIntegrationContainer.class);
+        ModIntegrationRegistry.INSTANCE.init();
     }
 
 }
