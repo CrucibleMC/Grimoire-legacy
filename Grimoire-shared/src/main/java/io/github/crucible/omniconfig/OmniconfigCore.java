@@ -60,6 +60,16 @@ public class OmniconfigCore {
         // NO-OP
     }
 
+    public String sanitizeName(String configName) {
+        String newName = configName.replace("/", FILE_SEPARATOR);
+
+        if (newName.endsWith(".cfg")) {
+            newName = newName.substring(0, newName.length()-4);
+        }
+
+        return newName;
+    }
+
     public void backUpDefaultCopy(Omniconfig cfg) {
         Configuration backingConfig = cfg.getBackingConfig();
 

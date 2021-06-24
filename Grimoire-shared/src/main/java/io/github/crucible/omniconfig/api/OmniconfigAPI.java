@@ -16,15 +16,15 @@ import io.github.crucible.omniconfig.gconfig.AnnotationConfigCore;
 public class OmniconfigAPI {
 
     public static IOmniconfigBuilder configBuilder(String fileName) {
-        return Omniconfig.builder(fileName, new Version("1.0.0"), true, SidedConfigType.COMMON);
+        return Omniconfig.builder(OmniconfigCore.INSTANCE.sanitizeName(fileName), new Version("1.0.0"), true, SidedConfigType.COMMON);
     }
 
     public static IOmniconfigBuilder configBuilder(String fileName, Version version) {
-        return Omniconfig.builder(fileName, version, true, SidedConfigType.COMMON);
+        return Omniconfig.builder(OmniconfigCore.INSTANCE.sanitizeName(fileName), version, true, SidedConfigType.COMMON);
     }
 
     public static IOmniconfigBuilder configBuilder(String fileName, Version version, SidedConfigType sidedType) {
-        return Omniconfig.builder(fileName, version, true, sidedType);
+        return Omniconfig.builder(OmniconfigCore.INSTANCE.sanitizeName(fileName), version, true, sidedType);
     }
 
     public static void registerAnnotationConfig(Class<?> annotationConfigClass) {
@@ -41,10 +41,6 @@ public class OmniconfigAPI {
 
     public static File getConfigDirectory() {
         return OmniconfigCore.CONFIG_DIR;
-    }
-
-    public static String getFileSeparator() {
-        return OmniconfigCore.FILE_SEPARATOR;
     }
 
     public String getDefaultCategory() {

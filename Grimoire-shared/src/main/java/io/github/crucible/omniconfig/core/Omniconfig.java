@@ -159,7 +159,7 @@ public class Omniconfig implements IOmniconfig {
 
             String fileID = filePath.replace(configDirPath + OmniconfigCore.FILE_SEPARATOR, "");
 
-            return new Builder(fileID, new Configuration(new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf"), version, caseSensitive), sidedType);
+            return new Builder(fileID, new Configuration(new File(OmniconfigCore.CONFIG_DIR, fileName+".cfg"), version, caseSensitive), sidedType);
         } catch (Exception ex) {
             throw new RuntimeException("Something screwed up when loading config!", ex);
         }

@@ -24,7 +24,7 @@ public class OmniconfigTest {
     public OmniconfigTest() {
         String version = "1.8";
 
-        IOmniconfigBuilder wrapper = OmniconfigAPI.configBuilder("testdir" + OmniconfigAPI.getFileSeparator() + "omnitest", new Version(version), SidedConfigType.COMMON);
+        IOmniconfigBuilder wrapper = OmniconfigAPI.configBuilder("testdir/omnitest.cfg", new Version(version), SidedConfigType.COMMON);
 
         wrapper.versioningPolicy(VersioningPolicy.NOBLE);
         wrapper.terminateNonInvokedKeys(true);
