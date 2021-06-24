@@ -1,6 +1,7 @@
 package io.github.crucible.grimoire.common.core;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
+import io.github.crucible.grimoire.common.api.eventbus.CoreEventHandler;
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import org.objectweb.asm.*;
 
@@ -12,17 +13,26 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class GrimmixAnnotationVisitor extends ClassVisitor {
-    private final GrimmixCandidate candidate = new GrimmixCandidate();
+public class GrimoireAnnotationAnalyzer extends ClassVisitor {
+    private final GrimmixCandidate grimmixCandidate = new GrimmixCandidate();
+    private final EventHandlerCandidate handlerCandidate = new EventHandlerCandidate();
 
-    public GrimmixAnnotationVisitor() {
+    public GrimoireAnnotationAnalyzer() {
         super(Opcodes.ASM4);
     }
 
-    public static GrimmixCandidate examineClassForGrimmix(File classFile) {
+    public GrimmixCandidate getGrimmixCandidate() {
+        return this.grimmixCandidate;
+    }
+
+    public EventHandlerCandidate getHandlerCandidate() {
+        return this.handlerCandidate;
+    }
+
+    public static GrimoireAnnotationAnalyzer examineClass(File classFile) {
         try {
             FileInputStream stream = new FileInputStream(classFile);
-            GrimmixCandidate result = examineClassForGrimmix(stream);
+            GrimoireAnnotationAnalyzer result = examineClass(stream);
             stream.close();
 
             return result;
@@ -33,10 +43,10 @@ public class GrimmixAnnotationVisitor extends ClassVisitor {
         return null;
     }
 
-    public static GrimmixCandidate examineClassForGrimmix(ZipFile archive, ZipEntry entry) {
+    public static GrimoireAnnotationAnalyzer examineClass(ZipFile archive, ZipEntry entry) {
         try {
             InputStream stream = archive.getInputStream(entry);
-            GrimmixCandidate result = examineClassForGrimmix(stream);
+            GrimoireAnnotationAnalyzer result = examineClass(stream);
             stream.close();
 
             return result;
@@ -46,13 +56,13 @@ public class GrimmixAnnotationVisitor extends ClassVisitor {
         return null;
     }
 
-    public static GrimmixCandidate examineClassForGrimmix(InputStream classStream) {
+    public static GrimoireAnnotationAnalyzer examineClass(InputStream classStream) {
         try {
             ClassReader reader = new ClassReader(classStream);
-            GrimmixAnnotationVisitor visitor = new GrimmixAnnotationVisitor();
+            GrimoireAnnotationAnalyzer visitor = new GrimoireAnnotationAnalyzer();
             reader.accept(visitor, 0);
 
-            return visitor.candidate;
+            return visitor;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -63,7 +73,11 @@ public class GrimmixAnnotationVisitor extends ClassVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         if (getDescriptorForClass(Grimmix.class).equals(desc)) {
-            this.candidate.hasAnnotation = true;
+            this.grimmixCandidate.hasAnnotation = true;
+        }
+
+        if (getDescriptorForClass(CoreEventHandler.class).equals(desc)) {
+            this.handlerCandidate.hasAnnotation = true;
         }
 
         return new DataReader(this);
@@ -71,15 +85,16 @@ public class GrimmixAnnotationVisitor extends ClassVisitor {
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        this.candidate.className = name != null ? name.replaceAll("/", ".") : "null";
+        this.grimmixCandidate.className = name != null ? name.replaceAll("/", ".") : "null";
+        this.handlerCandidate.className = name != null ? name.replaceAll("/", ".") : "null";
 
         super.visit(version, access, name, signature, superName, interfaces);
     }
 
     private static class DataReader extends AnnotationVisitor {
-        private final GrimmixAnnotationVisitor supervisitor;
+        private final GrimoireAnnotationAnalyzer supervisitor;
 
-        private DataReader(GrimmixAnnotationVisitor supervisitor) {
+        private DataReader(GrimoireAnnotationAnalyzer supervisitor) {
             super(Opcodes.ASM4);
             this.supervisitor = supervisitor;
         }
@@ -90,7 +105,7 @@ public class GrimmixAnnotationVisitor extends ClassVisitor {
         @Override
         public void visit(String name, Object value) {
             if ("modid".equals(name)) {
-                this.supervisitor.candidate.name = String.valueOf(value);
+                this.supervisitor.grimmixCandidate.name = String.valueOf(value);
             }
 
             super.visit(name, value);
@@ -101,19 +116,38 @@ public class GrimmixAnnotationVisitor extends ClassVisitor {
         return Type.getDescriptor(classInQuestion);
     }
 
+    public static class EventHandlerCandidate {
+        private String className = null;
+        private boolean hasAnnotation = false;
 
-    public static class GrimmixCandidate {
-        protected String name = null;
-        protected String className = null;
-        protected boolean hasAnnotation = false;
-        protected List<String> configurationPaths = new ArrayList<>();
-
-        public GrimmixCandidate() {
+        protected EventHandlerCandidate() {
             // NO-OP
         }
 
         public boolean validate() {
+            if (this.hasAnnotation) {
+                GrimoireCore.logger.info("Event handler candidate found: {}", this.className);
+            }
 
+            return this.hasAnnotation;
+        }
+
+        public String getClassName() {
+            return this.className;
+        }
+    }
+
+    public static class GrimmixCandidate {
+        private String name = null;
+        private String className = null;
+        private boolean hasAnnotation = false;
+        private List<String> configurationPaths = new ArrayList<>();
+
+        protected GrimmixCandidate() {
+            // NO-OP
+        }
+
+        public boolean validate() {
             if (this.hasAnnotation) {
                 GrimoireCore.logger.info("Grimmix candidate found: {}", this.className);
             }

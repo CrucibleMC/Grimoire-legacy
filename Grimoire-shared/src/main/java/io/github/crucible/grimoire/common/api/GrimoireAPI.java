@@ -9,6 +9,7 @@ import io.github.crucible.grimoire.common.api.events.GrimoireEvent;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -20,7 +21,11 @@ public class GrimoireAPI {
      * General-purpose EventBus for posting any Grimoire-related events.<br/>
      * Any events posted via this bus must extend {@link GrimoireEvent}.
      */
-    public static final CoreEventBus<GrimoireEvent> EVENT_BUS = CoreEventBus.create(GrimoireEvent.class);
+    public static final CoreEventBus<GrimoireEvent> EVENT_BUS = CoreEventBus.create(GrimoireEvent.class, GrimoireConstants.MAIN_BUS_NAME);
+
+    private GrimoireAPI() {
+        // Can't touch this
+    }
 
     public static IMixinConfiguration registerMixinConfiguration(String classpath, ConfigurationType type) {
         return new MixinConfiguration(null, type, classpath, false);
@@ -72,5 +77,4 @@ public class GrimoireAPI {
 
         return builder.build();
     }
-
 }

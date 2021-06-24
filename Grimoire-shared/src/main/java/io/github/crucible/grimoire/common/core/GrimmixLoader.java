@@ -9,10 +9,15 @@ import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
+import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
+import io.github.crucible.grimoire.common.api.eventbus.CoreEventBus;
+import io.github.crucible.grimoire.common.api.eventbus.CoreEventHandler;
 import io.github.crucible.grimoire.common.api.events.configurations.GrimoireConfigsEvent;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.EventHandlerCandidate;
+import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.GrimmixCandidate;
 import io.github.crucible.grimoire.common.modules.ForceLoadController;
 import io.github.crucible.omniconfig.api.lib.Either;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -31,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.jar.JarFile;
@@ -46,6 +53,7 @@ public class GrimmixLoader {
 
     protected final List<GrimmixContainer> containerList = new ArrayList<>();
     protected final List<GrimmixContainer> activeContainerList = new ArrayList<>();
+    protected final List<Class<?>> staticEventHandlers = new ArrayList<>();
 
     protected LoadingStage internalStage = LoadingStage.PRE_CONSTRUCTION;
     protected GrimmixContainer activeContainer = null;
@@ -107,12 +115,12 @@ public class GrimmixLoader {
         return null;
     }
 
-    private List<GrimmixAnnotationVisitor.GrimmixCandidate> examineForAnnotations(File file, List<GrimmixAnnotationVisitor.GrimmixCandidate> candidates, List<String> configList, String recursivePath) {
+    private void examineForAnnotations(File file, List<GrimmixCandidate> candidates, List<EventHandlerCandidate> handlers, List<String> configList, String recursivePath) {
         if (file.isDirectory()) {
             String newPath = recursivePath == null ? "" : (recursivePath + file.getName() + File.separator);
 
             for (File newFile : file.listFiles()) {
-                this.examineForAnnotations(newFile, candidates, configList, newPath); // Do recursive kekw
+                this.examineForAnnotations(newFile, candidates, handlers, configList, newPath); // Do recursive kekw
             }
         } else if (file.getName().endsWith(".jar")) { // Its a jar man
             try {
@@ -120,10 +128,14 @@ public class GrimmixLoader {
 
                 for (ZipEntry ze : Collections.list(jar.entries())) {
                     if (this.isClassFile(ze.getName())) {
-                        GrimmixAnnotationVisitor.GrimmixCandidate candidate = GrimmixAnnotationVisitor.examineClassForGrimmix(jar, ze);
+                        GrimoireAnnotationAnalyzer analyzer = GrimoireAnnotationAnalyzer.examineClass(jar, ze);
 
-                        if (candidate.validate()) {
-                            candidates.add(candidate);
+                        if (analyzer.getGrimmixCandidate().validate()) {
+                            candidates.add(analyzer.getGrimmixCandidate());
+                        }
+
+                        if (analyzer.getHandlerCandidate().validate()) {
+                            handlers.add(analyzer.getHandlerCandidate());
                         }
                     } else if (this.isJson(ze.getName())) {
                         DeserializedMixinJson json = GrimoireInternals.deserializeMixinConfiguration(() -> this.tryGetInputStream(jar, ze));
@@ -143,10 +155,14 @@ public class GrimmixLoader {
                 e.printStackTrace();
             }
         } else if (this.isClassFile(file.getName())) { // Its a .class file
-            GrimmixAnnotationVisitor.GrimmixCandidate candidate = GrimmixAnnotationVisitor.examineClassForGrimmix(file);
+            GrimoireAnnotationAnalyzer analyzer = GrimoireAnnotationAnalyzer.examineClass(file);
 
-            if (candidate.validate()) {
-                candidates.add(candidate);
+            if (analyzer.getGrimmixCandidate().validate()) {
+                candidates.add(analyzer.getGrimmixCandidate());
+            }
+
+            if (analyzer.getHandlerCandidate().validate()) {
+                handlers.add(analyzer.getHandlerCandidate());
             }
         } else if (this.isJson(file.getName())) {
             DeserializedMixinJson json = GrimoireInternals.deserializeMixinConfiguration(() -> this.tryGetInputStream(file));
@@ -161,7 +177,7 @@ public class GrimmixLoader {
             }
         }
 
-        return candidates;
+        return;
     }
 
     protected void seekGrimmixes(Collection<URL> paths, @Nullable LaunchClassLoader classLoader) {
@@ -201,10 +217,11 @@ public class GrimmixLoader {
                     }
                 }
 
-                List<GrimmixAnnotationVisitor.GrimmixCandidate> candidateList = new ArrayList<>();
+                List<GrimmixCandidate> candidateList = new ArrayList<>();
+                List<EventHandlerCandidate> handlerList = new ArrayList<>();
                 List<String> configList = new ArrayList<>();
 
-                this.examineForAnnotations(candidateFile, candidateList, configList, null);
+                this.examineForAnnotations(candidateFile, candidateList, handlerList, configList, null);
 
                 if (candidateList.size() > 0 && classLoader != null) {
                     boolean alreadyThere = false;
@@ -222,7 +239,7 @@ public class GrimmixLoader {
                     }
                 }
 
-                for (GrimmixAnnotationVisitor.GrimmixCandidate candidate : candidateList) {
+                for (GrimmixCandidate candidate : candidateList) {
                     try {
                         Class<?> controllerClass = Class.forName(candidate.getClassName());
 
@@ -241,6 +258,17 @@ public class GrimmixLoader {
                     } catch (Exception ex) {
                         throw new RuntimeException("Failed to collect controller constructor: " + candidate.getClassName(), ex);
                     }
+                }
+
+                if (handlerList.size() > 0) {
+                    handlerList.forEach(candidate -> {
+                        try {
+                            Class<?> handlerClass = Class.forName(candidate.getClassName());
+                            this.staticEventHandlers.add(handlerClass);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    });
                 }
 
             } catch (Exception e) {
@@ -297,6 +325,28 @@ public class GrimmixLoader {
 
         if (fileURLs.size() > 0) {
             this.seekGrimmixes(fileURLs, classLoader);
+        }
+
+        for (Class<?> handlerClass : this.staticEventHandlers) {
+            CoreEventHandler annotation = handlerClass.getAnnotation(CoreEventHandler.class);
+
+            if (annotation != null) {
+                String[] busNames = annotation.value();
+
+                for (String busName : busNames) {
+                    Optional<CoreEventBus<? extends CoreEvent>> maybeBus = CoreEventBus.findBus(busName);
+
+                    if (!maybeBus.isPresent() && annotation.mandatory())
+                        throw new NoSuchElementException("Could not locate EventBus with name: " + busName
+                                + ", required by static handler: " + handlerClass);
+
+                    maybeBus.ifPresent(bus -> {
+                        bus.register(handlerClass);
+                        GrimoireCore.logger.info("Successfully subscribed annotated static handler {} to event bus {}", handlerClass, busName);
+                    });
+                }
+            }
+
         }
 
         this.finishedScan = true;

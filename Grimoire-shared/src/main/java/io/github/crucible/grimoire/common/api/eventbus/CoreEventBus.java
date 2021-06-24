@@ -1,5 +1,6 @@
 package io.github.crucible.grimoire.common.api.eventbus;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
@@ -22,18 +23,37 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
+    private static final List<CoreEventBus<? extends CoreEvent>> busRegistry = new ArrayList<>();
+    protected static int nextBusID = 0;
+
+    protected final int id;
+    protected final String name;
     protected final Class<T> eventClass;
     protected final List<CoreEventHandler> handlerList = new ArrayList<>();
     protected final IExceptionHandler<T> exceptionHandler;
     protected boolean shutdown = false;
 
-    protected CoreEventBus(Class<T> eventClass, IExceptionHandler<T> exceptionHandler) {
+    protected CoreEventBus(Class<T> eventClass, String busName, IExceptionHandler<T> exceptionHandler) {
         this.eventClass = eventClass;
+        this.name = busName;
         this.exceptionHandler = exceptionHandler != null ? exceptionHandler : this;
+        this.id = nextBusID;
+
+        busRegistry.add(this);
+        nextBusID++;
+    }
+
+    public int getID() {
+        return this.id;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public void register(@NotNull Object target) {
@@ -50,7 +70,7 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
             if (handler.isValid) {
                 this.handlerList.add(handler);
             } else {
-                GrimoireCore.logger.error("Registered event handler does not have any valid event receivers: {}", target.getClass());
+                GrimoireCore.logger.error("Registered event handler does not have any valid event receivers: {}", target.getClass() == Class.class ? target : target.getClass());
             }
         } catch (Exception ex) {
             GrimoireCore.logger.fatal("Error when trying to register event handler: {}", target.getClass());
@@ -136,16 +156,29 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
         }
     }
 
-    public static <E extends CoreEvent> CoreEventBus<E> create(@NotNull Class<E> eventClass, IExceptionHandler<E> exceptionHandler) {
-        return new CoreEventBus<>(eventClass, exceptionHandler);
+    public static <E extends CoreEvent> CoreEventBus<E> create(@NotNull Class<E> eventClass, @NotNull String busName, IExceptionHandler<E> exceptionHandler) {
+        return new CoreEventBus<>(eventClass, busName, exceptionHandler);
     }
 
-    public static <E extends CoreEvent> CoreEventBus<E> create(@NotNull Class<E> eventClass) {
-        return create(eventClass, null);
+    public static <E extends CoreEvent> CoreEventBus<E> create(@NotNull Class<E> eventClass, String busName) {
+        return create(eventClass, busName, null);
     }
 
-    public static CoreEventBus<CoreEvent> create() {
-        return create(CoreEvent.class);
+    public static CoreEventBus<CoreEvent> create(String busName) {
+        return create(CoreEvent.class, busName);
+    }
+
+    public static List<CoreEventBus<? extends CoreEvent>> getBusRegistry() {
+        return Collections.unmodifiableList(busRegistry);
+    }
+
+    public static Optional<CoreEventBus<? extends CoreEvent>> findBus(String busName) {
+        for (CoreEventBus<? extends CoreEvent> bus : busRegistry) {
+            if (Objects.equal(bus.getName(), busName))
+                return Optional.of(bus);
+        }
+
+        return Optional.empty();
     }
 
     @SuppressWarnings("unchecked")
@@ -158,8 +191,13 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
             boolean valid = false;
             boolean isStatic = target.getClass() == Class.class;
 
+            if (isStatic) {
+                GrimoireCore.logger.info("Analyzing static handler " + target);
+            }
+
             Set<? extends Class<?>> supers = isStatic ? Sets.newHashSet((Class<?>) target) : TypeToken.of(target.getClass()).getTypes().rawTypes();
 
+            // TODO Maybe use getDeclaredMethods() below
             for (Method method : (isStatic ? (Class<?>) target : target.getClass()).getMethods()) {
                 if (isStatic && !Modifier.isStatic(method.getModifiers())) {
                     continue;
@@ -167,11 +205,13 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
                     continue;
                 }
 
+
                 for (Class<?> cls : supers) {
                     try {
                         Method real = cls.getDeclaredMethod(method.getName(), method.getParameterTypes());
 
                         if (CoreEventBus.this.hasAnnotation(real)) {
+
                             Class<?>[] parameterTypes = method.getParameterTypes();
                             if (parameterTypes.length != 1)
                                 throw new IllegalArgumentException(
