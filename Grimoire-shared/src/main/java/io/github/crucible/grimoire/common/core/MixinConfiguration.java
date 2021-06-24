@@ -2,6 +2,8 @@ package io.github.crucible.grimoire.common.core;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.events.configurations.MixinConfigLoadEvent;

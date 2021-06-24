@@ -5,12 +5,10 @@ Specification-Vendor: Grimoire
 Specification-Title: io.github.crucible.grimoire
 Implementation-Timestamp: 2021-06-05T00:05:54+0200
 TweakClass: org.spongepowered.asm.launch.MixinTweaker
-Class-Path: Grimoire-shared-3.0.0.jar mixin-0.8.3-SNAPSHOT.jar launchw
- rapper-1.11.jar log4j-core-2.0-beta9.jar log4j-api-2.0-beta9.jar anno
- tations-20.1.0.jar asm-debug-all-5.0.3.jar jopt-simple-4.5.jar
 Implementation-Vendor: Grimoire
 FMLCorePluginContainsFMLMod: true
 ForceLoadAsMod: true
+IsThatYouGrimoire: Indeed
 Specification-Version: 1
 FMLCorePlugin: io.github.crucible.grimoire.mc1_12.GrimoireCoremod
 

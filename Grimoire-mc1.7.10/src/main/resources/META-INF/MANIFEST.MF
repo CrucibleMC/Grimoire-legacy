@@ -7,6 +7,7 @@ Specification-Title: io.github.crucible.grimoire
 Implementation-Timestamp: 2021-06-05T00:06:21+0200
 TweakClass: org.spongepowered.asm.launch.MixinTweaker
 ForceLoadAsMod: true
+IsThatYouGrimoire: Indeed
 Specification-Version: 1
 FMLCorePlugin: io.github.crucible.grimoire.mc1_7_10.GrimoireCoremod
 Implementation-Vendor: Grimoire

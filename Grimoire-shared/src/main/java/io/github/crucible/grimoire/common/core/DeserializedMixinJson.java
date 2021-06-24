@@ -2,11 +2,15 @@ package io.github.crucible.grimoire.common.core;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class DeserializedMixinJson {
+import io.github.crucible.grimoire.common.GrimoireCore;
+import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration.ConfigurationType;
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
 
-    // TODO forceLoadAtStage thing
+public class DeserializedMixinJson {
 
     @SerializedName("package")
     private String mixinPackage;
@@ -19,6 +23,9 @@ public class DeserializedMixinJson {
 
     @SerializedName("server")
     private List<String> mixinClassesServer;
+
+    @SerializedName("forceLoadAtStage")
+    private String forceLoadAtStage;
 
     private DeserializedMixinJson() {
         // NO-OP
@@ -33,5 +40,18 @@ public class DeserializedMixinJson {
         }
 
         return valid;
+    }
+
+    @Nullable
+    public ConfigurationType getForceLoadType() {
+        if (this.forceLoadAtStage != null) {
+            try {
+                LoadingStage forcedStage = LoadingStage.valueOf(this.forceLoadAtStage);
+                return forcedStage.getAssociatedConfigurationType();
+            } catch (Exception ex) {
+                return null;
+            }
+        } else
+            return null;
     }
 }

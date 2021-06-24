@@ -1,5 +1,6 @@
 package io.github.crucible.grimoire.common.core;
 
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import org.objectweb.asm.*;
 

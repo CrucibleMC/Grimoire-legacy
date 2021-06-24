@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Throwables;
 import com.google.gson.Gson;
@@ -18,7 +19,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 import io.github.crucible.grimoire.common.api.lib.Environment;
-import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.grimoire.common.core.DeserializedMixinJson;
 
 public class GrimoireInternals {
@@ -40,7 +40,8 @@ public class GrimoireInternals {
         return GrimoireCore.INSTANCE.getEnvironment();
     }
 
-    public static boolean isMixinConfiguration(Supplier<InputStream> streamSupplier) {
+    @Nullable
+    public static DeserializedMixinJson deserializeMixinConfiguration(Supplier<InputStream> streamSupplier) {
         DeserializedMixinJson result = null;
         InputStream stream;
         InputStreamReader reader;
@@ -49,7 +50,7 @@ public class GrimoireInternals {
             stream = streamSupplier.get();
 
             if (stream == null)
-                return false;
+                return null;
 
             Gson gson = new GsonBuilder().create();
             reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
@@ -57,17 +58,16 @@ public class GrimoireInternals {
             try {
                 result = gson.fromJson(reader, DeserializedMixinJson.class);
             } catch (Exception ex) {
-                // NO-OP
+                ex.printStackTrace();
             }
 
             reader.close();
             stream.close();
         } catch (Exception ex) {
-
             ex.printStackTrace();
         }
 
-        return result != null && result.isValidConfiguration();
+        return result;
     }
 
     public static String getMD5Digest(File file) {

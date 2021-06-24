@@ -5,6 +5,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.configurations.IMixinConfiguration;
@@ -12,6 +13,7 @@ import io.github.crucible.grimoire.common.api.events.configurations.GrimoireConf
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.grimoire.common.modules.ForceLoadController;
 import io.github.crucible.omniconfig.api.lib.Either;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.FileUtils;
@@ -123,8 +125,16 @@ public class GrimmixLoader {
                         if (candidate.validate()) {
                             candidates.add(candidate);
                         }
-                    } else if (this.isJson(ze.getName()) && GrimoireInternals.isMixinConfiguration(() -> this.tryGetInputStream(jar, ze))) {
-                        configList.add(ze.getName());
+                    } else if (this.isJson(ze.getName())) {
+                        DeserializedMixinJson json = GrimoireInternals.deserializeMixinConfiguration(() -> this.tryGetInputStream(jar, ze));
+
+                        if (json.isValidConfiguration()) {
+                            if (json.getForceLoadType() != null) {
+                                ForceLoadController.addForcedConfiguration(json.getForceLoadType(), ze.getName());
+                            } else {
+                                configList.add(ze.getName());
+                            }
+                        }
                     }
                 }
 
@@ -138,8 +148,17 @@ public class GrimmixLoader {
             if (candidate.validate()) {
                 candidates.add(candidate);
             }
-        } else if (this.isJson(file.getName()) && GrimoireInternals.isMixinConfiguration(() -> this.tryGetInputStream(file))) {
-            configList.add(recursivePath + file.getName());
+        } else if (this.isJson(file.getName())) {
+            DeserializedMixinJson json = GrimoireInternals.deserializeMixinConfiguration(() -> this.tryGetInputStream(file));
+            String cfgPath = recursivePath + file.getName();
+
+            if (json.isValidConfiguration()) {
+                if (json.getForceLoadType() != null) {
+                    ForceLoadController.addForcedConfiguration(json.getForceLoadType(), cfgPath);
+                } else {
+                    configList.add(cfgPath);
+                }
+            }
         }
 
         return candidates;
@@ -176,8 +195,8 @@ public class GrimmixLoader {
 
                 boolean isGrimoireGrimmix = false;
                 if (manifest != null) {
-                    String controllerPath = manifest.getMainAttributes().getValue("FMLCorePlugin");
-                    if (Objects.equal(controllerPath, "io.github.crucible.grimoire.mc1_7_10.GrimoireCoremod")) {
+                    String isGrimoireAttribute = manifest.getMainAttributes().getValue("IsThatYouGrimoire");
+                    if (Objects.equal(isGrimoireAttribute, "Indeed")) {
                         isGrimoireGrimmix = true;
                     }
                 }
@@ -218,7 +237,7 @@ public class GrimmixLoader {
                         this.activeContainerList.add(container);
 
                         GrimoireCore.logger.info("Sucessfully collected controller constructor: " + controllerConstructor);
-                        GrimoireCore.logger.info("Configuration candidates for {} Grimmix {}: {}", isGrimoireGrimmix ? "integrated" : "", candidate.getClassName(), configList);
+                        GrimoireCore.logger.info("Configuration candidates for{} Grimmix {}: {}", isGrimoireGrimmix ? " integrated" : "", candidate.getClassName(), configList);
                     } catch (Exception ex) {
                         throw new RuntimeException("Failed to collect controller constructor: " + candidate.getClassName(), ex);
                     }

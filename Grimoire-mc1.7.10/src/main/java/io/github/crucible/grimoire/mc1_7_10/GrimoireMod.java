@@ -6,7 +6,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import io.github.crucible.grimoire.common.core.GrimoireCore;
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadEventHandler;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher;

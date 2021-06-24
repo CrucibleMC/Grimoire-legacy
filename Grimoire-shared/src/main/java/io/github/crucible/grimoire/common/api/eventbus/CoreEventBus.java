@@ -7,8 +7,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEvent.Priority;
-import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.grimoire.common.events.SubscribeAnnotationWrapper;
 import org.jetbrains.annotations.NotNull;
 

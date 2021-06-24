@@ -11,7 +11,7 @@ import javax.print.attribute.HashAttributeSet;
 
 import com.google.common.collect.ImmutableList;
 
-import io.github.crucible.grimoire.common.core.GrimoireCore;
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.api.builders.IAbstractPropertyBuilder;
 import io.github.crucible.omniconfig.api.core.SidedConfigType;

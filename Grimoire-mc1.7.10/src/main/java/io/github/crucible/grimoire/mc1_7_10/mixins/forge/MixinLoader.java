@@ -3,7 +3,7 @@ package io.github.crucible.grimoire.mc1_7_10.mixins.forge;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
-import io.github.crucible.grimoire.common.core.GrimoireCore;
+import io.github.crucible.grimoire.common.GrimoireCore;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.MixinEnvironment;

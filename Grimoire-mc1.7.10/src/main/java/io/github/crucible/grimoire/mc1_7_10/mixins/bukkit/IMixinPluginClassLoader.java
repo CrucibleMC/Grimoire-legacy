@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.crucible.grimoire.common.core.GrimoireCore;
+import io.github.crucible.grimoire.common.GrimoireCore;
 
 import java.io.File;
 import java.lang.reflect.Method;

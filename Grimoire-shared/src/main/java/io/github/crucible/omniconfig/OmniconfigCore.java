@@ -33,8 +33,8 @@ import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.GrimoireInternals;
-import io.github.crucible.grimoire.common.core.GrimoireCore;
 import io.github.crucible.omniconfig.backing.Configuration;
 import io.github.crucible.omniconfig.core.Omniconfig;
 

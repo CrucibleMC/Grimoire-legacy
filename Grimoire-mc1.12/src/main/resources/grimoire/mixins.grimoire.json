@@ -1,5 +1,6 @@
 {
   "required": true,
+  "verbose": true,
   "package": "io.github.crucible.grimoire.mixins",
   "mixins":[
     "forge.MixinLoader"

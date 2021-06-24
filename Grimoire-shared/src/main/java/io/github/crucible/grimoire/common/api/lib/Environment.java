@@ -2,7 +2,7 @@ package io.github.crucible.grimoire.common.api.lib;
 
 import java.util.function.Supplier;
 
-import io.github.crucible.grimoire.common.core.GrimoireCore;
+import io.github.crucible.grimoire.common.GrimoireCore;
 
 public enum Environment {
 

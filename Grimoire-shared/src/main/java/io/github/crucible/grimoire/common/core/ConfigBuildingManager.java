@@ -18,6 +18,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.backing.Configuration;

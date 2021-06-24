@@ -1,13 +1,13 @@
 package io.github.crucible.grimoire.common.integrations;
 
-import io.github.crucible.grimoire.common.core.GrimoireCore;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import com.google.common.base.Throwables;
+
+import io.github.crucible.grimoire.common.GrimoireCore;
 
 // TODO Make this a singleton instead of static class, API exposure
 public class ModIntegrationRegistry {

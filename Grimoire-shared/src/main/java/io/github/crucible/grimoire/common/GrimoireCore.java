@@ -1,7 +1,8 @@
-package io.github.crucible.grimoire.common.core;
+package io.github.crucible.grimoire.common;
 
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.lib.Environment;
+import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.integrations.ModIntegrationRegistry;
 import io.github.crucible.grimoire.common.test.AnnotationConfigTest;
 import io.github.crucible.grimoire.common.test.OmniconfigTest;
@@ -25,6 +26,7 @@ public class GrimoireCore {
     private File dataFolder;
     private String version;
     private Environment side;
+    private boolean obfuscated;
 
     public GrimoireCore() {
         if (this.isDevEnvironment()) {
@@ -47,6 +49,7 @@ public class GrimoireCore {
         this.mcModFolder = new File(this.mcLocation, mcModFolder);
         this.configFolder = new File(this.mcLocation, "config");
         this.dataFolder = new File(this.mcLocation, "mcdata");
+        this.obfuscated = obfuscated;
 
         this.configFolder.mkdirs();
         this.dataFolder.mkdirs();
@@ -92,6 +95,10 @@ public class GrimoireCore {
 
     public File getConfigFolder() {
         return this.configFolder;
+    }
+
+    public boolean isObfuscatedEnvironment() {
+        return this.obfuscated;
     }
 
     public LaunchClassLoader getClassLoader() {
