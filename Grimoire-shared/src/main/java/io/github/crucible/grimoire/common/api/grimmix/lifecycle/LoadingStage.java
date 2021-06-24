@@ -1,6 +1,6 @@
 package io.github.crucible.grimoire.common.api.grimmix.lifecycle;
 
-import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 
 public enum LoadingStage {
     PRE_CONSTRUCTION,
@@ -23,11 +23,11 @@ public enum LoadingStage {
         return this == CORELOAD || this == LoadingStage.MODLOAD;
     }
 
-    public IMixinConfiguration.ConfigurationType getAssociatedConfigurationType() {
+    public ConfigurationType getAssociatedConfigurationType() {
         if (this == CORELOAD)
-            return IMixinConfiguration.ConfigurationType.CORE;
+            return ConfigurationType.CORE;
         else if (this == MODLOAD)
-            return IMixinConfiguration.ConfigurationType.MOD;
+            return ConfigurationType.MOD;
         else
             return null;
     }

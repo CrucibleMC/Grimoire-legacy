@@ -10,7 +10,6 @@ import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixCoreLoadEvent;
 import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixModLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IConfigRegistryEvent;
-import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
 
 public abstract class SubscribeAnnotationWrapper {
     private static Function<Method, SubscribeAnnotationWrapper> wrapperFactory = null;

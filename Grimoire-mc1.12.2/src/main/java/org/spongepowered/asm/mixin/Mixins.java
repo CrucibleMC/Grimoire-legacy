@@ -39,7 +39,7 @@ import org.spongepowered.asm.mixin.transformer.Config;
 
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.ICoreLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
-import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 
 /**
  * Entry point for registering global mixin resources. Compatibility with

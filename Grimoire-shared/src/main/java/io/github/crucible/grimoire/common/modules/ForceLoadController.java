@@ -12,7 +12,7 @@ import io.github.crucible.grimoire.common.api.grimmix.lifecycle.ICoreLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IFinishLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IValidationEvent;
-import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 
 @Grimmix(id = "GrimoireForceLoadModule", name = "Grimoire Force Load Module")
 public class ForceLoadController extends GrimmixController {

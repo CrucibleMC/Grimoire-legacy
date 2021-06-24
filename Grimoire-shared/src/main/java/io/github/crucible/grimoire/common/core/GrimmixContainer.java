@@ -14,6 +14,7 @@ import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.events.grimmix.ConfigBuildingEvent;
 import io.github.crucible.grimoire.common.events.grimmix.CoreLoadEvent;
@@ -120,7 +121,7 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
         return this.valid;
     }
 
-    public List<IMixinConfiguration> prepareConfigurations(IMixinConfiguration.ConfigurationType ofType) {
+    public List<IMixinConfiguration> prepareConfigurations(ConfigurationType ofType) {
         List<IMixinConfiguration> coreConfigs = new ArrayList<>();
 
         for (IMixinConfiguration config : this.ownedConfigurations) {

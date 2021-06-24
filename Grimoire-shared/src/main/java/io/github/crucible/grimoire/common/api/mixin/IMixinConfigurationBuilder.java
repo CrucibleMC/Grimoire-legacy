@@ -2,7 +2,6 @@ package io.github.crucible.grimoire.common.api.mixin;
 
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.core.runtimeconfig.MixinConfigBuilder;
 
 public interface IMixinConfigurationBuilder {

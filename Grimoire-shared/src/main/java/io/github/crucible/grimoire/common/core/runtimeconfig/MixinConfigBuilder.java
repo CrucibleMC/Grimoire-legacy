@@ -18,9 +18,9 @@ import com.google.gson.GsonBuilder;
 
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfigurationBuilder;
-import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration.ConfigurationType;
 import io.github.crucible.grimoire.common.core.GrimmixContainer;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
 import io.github.crucible.omniconfig.api.OmniconfigAPI;
