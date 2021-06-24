@@ -51,6 +51,7 @@ public class ConfigBuildingManager {
 
             byte[] buf = new byte[1024];
             JarOutputStream jarOutput = new JarOutputStream(new FileOutputStream(mixinConfigsArchive));
+            int configs = 0;
 
             for (MixinConfigBuilder builder : builderRegistry) {
                 File config = builder.writeAsTempFile();
@@ -64,6 +65,8 @@ public class ConfigBuildingManager {
 
                 updateInput.close();
                 config.delete();
+
+                configs++;
             }
 
             jarOutput.close();
@@ -71,6 +74,9 @@ public class ConfigBuildingManager {
             RuntimeMixinsProtector.create(getArchiveMD5Digest()).attach();
 
             GrimoireCore.INSTANCE.getClassLoader().addURL(mixinConfigsArchive.toURI().toURL());
+
+            GrimoireCore.logger.info("Created mcdata/{} archive with total of {} runtime-generated configurations.",
+                    mixinConfigsArchive.getName(), configs);
         } catch (Exception ex) {
             Throwables.propagate(ex);
         }
