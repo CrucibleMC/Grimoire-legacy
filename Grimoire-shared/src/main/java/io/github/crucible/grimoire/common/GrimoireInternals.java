@@ -59,4 +59,9 @@ public class GrimoireInternals {
         onCast.accept((T)object);
     }
 
+    public static String sanitizePath(String URLPath) {
+        return URLPath.replace("file:/", "").replace("%20", " ").replace("%5B", "[").replace("%5D", "]")
+                .replace("%5b", "[").replace("%5d", "]");
+    }
+
 }

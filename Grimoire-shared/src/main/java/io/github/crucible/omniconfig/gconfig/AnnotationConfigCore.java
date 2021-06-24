@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.api.annotation.IAnnotationConfigRegistry;
 import io.github.crucible.omniconfig.api.core.IOmniconfig;
 import io.github.crucible.omniconfig.core.Omniconfig;
@@ -22,6 +23,7 @@ public class AnnotationConfigCore implements IAnnotationConfigRegistry {
 
     public void addAnnotationConfig(Class<?> configClass) {
         if (!this.annotationConfigMap.containsKey(configClass)) {
+            OmniconfigCore.logger.info("Registering annotation config class: " + configClass);
             this.annotationConfigMap.put(configClass,  new AnnotationConfigReader(configClass).read());
         } else
             throw new IllegalArgumentException("Annotation config class " + configClass + "was already registered!");

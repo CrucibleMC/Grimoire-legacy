@@ -52,8 +52,7 @@ public class OmniconfigCore {
 
     public static final OmniconfigCore INSTANCE = new OmniconfigCore();
 
-    // TODO Remove .zip extension once we're finished with extensive testing
-    private final File defaultConfigsArchive = new File(GrimoireCore.INSTANCE.getDataFolder(), "defaultconfigs.zip");
+    private final File defaultConfigsArchive = new File(GrimoireCore.INSTANCE.getDataFolder(), "defaultconfigs");
     private final File defaultConfigsJson = new File(GrimoireCore.INSTANCE.getDataFolder(), "defaultconfigs.json");
 
     private OmniconfigCore() {
@@ -86,9 +85,9 @@ public class OmniconfigCore {
                 out.close();
 
                 this.updateMemorizedMD5Digest();
-                logger.info("Made zip archive: " + this.defaultConfigsArchive.getCanonicalPath() + ", exists: " + this.defaultConfigsArchive.exists());
-            } catch (Exception e) {
-                e.printStackTrace();
+                logger.info("Made new defaultconfigs archive: {}", this.defaultConfigsArchive.getCanonicalPath());
+            } catch (Exception ex) {
+                Throwables.propagate(ex);
             }
         }
 
@@ -108,7 +107,7 @@ public class OmniconfigCore {
             Throwables.propagate(e);
         }
 
-        logger.info("Updated default copy of omniconfig file: {}", cfg.getFileID());
+        // logger.info("Updated default copy of omniconfig file: {}", cfg.getFileID());
     }
 
     private void updateFileWithinArchive(File zipFile, File fileToUpdate, String zipEntryName) throws IOException {
@@ -170,14 +169,6 @@ public class OmniconfigCore {
         String current = this.getArchiveMD5Digest();
 
         boolean equals = Objects.equals(memorized, current);
-
-        if (!equals) {
-            logger.warn("Memorized md5 of defaultconfigs archive is different from that of the current file.");
-            logger.warn("Last known: {}, current: {}", memorized, current);
-        } else {
-            logger.info("Memorized md5 of defaultconfigs archive matches that of current file: {}", memorized);
-        }
-
         return equals;
     }
 
@@ -226,8 +217,6 @@ public class OmniconfigCore {
 
             streamWriter.close();
             fileOutput.close();
-
-            logger.info("Updated memorized defaultconfigs md5 hash: {}", hash);
         } catch (Exception ex) {
             Throwables.propagate(ex);
         }

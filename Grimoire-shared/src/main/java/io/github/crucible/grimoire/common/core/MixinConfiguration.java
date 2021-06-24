@@ -51,9 +51,6 @@ public class MixinConfiguration implements IMixinConfiguration {
                 this.duplicateException();
             }
         }
-
-        GrimoireCore.logger.info("Registered new IMixinConfiguration, owner: {}, type: {}, paths: {}",
-                this.owner.isPresent() ? this.owner.get().getName() : null, this.configType, this.classpath);
     }
 
     public static List<IMixinConfiguration> getUnclaimedConfigurations() {

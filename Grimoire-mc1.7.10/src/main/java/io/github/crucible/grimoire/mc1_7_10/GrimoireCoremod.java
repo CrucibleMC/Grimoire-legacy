@@ -12,7 +12,6 @@ import io.github.crucible.grimoire.mc1_7_10.handlers.ChadAnnotationWrapper;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadOPChecker;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadVersionHandler;
-import io.github.crucible.grimoire.mc1_7_10.test.TestEventHandler;
 import io.github.crucible.omniconfig.OmniconfigCore;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,8 +43,6 @@ public class GrimoireCoremod implements IFMLLoadingPlugin {
                 FMLLaunchHandler.side() == cpw.mods.fml.relauncher.Side.CLIENT ? Environment.CLIENT : Environment.DEDICATED_SERVER);
         SubscribeAnnotationWrapper.setWrapperFactory(this::createWrapper);
         ChadVersionHandler.init();
-
-        GrimoireAPI.EVENT_BUS.register(new TestEventHandler());
 
         GrimoireCore.INSTANCE.init();
     }

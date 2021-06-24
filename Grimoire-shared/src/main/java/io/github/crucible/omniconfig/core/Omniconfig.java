@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -63,6 +64,9 @@ public class Omniconfig implements IOmniconfig {
         }
 
         OmniconfigRegistry.INSTANCE.registerConfig(this);
+
+        OmniconfigCore.logger.info("Sucessfully build Omniconfig file {} with total of {} properties.",
+                this.fileID, this.propertyMap.size());
     }
 
     @Override
@@ -149,7 +153,7 @@ public class Omniconfig implements IOmniconfig {
 
     public static Builder builder(String fileName, Version version, boolean caseSensitive, SidedConfigType sidedType) {
         try {
-            File file = new File(OmniconfigCore.CONFIG_DIR, fileName+".omniconf");
+            File file = new File(OmniconfigCore.CONFIG_DIR, fileName+".cfg");
             String filePath = file.getCanonicalPath();
             String configDirPath = OmniconfigCore.CONFIG_DIR.getCanonicalPath();
 
@@ -159,7 +163,7 @@ public class Omniconfig implements IOmniconfig {
 
             String fileID = filePath.replace(configDirPath + OmniconfigCore.FILE_SEPARATOR, "");
 
-            return new Builder(fileID, new Configuration(new File(OmniconfigCore.CONFIG_DIR, fileName+".cfg"), version, caseSensitive), sidedType);
+            return new Builder(fileID, new Configuration(file, version, caseSensitive), sidedType);
         } catch (Exception ex) {
             throw new RuntimeException("Something screwed up when loading config!", ex);
         }
@@ -187,6 +191,8 @@ public class Omniconfig implements IOmniconfig {
             this.fileID = fileID;
 
             this.config.setSidedType(sidedType);
+
+            OmniconfigCore.logger.info("Started Omniconfig builder for file: " + fileID);
         }
 
         @Override

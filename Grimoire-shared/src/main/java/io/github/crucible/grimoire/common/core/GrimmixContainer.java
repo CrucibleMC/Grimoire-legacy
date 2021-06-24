@@ -77,6 +77,7 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
     protected void constructController() {
         try {
             this.controller = this.constructor.newInstance();
+            GrimoireCore.logger.info("Successfully constructed Grimmix instance of class: {}", this.controller.getClass());
         } catch (Exception ex) {
             throw new RuntimeException("Failed to construct Grimmix instance of class: " + this.constructor.getDeclaringClass(), ex);
         }

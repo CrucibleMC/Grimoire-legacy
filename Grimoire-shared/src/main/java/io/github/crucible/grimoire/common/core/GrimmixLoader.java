@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
+import io.github.crucible.grimoire.common.api.GrimoireConstants;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEventBus;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEventHandler;
@@ -179,6 +180,7 @@ public class GrimmixLoader {
         } else if (this.isJson(file.getName())) {
             DeserializedMixinJson json = DeserializedMixinJson.deserialize(() -> this.tryGetInputStream(file));
             String cfgPath = recursivePath + file.getName();
+            cfgPath = cfgPath.replace(File.separator, "/");
 
             if (json != null && json.isValidConfiguration()) {
                 if (json.getForceLoadType() != null) {
@@ -205,7 +207,7 @@ public class GrimmixLoader {
                 Manifest manifest = null;
                 boolean isDirectory = candidateFile.isDirectory();
 
-                GrimoireCore.logger.info("Scanning {} {} for Grimmix controllers...", isDirectory ? "directory" : "file", uri.toString().replaceAll("%20", " "));
+                GrimoireCore.logger.info("Scanning {} {} for grimmix controllers...", isDirectory ? "directory" : "file", GrimoireInternals.sanitizePath(uri.toString()));
 
                 if (isDirectory) {
                     File manifestFile = new File(candidateFile, "META-INF/MANIFEST.MF");
@@ -264,8 +266,7 @@ public class GrimmixLoader {
                         this.containerList.add(container);
                         this.activeContainerList.add(container);
 
-                        GrimoireCore.logger.info("Sucessfully collected controller constructor: " + controllerConstructor);
-                        GrimoireCore.logger.info("Configuration candidates for{} Grimmix {}: {}", isGrimoireGrimmix ? " integrated" : "", candidate.getClassName(), configList);
+                        GrimoireCore.logger.info("Configuration candidates for {} Grimmix {}: {}", isGrimoireGrimmix ? "integrated" : "external", candidate.getClassName(), configList);
                     } catch (Exception ex) {
                         throw new RuntimeException("Failed to collect controller constructor: " + candidate.getClassName(), ex);
                     }
@@ -296,14 +297,14 @@ public class GrimmixLoader {
         if (this.finishedScan)
             return;
 
-        GrimoireCore.logger.info("Scanning for Grimmix controllers in following locations: ");
+        GrimoireCore.logger.info("Scanning for @Grimmix controllers in following locations: ");
 
         if (classLoader != null) {
             GrimoireCore.logger.info("Location: Java Classpath");
         }
         for (File file : directories) {
             try {
-                GrimoireCore.logger.info("Location: " + file.getCanonicalFile().toURI().toString().replaceAll("%20", " "));
+                GrimoireCore.logger.info("Location: " + GrimoireInternals.sanitizePath(file.getCanonicalFile().toURI().toString()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -458,6 +459,7 @@ public class GrimmixLoader {
             ConfigBuildingManager.generateRuntimeConfigurations();
         } else if (to.isConfigurationStage()) {
             this.preparedConfigs.addAll(MixinConfiguration.prepareUnclaimedConfigurations(to.getAssociatedConfigurationType()));
+            GrimoireCore.logger.info("Registered total of {} mixin configurations of type {}.", this.preparedConfigs.size(), to.getAssociatedConfigurationType());
         }
 
         GrimoireCore.logger.info("Sucessfully finished transition into {} loading stage.", this.internalStage);

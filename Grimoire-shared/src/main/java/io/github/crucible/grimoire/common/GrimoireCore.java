@@ -5,8 +5,6 @@ import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.config.GrimoireConfig;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
-import io.github.crucible.grimoire.common.test.AnnotationConfigTest;
-import io.github.crucible.grimoire.common.test.OmniconfigTest;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.api.OmniconfigAPI;
 import io.github.crucible.omniconfig.gconfig.AnnotationConfigCore;
@@ -22,9 +20,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 public class GrimoireCore {
-    public static final GrimoireCore INSTANCE = new GrimoireCore();
-    public static final Logger logger = LogManager.getLogger("Grimoire");
     private static final LaunchClassLoader classLoader = (LaunchClassLoader) GrimoireCore.class.getClassLoader();
+    public static final Logger logger = LogManager.getLogger("Grimoire");
+    public static final GrimoireCore INSTANCE = new GrimoireCore();
 
     private final GrimmixLoader grimmixLoader;
     private File mcLocation;
@@ -39,13 +37,14 @@ public class GrimoireCore {
 
     public GrimoireCore() {
         this.grimmixLoader = GrimmixLoader.INSTANCE;
+        logger.info("I log, hereby, I exist.");
     }
 
     public void setCoremodManager(Class<?> coreModManager) {
         this.coremodManager = coreModManager;
 
         if (this.isDevEnvironment()) {
-            logger.info("Loading within deobfuscated environment...");
+            logger.info("Loading within dev environment...");
 
             System.setProperty("mixin.debug", "true");
             System.setProperty("mixin.hotSwap", "true");
@@ -54,6 +53,8 @@ public class GrimoireCore {
             System.setProperty("mixin.checks", "true");
             System.setProperty("mixin.checks.interfaces", "true");
             System.setProperty("mixin.env", "true");
+        } else {
+            logger.info("Loading within production environment...");
         }
     }
 
@@ -74,9 +75,6 @@ public class GrimoireCore {
     }
 
     public void init() {
-        OmniconfigTest.INSTANCE.getClass(); // make it construct
-        AnnotationConfigCore.INSTANCE.addAnnotationConfig(AnnotationConfigTest.class);
-
         this.grimmixLoader.scanForGrimmixes(classLoader, this.modFolder, this.versionedModFolder);
 
         this.grimmixLoader.construct();

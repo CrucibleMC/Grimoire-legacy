@@ -66,8 +66,6 @@ public class LegacyPatchController extends GrimmixController {
             File modFolder = GrimoireAPI.getModFolder();
             File versionFolder = GrimoireAPI.getVersionedModFolder();
 
-            GrimoireCore.logger.info("Scanning folders: {}, {}, {}", grimoireFolder, modFolder, versionFolder);
-
             if (grimoireFolder.exists() && grimoireFolder.isDirectory()) {
                 patches.addAll(this.scanForPatches(grimoireFolder, true));
             }

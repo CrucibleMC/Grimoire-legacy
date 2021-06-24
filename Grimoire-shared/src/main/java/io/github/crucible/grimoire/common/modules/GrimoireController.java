@@ -1,4 +1,4 @@
-package io.github.crucible.grimoire.common.test;
+package io.github.crucible.grimoire.common.modules;
 
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
@@ -11,7 +11,14 @@ import io.github.crucible.grimoire.common.events.grimmix.FinishLoadEvent;
 import io.github.crucible.grimoire.common.events.grimmix.ModLoadEvent;
 import io.github.crucible.grimoire.common.events.grimmix.ValidationEvent;
 
-@Grimmix(id = "grimoire", name = "Grimoire", version = "1.0.0")
+/**
+ * Purposeless for now, but let's keep it around for
+ * the sake of having its ID reserved.
+ *
+ * @author Aizistral
+ */
+
+@Grimmix(id = "Grimoire", name = "Grimoire", version = "1.0.0")
 public class GrimoireController extends GrimmixController {
 
     public GrimoireController() {
@@ -20,6 +27,7 @@ public class GrimoireController extends GrimmixController {
 
     @Override
     public void buildMixinConfigs(IConfigBuildingEvent event) {
+        /*
         event.createBuilder("omg/randommixins.json")
         .mixinPackage("io.github.crucible.grimoire.common.test.mixins")
         .configurationType(ConfigurationType.CORE)
@@ -27,6 +35,7 @@ public class GrimoireController extends GrimmixController {
         .mixinPriority(1001)
         .required(true)
         .build();
+         */
     }
 
 }

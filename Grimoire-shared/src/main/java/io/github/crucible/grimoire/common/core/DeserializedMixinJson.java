@@ -39,12 +39,6 @@ class DeserializedMixinJson {
 
     public boolean isValidConfiguration() {
         boolean valid = this.mixinPackage != null && this.mixinClasses != null && this.mixinClassesClient != null && this.mixinClassesServer != null;
-
-        if (valid) {
-            GrimoireCore.logger.info("Deserialized MixinJson. Package: {}, mixins: {}, client: {}, server: {}",
-                    this.mixinPackage, this.mixinClasses, this.mixinClassesClient, this.mixinClassesServer);
-        }
-
         return valid;
     }
 
