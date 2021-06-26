@@ -8,9 +8,10 @@
     "url": "https://github.com/CrucibleMC/Grimoire",
     "updateUrl": "",
     "authorList": [
-      "CrucibleMC team"
+      "CrucibleMC Team",
+      "Aizistral"
     ],
-    "credits": "Special thanks to Aizistral for major contribution to the project.",
+    "credits": "",
     "logoFile": "",
     "screenshots": [],
     "dependencies": []
