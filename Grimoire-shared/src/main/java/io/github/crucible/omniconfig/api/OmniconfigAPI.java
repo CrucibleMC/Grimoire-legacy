@@ -2,6 +2,7 @@ package io.github.crucible.omniconfig.api;
 
 import java.io.File;
 
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.api.annotation.IAnnotationConfigRegistry;
 import io.github.crucible.omniconfig.api.builders.IOmniconfigBuilder;
@@ -11,6 +12,7 @@ import io.github.crucible.omniconfig.api.lib.Version;
 import io.github.crucible.omniconfig.core.Omniconfig;
 import io.github.crucible.omniconfig.core.OmniconfigRegistry;
 import io.github.crucible.omniconfig.gconfig.AnnotationConfigCore;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 
 public class OmniconfigAPI {
 

@@ -18,6 +18,8 @@ import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractServer;
+import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlayerMP;
 
 public class ChadPacketDispatcher extends AbstractPacketDispatcher<ByteBuf, ChadPlayerMP> {
     public static final ChadPacketDispatcher INSTANCE = new ChadPacketDispatcher();

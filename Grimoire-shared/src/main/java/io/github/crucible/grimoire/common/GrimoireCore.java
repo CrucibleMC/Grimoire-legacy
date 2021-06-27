@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Throwables;
 
+import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.config.GrimoireConfig;
@@ -67,6 +68,8 @@ public class GrimoireCore {
 
         this.configFolder.mkdirs();
         this.dataFolder.mkdirs();
+
+        GrimoireAPI.EVENT_BUS.getClass(); // Make it happen
 
         OmniconfigCore.logger.info("Initializing omniconfig core...");
         OmniconfigAPI.registerAnnotationConfig(GrimoireConfig.class);

@@ -21,6 +21,7 @@ import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
 import io.github.crucible.grimoire.common.core.VersionHandler;
 import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 
 public class GrimoireAPI {
 
@@ -142,6 +143,10 @@ public class GrimoireAPI {
 
     public static File getDataFolder() {
         return GrimoireCore.INSTANCE.getDataFolder();
+    }
+
+    public static LaunchClassLoader getLaunchClassloader() {
+        return GrimoireCore.INSTANCE.getClassLoader();
     }
 
 }
