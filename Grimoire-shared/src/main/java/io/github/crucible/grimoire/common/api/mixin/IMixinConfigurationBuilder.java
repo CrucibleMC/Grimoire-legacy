@@ -2,8 +2,6 @@ package io.github.crucible.grimoire.common.api.mixin;
 
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import io.github.crucible.grimoire.common.core.runtimeconfig.MixinConfigBuilder;
-
 public interface IMixinConfigurationBuilder {
 
     public IMixinConfigurationBuilder targetEnvironment(MixinEnvironment.Phase envPhase);
@@ -25,6 +23,8 @@ public interface IMixinConfigurationBuilder {
     public IMixinConfigurationBuilder mixinPriority(int priority);
 
     public IMixinConfigurationBuilder setSourceFile(boolean setOrNot);
+
+    public IMixinConfigurationBuilder verbose(boolean verbose);
 
     public IMixinConfigurationBuilder setConfigurationPlugin(String pluginClass);
 

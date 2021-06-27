@@ -8,7 +8,6 @@ import io.github.crucible.omniconfig.api.builders.IOmniconfigBuilder;
 import io.github.crucible.omniconfig.api.core.IOmniconfigRegistry;
 import io.github.crucible.omniconfig.api.core.SidedConfigType;
 import io.github.crucible.omniconfig.api.lib.Version;
-import io.github.crucible.omniconfig.backing.Configuration;
 import io.github.crucible.omniconfig.core.Omniconfig;
 import io.github.crucible.omniconfig.core.OmniconfigRegistry;
 import io.github.crucible.omniconfig.gconfig.AnnotationConfigCore;

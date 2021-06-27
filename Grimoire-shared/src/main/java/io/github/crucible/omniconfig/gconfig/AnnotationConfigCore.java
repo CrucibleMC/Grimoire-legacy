@@ -1,17 +1,14 @@
 package io.github.crucible.omniconfig.gconfig;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.api.annotation.IAnnotationConfigRegistry;
 import io.github.crucible.omniconfig.api.core.IOmniconfig;
-import io.github.crucible.omniconfig.core.Omniconfig;
 
 public class AnnotationConfigCore implements IAnnotationConfigRegistry {
     public static final AnnotationConfigCore INSTANCE = new AnnotationConfigCore();

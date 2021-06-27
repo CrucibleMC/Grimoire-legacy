@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import io.github.crucible.omniconfig.api.lib.Version;
 import io.github.crucible.omniconfig.api.properties.IAbstractProperty;
-import io.github.crucible.omniconfig.core.properties.AbstractParameter;
 
 public interface IOmniconfig {
 

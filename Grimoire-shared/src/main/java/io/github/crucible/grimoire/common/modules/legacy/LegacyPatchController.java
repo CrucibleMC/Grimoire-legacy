@@ -12,8 +12,6 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 
-import com.google.common.base.Objects;
-
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;

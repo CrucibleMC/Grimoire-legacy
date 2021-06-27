@@ -2,8 +2,6 @@ package io.github.crucible.grimoire.common.integration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;

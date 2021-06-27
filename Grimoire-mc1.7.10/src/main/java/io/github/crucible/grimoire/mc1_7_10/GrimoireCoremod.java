@@ -1,28 +1,20 @@
 package io.github.crucible.grimoire.mc1_7_10;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.Map;
+
+import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.Mixins;
+
 import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import io.github.crucible.grimoire.common.GrimoireCore;
-import io.github.crucible.grimoire.common.api.GrimoireAPI;
 import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.events.SubscribeAnnotationWrapper;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadAnnotationWrapper;
-import io.github.crucible.grimoire.mc1_7_10.handlers.ChadOPChecker;
-import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadVersionHandler;
-import io.github.crucible.omniconfig.OmniconfigCore;
-
-import org.apache.logging.log4j.LogManager;
-import org.spongepowered.asm.launch.MixinBootstrap;
-import org.spongepowered.asm.mixin.Mixins;
-
-import com.google.common.base.Charsets;
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 @IFMLLoadingPlugin.Name("Grimoire")
 @IFMLLoadingPlugin.MCVersion("1.7.10")

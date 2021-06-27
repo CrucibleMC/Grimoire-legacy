@@ -1,5 +1,15 @@
 package io.github.crucible.grimoire.common.api.eventbus;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -11,21 +21,6 @@ import com.google.common.reflect.TypeToken;
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEvent.Priority;
 import io.github.crucible.grimoire.common.events.SubscribeAnnotationWrapper;
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
     private static final List<CoreEventBus<? extends CoreEvent>> busRegistry = new ArrayList<>();

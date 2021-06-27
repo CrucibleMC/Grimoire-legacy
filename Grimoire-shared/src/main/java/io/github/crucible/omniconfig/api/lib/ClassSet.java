@@ -1,9 +1,5 @@
 package io.github.crucible.omniconfig.api.lib;
 
-import com.google.common.base.Preconditions;
-
-import io.github.crucible.omniconfig.OmniconfigCore;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,6 +8,10 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.google.common.base.Preconditions;
+
+import io.github.crucible.omniconfig.OmniconfigCore;
 
 public final class ClassSet<T> implements Iterable<Class<? extends T>> {
     private final Set<Class<? extends T>> classes = new HashSet<>();

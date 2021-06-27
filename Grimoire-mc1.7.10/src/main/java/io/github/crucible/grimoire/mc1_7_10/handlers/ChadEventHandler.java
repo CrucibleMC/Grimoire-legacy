@@ -1,27 +1,17 @@
 package io.github.crucible.grimoire.mc1_7_10.handlers;
 
-import com.gamerforea.eventhelper.util.ConvertUtils;
-
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.GrimoireInternals;
-import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
-import io.github.crucible.grimoire.mc1_7_10.api.integration.eventhelper.IEventHelperIntegration;
 import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher.ChadPlayerMP;
-import io.github.crucible.omniconfig.OmniconfigCore;
-import io.github.crucible.omniconfig.core.Omniconfig;
 import io.github.crucible.omniconfig.core.SynchronizationManager;
-import io.github.crucible.omniconfig.core.properties.AbstractParameter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.event.world.ChunkEvent;
 
 public class ChadEventHandler {
 

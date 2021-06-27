@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlayerMP;
-import io.github.crucible.omniconfig.lib.Finalized;
 
 public abstract class AbstractPacketDispatcher<T, E extends AbstractPlayerMP<?>> {
 

@@ -3,16 +3,11 @@ package io.github.crucible.omniconfig.gconfig;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +30,6 @@ import io.github.crucible.omniconfig.api.core.IOmniconfig;
 import io.github.crucible.omniconfig.api.lib.ClassSet;
 import io.github.crucible.omniconfig.api.lib.Version;
 import io.github.crucible.omniconfig.backing.Configuration;
-import io.github.crucible.omniconfig.core.Omniconfig;
 import io.github.crucible.omniconfig.core.properties.EnumParameter;
 
 public class AnnotationConfigReader {

@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
 import io.github.crucible.omniconfig.api.core.IOmniconfigRegistry;
 
 public class OmniconfigRegistry implements IOmniconfigRegistry {

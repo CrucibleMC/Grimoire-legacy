@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,15 +15,12 @@ import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfigurationBuilder;
 import io.github.crucible.grimoire.common.core.GrimmixContainer;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
-import io.github.crucible.omniconfig.api.OmniconfigAPI;
-import io.github.crucible.omniconfig.core.Omniconfig;
 
 public class MixinConfigBuilder implements IMixinConfigurationBuilder {
     private final SerializedMixinJson json = new SerializedMixinJson();
@@ -100,6 +96,12 @@ public class MixinConfigBuilder implements IMixinConfigurationBuilder {
     @Override
     public MixinConfigBuilder setSourceFile(boolean setOrNot) {
         this.json.setSetSourceFile(setOrNot);
+        return this;
+    }
+
+    @Override
+    public MixinConfigBuilder verbose(boolean verbose) {
+        this.json.setVerboseLogging(verbose);
         return this;
     }
 

@@ -1,33 +1,5 @@
 package io.github.crucible.grimoire.common.core;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import io.github.crucible.grimoire.common.GrimoireCore;
-import io.github.crucible.grimoire.common.GrimoireInternals;
-import io.github.crucible.grimoire.common.api.GrimoireAPI;
-import io.github.crucible.grimoire.common.api.GrimoireConstants;
-import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
-import io.github.crucible.grimoire.common.api.eventbus.CoreEventBus;
-import io.github.crucible.grimoire.common.api.eventbus.CoreEventHandler;
-import io.github.crucible.grimoire.common.api.events.configurations.GrimoireConfigsEvent;
-import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
-import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
-import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
-import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
-import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
-import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.EventHandlerCandidate;
-import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.GrimmixCandidate;
-import io.github.crucible.grimoire.common.core.runtimeconfig.ConfigBuildingManager;
-import io.github.crucible.grimoire.common.modules.ForceLoadController;
-import io.github.crucible.omniconfig.api.lib.Either;
-import net.minecraft.launchwrapper.LaunchClassLoader;
-import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.service.MixinService;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,13 +14,37 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.service.MixinService;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+
+import io.github.crucible.grimoire.common.GrimoireCore;
+import io.github.crucible.grimoire.common.GrimoireInternals;
+import io.github.crucible.grimoire.common.api.GrimoireAPI;
+import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
+import io.github.crucible.grimoire.common.api.eventbus.CoreEventBus;
+import io.github.crucible.grimoire.common.api.eventbus.CoreEventHandler;
+import io.github.crucible.grimoire.common.api.events.configurations.GrimoireConfigsEvent;
+import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
+import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
+import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
+import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.EventHandlerCandidate;
+import io.github.crucible.grimoire.common.core.GrimoireAnnotationAnalyzer.GrimmixCandidate;
+import io.github.crucible.grimoire.common.core.runtimeconfig.ConfigBuildingManager;
+import io.github.crucible.grimoire.common.modules.ForceLoadController;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 
 public class GrimmixLoader {
     public static Pattern classFile = Pattern.compile("[^\\s\\$]+(\\$[^\\s]+)?\\.class$");

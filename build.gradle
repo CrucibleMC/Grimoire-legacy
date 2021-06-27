@@ -3,5 +3,5 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     group = 'io.github.crucible.grimoire'
-    version = '3.0.0'
+    version = '3.0.0-beta'
 }

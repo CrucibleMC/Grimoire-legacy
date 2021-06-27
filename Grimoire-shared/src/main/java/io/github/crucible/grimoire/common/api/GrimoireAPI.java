@@ -1,9 +1,14 @@
 package io.github.crucible.grimoire.common.api;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
-import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
 import io.github.crucible.grimoire.common.api.eventbus.CoreEventBus;
 import io.github.crucible.grimoire.common.api.events.GrimoireEvent;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
@@ -12,17 +17,10 @@ import io.github.crucible.grimoire.common.api.integration.IModIntegrationRegistr
 import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
-import io.github.crucible.grimoire.common.core.GrimmixContainer;
 import io.github.crucible.grimoire.common.core.GrimmixLoader;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
 import io.github.crucible.grimoire.common.core.VersionHandler;
 import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
-
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GrimoireAPI {
 

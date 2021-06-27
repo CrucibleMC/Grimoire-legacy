@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 import io.github.crucible.omniconfig.api.lib.Perhaps;
 import io.github.crucible.omniconfig.api.properties.IPerhapsProperty;
-import io.github.crucible.omniconfig.core.properties.PerhapsParameter.Builder;
 
 public interface IPerhapsPropertyBuilder extends IAbstractPropertyBuilder<IPerhapsProperty, IPerhapsPropertyBuilder> {
 

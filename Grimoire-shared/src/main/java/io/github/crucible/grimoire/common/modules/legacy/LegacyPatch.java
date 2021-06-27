@@ -4,13 +4,6 @@ import java.util.List;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.List;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-
 class LegacyPatch implements Comparable<LegacyPatch> {
 
     private final long priority;

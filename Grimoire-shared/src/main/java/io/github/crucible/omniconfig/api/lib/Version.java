@@ -2,12 +2,9 @@ package io.github.crucible.omniconfig.api.lib;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-
-import io.github.crucible.grimoire.common.GrimoireInternals;
 
 public class Version {
     private static final char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };

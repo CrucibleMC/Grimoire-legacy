@@ -1,6 +1,5 @@
 package io.github.crucible.omniconfig.core.properties;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import io.github.crucible.omniconfig.OmniconfigCore;

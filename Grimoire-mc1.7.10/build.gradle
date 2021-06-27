@@ -101,6 +101,7 @@ jar {
 }
 
 task devJar(type: Jar) {
+	archiveBaseName = project.name + '-dev'
 	archiveClassifier = 'dev'
 	from sourceSets.main.output
 	
@@ -110,6 +111,7 @@ task devJar(type: Jar) {
 }
 
 task sourcesJar(type: Jar) {
+	archiveBaseName = project.name + '-dev'
 	archiveClassifier = 'dev-sources'
 	
 	from sourceSets.main.allSource
@@ -119,6 +121,7 @@ task sourcesJar(type: Jar) {
 }
 
 task apiJar(type: Jar) {
+	archiveBaseName = project.name + '-api'
 	archiveClassifier = 'api'
 
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -140,6 +143,7 @@ task apiJar(type: Jar) {
 }
 
 task apiSourcesJar(type: Jar) {
+	archiveBaseName = project.name + '-api'
 	archiveClassifier = 'api-sources'
 
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE

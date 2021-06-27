@@ -3,7 +3,6 @@ package io.github.crucible.grimoire.common.core.runtimeconfig;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
 import org.spongepowered.asm.mixin.injection.InjectionPoint;
 
 import com.google.gson.annotations.SerializedName;

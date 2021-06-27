@@ -9,10 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import org.apache.commons.codec.digest.DigestUtils;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -20,8 +16,6 @@ import com.google.common.base.Throwables;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.GrimoireInternals;
-import io.github.crucible.omniconfig.OmniconfigCore;
-import io.github.crucible.omniconfig.backing.Configuration;
 import io.github.crucible.omniconfig.lib.FileWatcher;
 
 public class ConfigBuildingManager {

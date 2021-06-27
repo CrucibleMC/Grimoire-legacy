@@ -1,7 +1,16 @@
 package io.github.crucible.grimoire.common.core;
 
+import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
@@ -21,17 +30,6 @@ import io.github.crucible.grimoire.common.events.grimmix.CoreLoadEvent;
 import io.github.crucible.grimoire.common.events.grimmix.FinishLoadEvent;
 import io.github.crucible.grimoire.common.events.grimmix.ModLoadEvent;
 import io.github.crucible.grimoire.common.events.grimmix.ValidationEvent;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix {
     protected final List<IMixinConfiguration> ownedConfigurations = new ArrayList<>();

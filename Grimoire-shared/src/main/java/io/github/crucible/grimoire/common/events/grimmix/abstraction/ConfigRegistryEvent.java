@@ -1,13 +1,13 @@
 package io.github.crucible.grimoire.common.events.grimmix.abstraction;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.core.MixinConfiguration;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
 
 public abstract class ConfigRegistryEvent extends LifecycleEvent {
     protected final List<String> configurationCandidates;

@@ -1,19 +1,11 @@
 package io.github.crucible.omniconfig.core.properties;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
-
-import javax.print.attribute.HashAttributeSet;
 
 import com.google.common.collect.ImmutableList;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.omniconfig.OmniconfigCore;
-import io.github.crucible.omniconfig.api.builders.IAbstractPropertyBuilder;
 import io.github.crucible.omniconfig.api.core.SidedConfigType;
 import io.github.crucible.omniconfig.api.core.VersioningPolicy;
 import io.github.crucible.omniconfig.api.properties.IAbstractProperty;

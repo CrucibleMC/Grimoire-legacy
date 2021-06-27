@@ -2,13 +2,10 @@ package io.github.crucible.omniconfig.core.properties;
 
 import java.util.function.Function;
 
-import io.github.crucible.omniconfig.OmniconfigCore;
 import io.github.crucible.omniconfig.api.builders.IBooleanPropertyBuilder;
 import io.github.crucible.omniconfig.api.properties.IBooleanProperty;
-import io.github.crucible.omniconfig.backing.ConfigCategory;
 import io.github.crucible.omniconfig.backing.Configuration;
 import io.github.crucible.omniconfig.core.Omniconfig;
-import io.github.crucible.omniconfig.core.properties.BooleanParameter.Builder;
 
 public class BooleanParameter extends AbstractParameter<IBooleanProperty> implements IBooleanProperty {
     protected final boolean defaultValue;

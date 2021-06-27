@@ -6,7 +6,6 @@ import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 
 import io.github.crucible.omniconfig.api.builders.IStringListPropertyBuilder;
-import io.github.crucible.omniconfig.api.lib.Perhaps;
 import io.github.crucible.omniconfig.api.properties.IStringListProperty;
 import io.github.crucible.omniconfig.backing.Configuration;
 import io.github.crucible.omniconfig.core.Omniconfig;

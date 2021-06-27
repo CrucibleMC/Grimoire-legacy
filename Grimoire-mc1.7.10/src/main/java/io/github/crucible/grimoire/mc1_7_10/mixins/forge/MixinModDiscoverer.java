@@ -1,19 +1,17 @@
 package io.github.crucible.grimoire.mc1_7_10.mixins.forge;
 
-import cpw.mods.fml.common.discovery.ModCandidate;
-import cpw.mods.fml.common.discovery.ModDiscoverer;
-import io.github.crucible.grimoire.common.GrimoireCore;
-import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
-import io.github.crucible.grimoire.common.core.GrimmixContainer;
-import io.github.crucible.grimoire.common.core.GrimmixLoader;
-import io.github.crucible.grimoire.common.modules.legacy.LegacyPatchController;
+import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.List;
+import cpw.mods.fml.common.discovery.ModCandidate;
+import cpw.mods.fml.common.discovery.ModDiscoverer;
+import io.github.crucible.grimoire.common.GrimoireCore;
+import io.github.crucible.grimoire.common.core.GrimmixLoader;
+import io.github.crucible.grimoire.common.modules.legacy.LegacyPatchController;
 
 @Mixin(value = ModDiscoverer.class, remap = false)
 public class MixinModDiscoverer {

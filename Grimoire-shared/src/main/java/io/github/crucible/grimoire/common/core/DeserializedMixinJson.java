@@ -12,7 +12,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
-import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
 import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 

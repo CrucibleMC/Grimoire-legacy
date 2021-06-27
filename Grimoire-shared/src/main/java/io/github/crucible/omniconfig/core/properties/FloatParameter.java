@@ -7,7 +7,6 @@ import io.github.crucible.omniconfig.api.builders.IFloatPropertyBuilder;
 import io.github.crucible.omniconfig.api.properties.IFloatProperty;
 import io.github.crucible.omniconfig.backing.Configuration;
 import io.github.crucible.omniconfig.core.Omniconfig;
-import io.github.crucible.omniconfig.core.properties.FloatParameter.Builder;
 
 public class FloatParameter extends AbstractParameter<IFloatProperty> implements IFloatProperty {
     protected final float defaultValue, minValue, maxValue;

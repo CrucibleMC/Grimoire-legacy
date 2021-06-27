@@ -3,28 +3,21 @@ package io.github.crucible.grimoire.mc1_7_10.handlers;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import io.github.crucible.grimoire.common.GrimoireInternals;
 import io.github.crucible.grimoire.common.api.lib.Environment;
 import io.github.crucible.grimoire.mc1_7_10.GrimoireMod;
-import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher.ChadPlayerMP;
+import io.github.crucible.grimoire.mc1_7_10.network.PacketSyncOmniconfig;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher;
 import io.github.crucible.omniconfig.core.Omniconfig;
 import io.github.crucible.omniconfig.core.SynchronizationManager;
-import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlayerMP;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import io.github.crucible.grimoire.mc1_7_10.network.PacketSyncOmniconfig;
-import io.github.crucible.grimoire.mc1_7_10.handlers.ChadPacketDispatcher.ChadPlayerMP;
 
 public class ChadPacketDispatcher extends AbstractPacketDispatcher<ByteBuf, ChadPlayerMP> {
     public static final ChadPacketDispatcher INSTANCE = new ChadPacketDispatcher();

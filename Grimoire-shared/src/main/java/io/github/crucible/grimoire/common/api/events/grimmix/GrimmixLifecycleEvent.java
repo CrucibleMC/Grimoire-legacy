@@ -1,6 +1,5 @@
 package io.github.crucible.grimoire.common.api.events.grimmix;
 
-import io.github.crucible.grimoire.common.api.eventbus.CoreEvent;
 import io.github.crucible.grimoire.common.api.eventbus.ICancelable;
 import io.github.crucible.grimoire.common.api.events.GrimoireEvent;
 import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;

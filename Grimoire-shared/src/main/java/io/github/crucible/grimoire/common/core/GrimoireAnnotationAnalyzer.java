@@ -1,10 +1,5 @@
 package io.github.crucible.grimoire.common.core;
 
-import io.github.crucible.grimoire.common.GrimoireCore;
-import io.github.crucible.grimoire.common.api.eventbus.CoreEventHandler;
-import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
-import org.objectweb.asm.*;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -12,6 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
+import io.github.crucible.grimoire.common.GrimoireCore;
+import io.github.crucible.grimoire.common.api.eventbus.CoreEventHandler;
+import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 
 class GrimoireAnnotationAnalyzer extends ClassVisitor {
     private final GrimmixCandidate grimmixCandidate = new GrimmixCandidate();

@@ -1,8 +1,8 @@
 package io.github.crucible.grimoire.common.api.mixin;
 
-import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
-
 import java.util.Optional;
+
+import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 
 public interface IMixinConfiguration {
 

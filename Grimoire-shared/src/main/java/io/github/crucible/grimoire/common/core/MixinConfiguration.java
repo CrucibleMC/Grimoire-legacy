@@ -1,7 +1,13 @@
 package io.github.crucible.grimoire.common.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import org.spongepowered.asm.mixin.Mixins;
+
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.api.GrimoireAPI;
@@ -10,13 +16,6 @@ import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
 import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 import io.github.crucible.grimoire.common.core.runtimeconfig.ConfigBuildingManager;
-
-import org.spongepowered.asm.mixin.Mixins;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 public class MixinConfiguration implements IMixinConfiguration {
     private static final List<MixinConfiguration> unclaimedConfigurations = new ArrayList<>();
