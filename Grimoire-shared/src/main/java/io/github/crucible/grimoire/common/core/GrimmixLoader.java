@@ -190,7 +190,7 @@ public class GrimmixLoader {
         return;
     }
 
-    protected void seekGrimmixes(Collection<URL> paths, @Nullable LaunchClassLoader classLoader) {
+    protected void seekGrimmixes(Collection<URL> paths, @Nullable LaunchClassLoader classLoader, boolean ignoreFolders) {
         for (URL url : paths) {
             try {
                 URI uri = url.toURI();
@@ -206,6 +206,10 @@ public class GrimmixLoader {
                 GrimoireCore.logger.info("Scanning {} {} for grimmix controllers...", isDirectory ? "directory" : "file", GrimoireInternals.sanitizePath(uri.toString()));
 
                 if (isDirectory) {
+                    if (ignoreFolders) {
+                        continue;
+                    }
+
                     File manifestFile = new File(candidateFile, "META-INF/MANIFEST.MF");
 
                     if (manifestFile.exists()) {
@@ -310,7 +314,7 @@ public class GrimmixLoader {
 
         if (classLoader != null) {
             classUrls = Lists.newArrayList(MixinService.getService().getClassProvider().getClassPath());
-            this.seekGrimmixes(classUrls, null);
+            this.seekGrimmixes(classUrls, null, false);
         }
 
         List<URL> fileURLs = new ArrayList<>();
@@ -332,7 +336,7 @@ public class GrimmixLoader {
         }
 
         if (fileURLs.size() > 0) {
-            this.seekGrimmixes(fileURLs, classLoader);
+            this.seekGrimmixes(fileURLs, classLoader, true);
         }
 
         for (Class<?> handlerClass : this.staticEventHandlers) {
