@@ -31,7 +31,7 @@ public class MixinModDiscoverer {
             value = "INVOKE"
             ))
     private boolean redirectCoremodCheck(List<?> loadedCoremods, Object fileName) {
-        boolean contains = true;
+        boolean contains = false;
 
         if (GrimmixLoader.INSTANCE.isGrimmix(String.valueOf(fileName))) {
             contains = true;
