@@ -1,0 +1,121 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+	flatDir {
+		dirs 'libs'
+	}
+    mavenCentral()
+}
+
+tasks.withType(Jar) {
+	if (name.equals('jar') || name.equals('devJar')) {
+		manifest {
+			attributes([
+					"Specification-Title": project.group,
+					"Specification-Vendor": "CrucibleMC Team",
+					"Specification-Version": "1",
+					"Implementation-Title": project.name,
+					"Implementation-Version": project.version,
+					"Implementation-Vendor": "CrucibleMC Team",
+					"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+					'IsThatYouGrimoire': "Indeed",
+					'FMLCorePluginContainsFMLMod': 'true',
+					"ForceLoadAsMod": "true",
+					'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
+			])
+		}
+	}
+}
+
+jar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from project(':Grimoire-shared').sourceSets.main.output
+	from zipTree(mixinRepackFile)
+}
+
+task devJar(type: Jar) {
+	archiveBaseName = project.name + '-dev'
+	archiveClassifier = 'dev'
+	from sourceSets.main.output
+	
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from project(':Grimoire-shared').sourceSets.main.output
+	from zipTree(mixinRepackFile)
+}
+
+task sourcesJar(type: Jar) {
+	archiveBaseName = project.name + '-dev'
+	archiveClassifier = 'dev-sources'
+	
+	from sourceSets.main.allSource
+	from project(':Grimoire-shared').sourceSets.main.allSource
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from zipTree(mixinRepackFileSources)
+}
+
+task apiJar(type: Jar) {
+	archiveBaseName = project.name + '-api'
+	archiveClassifier = 'api'
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	
+	from(project(':Grimoire-shared').sourceSets.main.output) {
+		include '**/api/**'
+	}	
+	
+	from(sourceSets.main.output) {
+		include '**/api/**'
+	}
+	
+	from(zipTree(mixinRepackFile)) {
+		exclude 'org/spongepowered/asm/launch/MixinBootstrap**'
+		exclude 'org/spongepowered/asm/mixin/Mixins**'
+		exclude 'com/google/gson/**'
+		exclude 'org/apache/**'
+	}
+}
+
+task apiSourcesJar(type: Jar) {
+	archiveBaseName = project.name + '-api'
+	archiveClassifier = 'api-sources'
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	
+	from(project(':Grimoire-shared').sourceSets.main.allSource) {
+		include '**/api/**'
+	}	
+	
+	from(sourceSets.main.allSource) {
+		include '**/api/**'
+	}
+	
+	from(zipTree(mixinRepackFileSources)) {
+		exclude 'org/spongepowered/asm/launch/MixinBootstrap**'
+		exclude 'org/spongepowered/asm/mixin/Mixins**'
+		exclude 'com/google/gson/**'
+		exclude 'org/apache/**'
+	}
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.mcVersion
+
+    from("${project.projectDir}/../docs") {
+        include "mcmod.info"
+        expand "version": project.version, "mcversion": project.mcVersion
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+}
+
+artifacts {
+	archives devJar
+	archives sourcesJar
+}
