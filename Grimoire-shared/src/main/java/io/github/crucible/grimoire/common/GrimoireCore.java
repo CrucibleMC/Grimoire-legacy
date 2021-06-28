@@ -2,6 +2,7 @@ package io.github.crucible.grimoire.common;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,7 @@ public class GrimoireCore {
     public static final Logger logger = LogManager.getLogger("Grimoire");
     public static final GrimoireCore INSTANCE = new GrimoireCore();
 
+    private List<String> forcedFilenames = new ArrayList<String>();;
     private final GrimmixLoader grimmixLoader;
     private File mcLocation;
     private File modFolder;
@@ -143,6 +145,10 @@ public class GrimoireCore {
         }
 
         return this.obfuscated.booleanValue();
+    }
+
+    public List<String> getForcedFilenames() {
+        return this.forcedFilenames;
     }
 
 }

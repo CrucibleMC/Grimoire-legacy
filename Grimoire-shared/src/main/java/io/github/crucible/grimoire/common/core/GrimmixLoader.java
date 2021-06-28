@@ -124,7 +124,8 @@ public class GrimmixLoader {
         return null;
     }
 
-    private void examineForAnnotations(File file, List<GrimmixCandidate> candidates, List<EventHandlerCandidate> handlers, List<String> configList, String recursivePath) {
+    private boolean examineForAnnotations(File file, List<GrimmixCandidate> candidates, List<EventHandlerCandidate> handlers, List<String> configList, String recursivePath) {
+        boolean hadForcedConfigurations = false;
         if (file.isDirectory()) {
             String newPath = recursivePath == null ? "" : (recursivePath + file.getName() + File.separator);
 
@@ -151,6 +152,7 @@ public class GrimmixLoader {
 
                         if (json != null && json.isValidConfiguration()) {
                             if (json.getForceLoadType() != null) {
+                                hadForcedConfigurations = true;
                                 ForceLoadController.addForcedConfiguration(json.getForceLoadType(), ze.getName());
                             } else {
                                 configList.add(ze.getName());
@@ -180,6 +182,7 @@ public class GrimmixLoader {
 
             if (json != null && json.isValidConfiguration()) {
                 if (json.getForceLoadType() != null) {
+                    hadForcedConfigurations = true;
                     ForceLoadController.addForcedConfiguration(json.getForceLoadType(), cfgPath);
                 } else {
                     configList.add(cfgPath);
@@ -187,7 +190,7 @@ public class GrimmixLoader {
             }
         }
 
-        return;
+        return hadForcedConfigurations;
     }
 
     protected void seekGrimmixes(Collection<URL> paths, @Nullable LaunchClassLoader classLoader, boolean ignoreFolders) {
@@ -235,22 +238,25 @@ public class GrimmixLoader {
                 List<EventHandlerCandidate> handlerList = new ArrayList<>();
                 List<String> configList = new ArrayList<>();
 
-                this.examineForAnnotations(candidateFile, candidateList, handlerList, configList, null);
+                // TODO Dont forget to add files with forced configurations to classpath
+                boolean hadForcedConfigurations = this.examineForAnnotations(candidateFile, candidateList, handlerList, configList, null);
                 boolean alreadyThere = false;
 
-                if (candidateList.size() > 0 && classLoader != null) {
-                    for (URL classURL : classLoader.getURLs()) {
-                        if (url.equals(classURL)) {
-                            alreadyThere = true;
-                            break;
+                if (classLoader != null && !candidateFile.isDirectory())
+                    if (candidateList.size() > 0 || handlerList.size() > 0 || hadForcedConfigurations) {
+                        for (URL classURL : classLoader.getURLs()) {
+                            if (url.equals(classURL)) {
+                                alreadyThere = true;
+                                break;
+                            }
+                        }
+
+                        if (!alreadyThere) {
+                            GrimoireCore.logger.info("Adding location: {} to java classpath, not there yet", url.toString().replaceAll("%20", " "));
+                            classLoader.addURL(url);
+                            GrimoireCore.INSTANCE.getForcedFilenames().add(candidateFile.getName());
                         }
                     }
-
-                    if (!alreadyThere) {
-                        GrimoireCore.logger.info("Adding location: {} to java classpath, not there yet", url.toString().replaceAll("%20", " "));
-                        classLoader.addURL(url);
-                    }
-                }
 
                 for (GrimmixCandidate candidate : candidateList) {
                     try {

@@ -30,18 +30,12 @@ public class MixinModDiscoverer {
             target = "Ljava/util/List;contains(Ljava/lang/Object;)Z",
             value = "INVOKE"
             ))
-    private boolean redirectCoremodCheck(List<?> loadedCoremods, Object fileName) {
-        boolean contains = false;
+    private boolean redirectCoremodCheck(List<?> loadedCoremods, Object file) {
+        String fileName = String.valueOf(file);
 
-        if (GrimmixLoader.INSTANCE.isGrimmix(String.valueOf(fileName))) {
-            contains = true;
-        } else if (LegacyPatchController.instance().isLegacyPatch(String.valueOf(fileName))) {
-            contains = true;
-        }
-
-        if (contains) {
+        if (GrimoireCore.INSTANCE.getForcedFilenames().contains(fileName)) {
             GrimoireCore.logger.info("File {} was discovered by Grimoire and added to classpath earlier, preventing re-addition by ModDiscovered.", fileName);
-            return contains;
+            return true;
         }
 
         return loadedCoremods.contains(fileName);
