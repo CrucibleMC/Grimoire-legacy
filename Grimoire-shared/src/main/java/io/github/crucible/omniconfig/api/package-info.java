@@ -1,5 +1,5 @@
 /**
- * The API package for Grimoire.<br/><br/>
+ * The API package for omniconfig system.<br/><br/>
  *
  * General contract is as per usual - external implementers are free to
  * use everything located within the bounds of API package, but whatever remains
@@ -11,4 +11,4 @@
  * @author Aizistral
  */
 
-package io.github.crucible.grimoire.common.api;
+package io.github.crucible.omniconfig.api;

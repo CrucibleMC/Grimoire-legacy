@@ -23,6 +23,10 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 
 public class OmniconfigAPI {
 
+    private OmniconfigAPI() {
+        // Can't touch this
+    }
+
     /**
      * Start new {@link IOmniconfigBuilder}, with {@link SidedConfigType#COMMON} and
      * version equal to <code>new {@link Version}("1.0.0")</code>.
@@ -88,8 +92,8 @@ public class OmniconfigAPI {
     }
 
     /**
-     * @return Default directory for configuration files. Normally this would be
-     * <code>[minecraft_folder]/config</code>
+     * @return Default directory for configuration files. Normally this will be
+     * <code>.minecraft/config</code>
      */
     public static File getConfigFolder() {
         return OmniconfigCore.CONFIG_DIR;

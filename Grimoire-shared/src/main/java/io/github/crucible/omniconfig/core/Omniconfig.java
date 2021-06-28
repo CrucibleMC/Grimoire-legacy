@@ -430,8 +430,10 @@ public class Omniconfig implements IOmniconfig {
 
         private void endPhase(BuildingPhase... phase) {
             for (BuildingPhase p : phase) {
-                if (this.phase == p && this.phase.hasNext()) {
+                if (this.phase != null && this.phase == p && this.phase.hasNext()) {
                     this.phase = this.phase.getNext();
+                } else if (p == BuildingPhase.FINALIZATION) {
+                    this.phase = null;
                 }
             }
         }
@@ -446,13 +448,18 @@ public class Omniconfig implements IOmniconfig {
             }
 
             if (!validPhase) {
-                String validPhases = String.valueOf(phase[0]);
-                for (int i = 1; i < phase.length; i++) {
-                    validPhases += ", " + phase[i];
-                }
 
-                throw new IllegalStateException("Invalid method called during omniconfig building phase "
-                        + this.phase + ". Invoked method can only be called in phases: " + validPhases);
+                if (this.phase == null)
+                    throw new IllegalStateException("Cannot invoke builder methods after config building is already finished.");
+                else {
+                    String validPhases = String.valueOf(phase[0]);
+                    for (int i = 1; i < phase.length; i++) {
+                        validPhases += ", " + phase[i];
+                    }
+
+                    throw new IllegalStateException("Invalid method called during omniconfig building phase "
+                            + this.phase + ". Invoked method can only be called in phases: " + validPhases);
+                }
             }
         }
 

@@ -10,6 +10,10 @@ import io.github.crucible.omniconfig.backing.Configuration;
 
 public class OmniconfigConstants {
 
+    private OmniconfigConstants() {
+        // Can't touch this
+    }
+
     /**
      * Category splitter char. May be used when specifying config subcategories
      * with annotation config.
