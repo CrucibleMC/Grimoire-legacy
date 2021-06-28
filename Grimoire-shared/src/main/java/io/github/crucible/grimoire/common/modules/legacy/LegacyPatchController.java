@@ -172,6 +172,7 @@ public class LegacyPatchController extends GrimmixController {
 
                     if (!alreadyThere) {
                         GrimoireCore.INSTANCE.getClassLoader().addURL(modUrl);
+                        GrimoireCore.INSTANCE.getForcedFilenames().add(mod.getName());
                     }
 
                     GrimoireCore.logger.info("Added legacy patch {}, was on classpath: {}", mod.getName(), alreadyThere);
