@@ -8,6 +8,7 @@ import java.util.Optional;
 import com.google.common.base.Preconditions;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.api.core.IOmniconfig;
 import io.github.crucible.omniconfig.api.properties.IAbstractProperty;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractBufferIO;
 import io.github.crucible.omniconfig.core.AbstractPacketDispatcher.AbstractPlayerMP;
@@ -59,10 +60,10 @@ public class SynchronizationManager {
         if (player.areWeRemoteServer()) {
             OmniconfigCore.logger.info("Synchronizing omniconfig files to " + player.getProfileName() + "...");
 
-            for (Omniconfig wrapper : OmniconfigRegistry.INSTANCE.getRegisteredConfigs()) {
+            for (IOmniconfig wrapper : OmniconfigRegistry.INSTANCE.getRegisteredConfigs()) {
                 if (!wrapper.getSidedType().isSided()) {
                     OmniconfigCore.logger.info("Sending data for " + wrapper.getFileID());
-                    player.sendSyncPacket(wrapper);
+                    player.sendSyncPacket((Omniconfig) wrapper);
                 }
             }
         } else {
@@ -136,7 +137,7 @@ public class SynchronizationManager {
 
             OmniconfigCore.onRemoteServer = false;
 
-            for (Omniconfig wrapper : OmniconfigRegistry.INSTANCE.getRegisteredConfigs()) {
+            for (IOmniconfig wrapper : OmniconfigRegistry.INSTANCE.getRegisteredConfigs()) {
                 if (wrapper.getSidedType().isSided()) {
                     continue;
                 }
@@ -155,7 +156,7 @@ public class SynchronizationManager {
                         }
 
                         String oldValue = param.valueToString();
-                        param.reloadFrom(wrapper);
+                        param.reloadFrom((Omniconfig) wrapper);
 
                         OmniconfigCore.logger.info("Value of '" + param.getID() + "' was restored to '" + param.valueToString() + "'; former server-forced value: " + oldValue);
                     }

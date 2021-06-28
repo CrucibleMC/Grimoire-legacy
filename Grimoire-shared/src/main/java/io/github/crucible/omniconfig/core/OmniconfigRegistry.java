@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import io.github.crucible.omniconfig.api.core.IOmniconfig;
 import io.github.crucible.omniconfig.api.core.IOmniconfigRegistry;
 
 public class OmniconfigRegistry implements IOmniconfigRegistry {
@@ -25,12 +26,12 @@ public class OmniconfigRegistry implements IOmniconfigRegistry {
     }
 
     @Override
-    public Collection<Omniconfig> getRegisteredConfigs() {
+    public Collection<IOmniconfig> getRegisteredConfigs() {
         return Collections.unmodifiableCollection(this.registryMap.values());
     }
 
     @Override
-    public Optional<Omniconfig> getConfig(String fileID) {
+    public Optional<IOmniconfig> getConfig(String fileID) {
         return Optional.ofNullable(this.registryMap.get(fileID));
     }
 

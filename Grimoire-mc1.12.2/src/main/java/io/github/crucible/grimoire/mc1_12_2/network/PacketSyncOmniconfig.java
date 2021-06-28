@@ -49,7 +49,7 @@ public class PacketSyncOmniconfig implements IMessage {
 
             message.either.ifSecond(data ->
             OmniconfigRegistry.INSTANCE.getConfig(data.getFileID()).ifPresent(wrapper ->
-            SynchronizationManager.updateData(wrapper, data)));
+            SynchronizationManager.updateData((Omniconfig) wrapper, data)));
 
             return null;
         }
