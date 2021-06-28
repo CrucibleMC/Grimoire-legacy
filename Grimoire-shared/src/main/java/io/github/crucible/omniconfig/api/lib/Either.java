@@ -7,6 +7,18 @@ import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * Generic object that serves as a container for storing one of two
+ * possible object types. It is assumed that any particular instance of
+ * {@link Either} will only ever store either one or another object type of
+ * two that are defined; never simultaneously both, and never none of them.
+ *
+ * @param <A> First object type.
+ * @param <B> Second object type.
+ *
+ * @author Aizistral
+ */
+
 public class Either<A, B> {
     private final A a;
     private final B b;
@@ -16,51 +28,101 @@ public class Either<A, B> {
         this.b = b;
     }
 
-    public boolean isA() {
+    /**
+     * @return True if this {@link Either} stores object of the first type.
+     */
+    public boolean isFirst() {
         return this.a != null;
     }
 
-    public boolean isB() {
+    /**
+     * @return True if this {@link Either} stores object of the second type.
+     */
+    public boolean isSecond() {
         return this.b != null;
     }
 
-    public boolean ifA(Consumer<A> consumer) {
-        if (this.isA()) {
+    /**
+     * If this {@link Either} is of first type, executes given {@link Consumer}
+     * passing instance of that object to it.
+     *
+     * @param consumer Consumer to execute.
+     * @return True if cosumer was actually executed, false otherwise.
+     */
+    public boolean ifFirst(Consumer<A> consumer) {
+        if (this.isFirst()) {
             consumer.accept(this.a);
         }
 
-        return this.isA();
+        return this.isFirst();
     }
 
-    public boolean ifB(Consumer<B> consumer) {
-        if (this.isB()) {
+    /**
+     * If this {@link Either} is of second type, executes given {@link Consumer}
+     * passing instance of that object to it.
+     *
+     * @param consumer Consumer to execute.
+     * @return True if cosumer was actually executed, false otherwise.
+     */
+    public boolean ifSecond(Consumer<B> consumer) {
+        if (this.isSecond()) {
             consumer.accept(this.b);
         }
 
-        return this.isB();
+        return this.isSecond();
     }
 
-    public void execute(Consumer<A> caseA, Consumer<B> caseB) {
-        if (this.ifA(caseA)) {
+    /**
+     * If this {@link Either} is of first type, execute first consumer passed;
+     * otherwise, execute second consumer.
+     *
+     * @param caseFirst Consumer to execute if this {@link Either} is of first type.
+     * @param caseSecond Cosumer to execute if this {@link Either} is of second type.
+     * @return True if cosumer was actually executed, false otherwise.
+     */
+    public void execute(Consumer<A> caseFirst, Consumer<B> caseSecond) {
+        if (this.ifFirst(caseFirst)) {
             // NO-OP
         } else {
-            caseB.accept(this.b);
+            caseSecond.accept(this.b);
         }
     }
 
-    public A getA() {
+    /**
+     * @return Stored object of first type.
+     * @throws NullPointerException If this either does not store
+     * object of first type.
+     */
+    public A getFirst() throws NullPointerException {
         return Preconditions.checkNotNull(this.a);
     }
 
-    public B getB() {
+    /**
+     * @return Stored object of second type.
+     * @throws NullPointerException If this either does not store
+     * object of second type.
+     */
+    public B getSecond() throws NullPointerException {
         return Preconditions.checkNotNull(this.b);
     }
 
-    public static <A, B> Either<A, B> fromA(@NotNull A a) {
-        return new Either<A, B>(Objects.requireNonNull(a), (B)null);
+    /**
+     * Create new {@link Either} instance that stores object of first type.
+     *
+     * @param first Object instance, must not be null.
+     * @return New {@link Either} of first type.
+     */
+    public static <A, B> Either<A, B> fromFirst(@NotNull A first) {
+        return new Either<A, B>(Objects.requireNonNull(first), (B)null);
     }
 
-    public static <A, B> Either<A, B> fromB(@NotNull B b) {
-        return new Either<A, B>((A)null, Objects.requireNonNull(b));
+    /**
+     * Create new {@link Either} instance that stores object of second type.
+     *
+     * @param first Object instance, must not be null.
+     * @return New {@link Either} of second type.
+     */
+    public static <A, B> Either<A, B> fromSecond(@NotNull B second) {
+        return new Either<A, B>((A)null, Objects.requireNonNull(second));
     }
 }

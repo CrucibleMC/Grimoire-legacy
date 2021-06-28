@@ -2,7 +2,7 @@
   {
     "modid": "grimoire",
     "name": "Grimoire",
-    "description": "An advanced mixin loader coremod",
+    "description": "The almighty Grimoire framework.",
     "version": "${version}",
     "mcversion": "${mcversion}",
     "url": "https://github.com/CrucibleMC/Grimoire",

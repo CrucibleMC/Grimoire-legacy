@@ -23,7 +23,7 @@ public class PacketSyncOmniconfig implements IMessage {
     private Either<Omniconfig, SyncData> either;
 
     public PacketSyncOmniconfig(@NotNull Omniconfig wrapper) {
-        this.either = Either.fromA(Objects.requireNonNull(wrapper));
+        this.either = Either.fromFirst(Objects.requireNonNull(wrapper));
     }
 
     public PacketSyncOmniconfig() {
@@ -32,12 +32,12 @@ public class PacketSyncOmniconfig implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.either = Either.fromB(SynchronizationManager.readData(this.dispatcher.getBufferIO(buf)));
+        this.either = Either.fromSecond(SynchronizationManager.readData(this.dispatcher.getBufferIO(buf)));
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        SynchronizationManager.writeData(this.either.getA(), this.dispatcher.getBufferIO(buf));
+        SynchronizationManager.writeData(this.either.getFirst(), this.dispatcher.getBufferIO(buf));
     }
 
     public static class Handler implements IMessageHandler<PacketSyncOmniconfig, IMessage> {
@@ -47,7 +47,7 @@ public class PacketSyncOmniconfig implements IMessage {
         public IMessage onMessage(PacketSyncOmniconfig message, MessageContext ctx) {
             OmniconfigCore.onRemoteServer = true;
 
-            message.either.ifB(data ->
+            message.either.ifSecond(data ->
             OmniconfigRegistry.INSTANCE.getConfig(data.getFileID()).ifPresent(wrapper ->
             SynchronizationManager.updateData(wrapper, data)));
 

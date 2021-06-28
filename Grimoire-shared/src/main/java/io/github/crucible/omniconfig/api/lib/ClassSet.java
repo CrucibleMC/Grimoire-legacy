@@ -13,7 +13,14 @@ import com.google.common.base.Preconditions;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
 
-public final class ClassSet<T> implements Iterable<Class<? extends T>> {
+/**
+ * An iterable collection of classes.
+ *
+ * @param <T> Class type.
+ * @author Aizistral
+ */
+
+public class ClassSet<T> implements Iterable<Class<? extends T>> {
     private final Set<Class<? extends T>> classes = new HashSet<>();
     private final Class<T> baseClass;
 

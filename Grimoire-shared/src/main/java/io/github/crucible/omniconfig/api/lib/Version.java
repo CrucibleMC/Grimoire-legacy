@@ -6,6 +6,13 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
+/**
+ * Basic class that serves as a way to store and compare different
+ * version declarations.
+ *
+ * @author Aizistral
+ */
+
 public class Version {
     private static final char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
