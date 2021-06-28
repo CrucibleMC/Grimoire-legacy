@@ -2,7 +2,7 @@ package io.github.crucible.omniconfig.core.properties;
 
 import java.util.function.Function;
 
-import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.api.OmniconfigConstants;
 import io.github.crucible.omniconfig.api.builders.IDoublePropertyBuilder;
 import io.github.crucible.omniconfig.api.properties.IDoubleProperty;
 import io.github.crucible.omniconfig.backing.Configuration;
@@ -98,7 +98,7 @@ public class DoubleParameter extends AbstractParameter<IDoubleProperty> implemen
 
     public static class Builder extends AbstractParameter.Builder<IDoubleProperty, Builder> implements IDoublePropertyBuilder {
         protected final double defaultValue;
-        protected double minValue = 0, maxValue = OmniconfigCore.STANDART_INTEGER_LIMIT;
+        protected double minValue = 0, maxValue = OmniconfigConstants.STANDART_INTEGER_LIMIT;
         protected Function<Double, Double> validator;
 
         protected Builder(Omniconfig.Builder parentBuilder, String name, double defaultValue) {

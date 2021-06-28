@@ -16,6 +16,7 @@ import io.github.crucible.omniconfig.api.lib.Version;
  * {@link OmniconfigAPI#registerAnnotationConfig(Class)}.
  *
  * @author Aizistral
+ * @see OmniconfigAPI#registerAnnotationConfig(Class)
  */
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -54,7 +55,8 @@ public @interface AnnotationConfig {
 
     /**
      * @return Versioning policy to use for this config file.
-     * @see {@link VersioningPolicy}, {@link IOmniconfigBuilder#versioningPolicy(VersioningPolicy)}
+     * @see VersioningPolicy
+     * @see IOmniconfigBuilder#versioningPolicy(VersioningPolicy)
      */
     public VersioningPolicy policy() default VersioningPolicy.DISMISSIVE;
 

@@ -26,4 +26,21 @@ public enum BuildingPhase {
      * @see IOmniconfigBuilder
      */
     FINALIZATION;
+
+    private BuildingPhase() {
+        // NO-OP
+    }
+
+    public boolean isNext(BuildingPhase phase) {
+        return phase.ordinal() == this.ordinal() + 1;
+    }
+
+    public boolean hasNext() {
+        return BuildingPhase.values().length-1 > this.ordinal();
+    }
+
+    public BuildingPhase getNext() {
+        return BuildingPhase.values()[this.ordinal() + 1];
+    }
+
 }

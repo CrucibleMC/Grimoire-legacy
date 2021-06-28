@@ -74,7 +74,7 @@ public class SynchronizationManager {
     public static void writeData(Omniconfig wrapper, AbstractBufferIO<?> io) {
         Map<String, String> synchronizedParameters = new HashMap<>();
 
-        for (IAbstractProperty prop : wrapper.getLoadedParameters()) {
+        for (IAbstractProperty prop : wrapper.getLoadedProperties()) {
             AbstractParameter<?> param = (AbstractParameter<?>) prop;
             if (param.isSynchronized()) {
                 synchronizedParameters.put(param.getID(), param.valueToString());
@@ -114,7 +114,7 @@ public class SynchronizationManager {
         OmniconfigCore.logger.info("Synchronizing values of " + data.fileID + " with ones dispatched by server...");
 
         for (Entry<String, String> entry : data.synchronizedParameters.entrySet()) {
-            AbstractParameter<?> parameter = (AbstractParameter<?>) wrapper.getParameter(entry.getKey()).orElse(null);
+            AbstractParameter<?> parameter = (AbstractParameter<?>) wrapper.getProperty(entry.getKey()).orElse(null);
 
             if (parameter != null) {
                 String oldValue = parameter.valueToString();
@@ -143,11 +143,17 @@ public class SynchronizationManager {
 
                 OmniconfigCore.logger.info("Dismissing values of " + wrapper.getFileID() + " in favor of local config...");
 
-                wrapper.forceReload();
-                for (IAbstractProperty prop : wrapper.getLoadedParameters()) {
+                boolean reloaded = false;
+
+                for (IAbstractProperty prop : wrapper.getLoadedProperties()) {
                     AbstractParameter<?> param = (AbstractParameter<?>) prop;
 
                     if (param.isSynchronized()) {
+                        if (!reloaded) {
+                            reloaded = true;
+                            wrapper.forceReload();
+                        }
+
                         String oldValue = param.valueToString();
                         param.reloadFrom(wrapper);
 

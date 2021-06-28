@@ -2,7 +2,7 @@ package io.github.crucible.omniconfig.core.properties;
 
 import java.util.function.Function;
 
-import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.api.OmniconfigConstants;
 import io.github.crucible.omniconfig.api.builders.IFloatPropertyBuilder;
 import io.github.crucible.omniconfig.api.properties.IFloatProperty;
 import io.github.crucible.omniconfig.backing.Configuration;
@@ -104,7 +104,7 @@ public class FloatParameter extends AbstractParameter<IFloatProperty> implements
 
     public static class Builder extends AbstractParameter.Builder<IFloatProperty, Builder> implements IFloatPropertyBuilder {
         protected final float defaultValue;
-        protected float minValue = 0, maxValue = OmniconfigCore.STANDART_INTEGER_LIMIT;
+        protected float minValue = 0, maxValue = OmniconfigConstants.STANDART_INTEGER_LIMIT;
         protected Function<Float, Float> validator;
 
         protected Builder(Omniconfig.Builder parentBuilder, String name, float defaultValue) {

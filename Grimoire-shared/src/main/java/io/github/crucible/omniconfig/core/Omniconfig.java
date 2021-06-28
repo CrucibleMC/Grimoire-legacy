@@ -3,16 +3,19 @@ package io.github.crucible.omniconfig.core;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.api.builders.BuildingPhase;
 import io.github.crucible.omniconfig.api.builders.IOmniconfigBuilder;
 import io.github.crucible.omniconfig.api.core.IOmniconfig;
 import io.github.crucible.omniconfig.api.core.SidedConfigType;
@@ -31,12 +34,15 @@ import io.github.crucible.omniconfig.core.properties.PerhapsParameter;
 import io.github.crucible.omniconfig.core.properties.StringArrayParameter;
 import io.github.crucible.omniconfig.core.properties.StringParameter;
 
+import static io.github.crucible.omniconfig.api.builders.BuildingPhase.*;
+
 public class Omniconfig implements IOmniconfig {
     protected final Configuration config;
     protected final String fileID;
     protected final ImmutableMap<String, IAbstractProperty> propertyMap;
     protected final ImmutableList<Consumer<IOmniconfig>> updateListeners;
     protected final boolean reloadable;
+    protected boolean forcedReload = false;
 
     protected Omniconfig(Builder builder) {
         this.config = builder.config;
@@ -49,7 +55,7 @@ public class Omniconfig implements IOmniconfig {
 
         OmniconfigCore.INSTANCE.backUpDefaultCopy(this);
 
-        if (this.reloadable || this.updateListeners.size() > 0) {
+        if (this.reloadable) {
             this.config.attachBeholder();
             this.config.attachReloadingAction(this::onConfigReload);
         }
@@ -61,19 +67,18 @@ public class Omniconfig implements IOmniconfig {
     }
 
     @Override
-    public Collection<IAbstractProperty> getLoadedParameters() {
+    public Collection<IAbstractProperty> getLoadedProperties() {
         return this.propertyMap.values();
     }
 
     @Override
-    public Optional<IAbstractProperty> getParameter(String parameterID) {
+    public Optional<IAbstractProperty> getProperty(String parameterID) {
         return Optional.ofNullable(this.propertyMap.get(parameterID));
     }
 
     @Override
     public void forceReload() {
-        this.config.load();
-        this.updateListeners.forEach(listener -> listener.accept(this));
+        this.onConfigReload(this.config);
     }
 
     @Override
@@ -113,17 +118,15 @@ public class Omniconfig implements IOmniconfig {
     }
 
     protected void onConfigReload(Configuration config) {
-        if (this.reloadable) {
-            config.load();
+        config.load();
 
-            this.propertyMap.entrySet().forEach(entry -> {
-                AbstractParameter<?> param = (AbstractParameter<?>) entry.getValue();
+        this.propertyMap.entrySet().forEach(entry -> {
+            AbstractParameter<?> param = (AbstractParameter<?>) entry.getValue();
 
-                if (!OmniconfigCore.onRemoteServer || !param.isSynchronized()) {
-                    param.reloadFrom(this);
-                }
-            });
-        }
+            if (!OmniconfigCore.onRemoteServer || !param.isSynchronized()) {
+                param.reloadFrom(this);
+            }
+        });
 
         this.updateListeners.forEach(listener -> listener.accept(this));
     }
@@ -173,6 +176,7 @@ public class Omniconfig implements IOmniconfig {
         protected String prefix = "";
         protected boolean reloadable = false;
         protected boolean sync = false;
+        protected BuildingPhase phase = BuildingPhase.INITIALIZATION;
 
         protected Function<Version, VersioningPolicy> versioningPolicyBackflips = null;
         protected Configuration oldDefaultCopy = null;
@@ -188,24 +192,30 @@ public class Omniconfig implements IOmniconfig {
 
         @Override
         public Builder versioningPolicy(VersioningPolicy policy) {
+            this.assertPhase(INITIALIZATION);
             this.config.setVersioningPolicy(policy);
             return this;
         }
 
         @Override
         public Builder terminateNonInvokedKeys(boolean terminate) {
+            this.assertPhase(INITIALIZATION);
             this.config.setTerminateNonInvokedKeys(terminate);
             return this;
         }
 
         @Override
         public Builder versioningPolicyBackflips(Function<Version, VersioningPolicy> determinator) {
+            this.assertPhase(INITIALIZATION);
             this.versioningPolicyBackflips = determinator;
             return this;
         }
 
         @Override
         public Builder loadFile() {
+            this.assertPhase(INITIALIZATION);
+            this.endPhase(INITIALIZATION);
+
             this.config.load();
 
             if (this.versioningPolicyBackflips != null) {
@@ -241,23 +251,27 @@ public class Omniconfig implements IOmniconfig {
 
         @Override
         public Builder prefix(String prefix) {
+            this.assertPhase(PROPERTY_LOADING);
             this.prefix = prefix;
             return this;
         }
 
         @Override
         public Builder resetPrefix() {
+            this.assertPhase(PROPERTY_LOADING);
             this.prefix = "";
             return this;
         }
 
         @Override
         public Builder pushCategory(String category) {
+            this.assertPhase(PROPERTY_LOADING);
             return this.pushCategory(category, null);
         }
 
         @Override
         public Builder pushCategory(String category, String comment) {
+            this.assertPhase(PROPERTY_LOADING);
             category = this.clearCategorySplitters(category);
 
             if (!this.currentCategory.isEmpty()) {
@@ -275,6 +289,7 @@ public class Omniconfig implements IOmniconfig {
 
         @Override
         public Builder popCategory() {
+            this.assertPhase(PROPERTY_LOADING);
             if (this.currentCategory.contains(Configuration.CATEGORY_SPLITTER)) {
                 this.currentCategory = this.currentCategory.substring(0, this.currentCategory.lastIndexOf(Configuration.CATEGORY_SPLITTER));
             } else {
@@ -285,78 +300,97 @@ public class Omniconfig implements IOmniconfig {
 
         @Override
         public Builder resetCategory() {
+            this.assertPhase(PROPERTY_LOADING);
             this.currentCategory = "";
             return this;
         }
 
         @Override
         public Builder synchronize(boolean sync) {
+            this.assertPhase(PROPERTY_LOADING);
             this.sync = sync;
             return this;
         }
 
         @Override
         public BooleanParameter.Builder getBoolean(String name, boolean defaultValue) {
+            this.assertPhase(PROPERTY_LOADING);
             this.assertPushedCategory();
             return this.rememberBuilder(BooleanParameter.builder(this, name, defaultValue));
         }
 
         @Override
         public IntegerParameter.Builder getInteger(String name, int defaultValue) {
+            this.assertPhase(PROPERTY_LOADING);
             this.assertPushedCategory();
             return this.rememberBuilder(IntegerParameter.builder(this, name, defaultValue));
         }
 
         @Override
         public DoubleParameter.Builder getDouble(String name, double defaultValue) {
+            this.assertPhase(PROPERTY_LOADING);
             this.assertPushedCategory();
             return this.rememberBuilder(DoubleParameter.builder(this, name, defaultValue));
         }
 
         @Override
         public FloatParameter.Builder getFloat(String name, float defaultValue) {
+            this.assertPhase(PROPERTY_LOADING);
             this.assertPushedCategory();
             return this.rememberBuilder(FloatParameter.builder(this, name, defaultValue));
         }
 
         @Override
         public PerhapsParameter.Builder getPerhaps(String name, Perhaps defaultValue) {
+            this.assertPhase(PROPERTY_LOADING);
             this.assertPushedCategory();
             return this.rememberBuilder(PerhapsParameter.builder(this, name, defaultValue));
         }
 
         @Override
         public StringParameter.Builder getString(String name, String defaultValue) {
+            this.assertPhase(PROPERTY_LOADING);
             this.assertPushedCategory();
             return this.rememberBuilder(StringParameter.builder(this, name, defaultValue));
         }
 
         @Override
         public StringArrayParameter.Builder getStringList(String name, String... defaultValue) {
+            this.assertPhase(PROPERTY_LOADING);
             this.assertPushedCategory();
             return this.rememberBuilder(StringArrayParameter.builder(this, name, defaultValue));
         }
 
         @Override
         public <T extends Enum<T>> EnumParameter.Builder<T> getEnum(String name, T defaultValue) {
+            this.assertPhase(PROPERTY_LOADING);
             this.assertPushedCategory();
             return this.rememberBuilder(EnumParameter.builder(this, name, defaultValue));
         }
 
         @Override
         public Builder setReloadable() {
+            this.assertPhase(PROPERTY_LOADING, FINALIZATION);
+            this.endPhase(PROPERTY_LOADING);
+
             this.reloadable = true;
             return this;
         }
 
         @Override
         public Builder addUpdateListener(Consumer<IOmniconfig> consumer) {
+            this.assertPhase(PROPERTY_LOADING, FINALIZATION);
+            this.endPhase(PROPERTY_LOADING);
+
             this.updateListeners.add(consumer);
             return this;
         }
 
         @Override
         public Builder buildIncompleteParameters() {
+            this.assertPhase(PROPERTY_LOADING, FINALIZATION);
+            this.endPhase(PROPERTY_LOADING);
+
             List<AbstractParameter.Builder<?, ?>> builders = new ArrayList<>();
             builders.addAll(this.incompleteBuilders);
 
@@ -370,6 +404,9 @@ public class Omniconfig implements IOmniconfig {
 
         @Override
         public Omniconfig build() {
+            this.assertPhase(PROPERTY_LOADING, FINALIZATION);
+            this.endPhase(PROPERTY_LOADING, FINALIZATION);
+
             if (!this.incompleteBuilders.isEmpty()) {
                 OmniconfigCore.logger.fatal("Omniconfig builder for file " + this.fileID + " has incomplete parameter builders.");
                 OmniconfigCore.logger.fatal("This is an error state. List of incomplete parameter builders goes as following: ");
@@ -377,7 +414,7 @@ public class Omniconfig implements IOmniconfig {
                     OmniconfigCore.logger.fatal("Class: {}, parameter ID: {}", builder.getClass(), builder.getParameterID());
                 }
 
-                throw new RuntimeException("Error when building omniconfig file " + this.fileID + "; incomplete parameter builders remain.");
+                throw new IllegalStateException("Error when building omniconfig file " + this.fileID + "; incomplete parameter builders remain.");
             }
 
             if (this.oldDefaultCopy != null) {
@@ -391,9 +428,37 @@ public class Omniconfig implements IOmniconfig {
 
         // Internal methods that must not be exposed via API
 
+        private void endPhase(BuildingPhase... phase) {
+            for (BuildingPhase p : phase) {
+                if (this.phase == p && this.phase.hasNext()) {
+                    this.phase = this.phase.getNext();
+                }
+            }
+        }
+
+        private void assertPhase(BuildingPhase... phase) {
+            boolean validPhase = false;
+            for (BuildingPhase p : phase) {
+                if (this.phase == p) {
+                    validPhase = true;
+                    break;
+                }
+            }
+
+            if (!validPhase) {
+                String validPhases = String.valueOf(phase[0]);
+                for (int i = 1; i < phase.length; i++) {
+                    validPhases += ", " + phase[i];
+                }
+
+                throw new IllegalStateException("Invalid method called during omniconfig building phase "
+                        + this.phase + ". Invoked method can only be called in phases: " + validPhases);
+            }
+        }
+
         private void assertPushedCategory() {
             if (this.currentCategory.isEmpty())
-                throw new IllegalArgumentException("Cannot create config property without any category specified.");
+                throw new IllegalStateException("Cannot create config property without any category specified.");
         }
 
         private String clearCategorySplitters(String str) {

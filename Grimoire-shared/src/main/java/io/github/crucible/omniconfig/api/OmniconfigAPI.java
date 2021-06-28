@@ -15,12 +15,12 @@ import io.github.crucible.omniconfig.core.OmniconfigRegistry;
 import io.github.crucible.omniconfig.gconfig.AnnotationConfigCore;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
-
 /**
- * The heart of Omniconfig API.
+ * The heart and core of Omniconfig API.
  *
  * @author Aizistral
  */
+
 public class OmniconfigAPI {
 
     /**
@@ -29,7 +29,6 @@ public class OmniconfigAPI {
      *
      * @see #configBuilder(String, Version, SidedConfigType)
      */
-
     public static IOmniconfigBuilder configBuilder(String fileName) {
         return Omniconfig.builder(OmniconfigCore.INSTANCE.sanitizeName(fileName), new Version("1.0.0"), true, SidedConfigType.COMMON);
     }
@@ -39,7 +38,6 @@ public class OmniconfigAPI {
      *
      * @see #configBuilder(String, Version, SidedConfigType)
      */
-
     public static IOmniconfigBuilder configBuilder(String fileName, Version version) {
         return Omniconfig.builder(OmniconfigCore.INSTANCE.sanitizeName(fileName), version, true, SidedConfigType.COMMON);
     }
@@ -61,9 +59,9 @@ public class OmniconfigAPI {
     }
 
     /**
-     * Register class as annotation config.
+     * Register class as annotation config.<br/>
      * Annotation config class must be decorated with {@link AnnotationConfig} annotation,
-     * and is generally expected to contain one or more non-final static fields decorated with
+     * and is generally anticipated to contain one or more non-final static fields decorated with
      * annotations from {@link io.github.crucible.omniconfig.api.annotation.properties} package.<br/>
      * {@link IOmniconfigBuilder} will automatically be created for registered class, using data provided
      * by annotations to build appropriate config file, and fill in field values once it is loaded.
@@ -88,7 +86,6 @@ public class OmniconfigAPI {
     public static IAnnotationConfigRegistry getAnnotationConfigRegistry() {
         return AnnotationConfigCore.INSTANCE;
     }
-
 
     /**
      * @return Default directory for configuration files. Normally this would be

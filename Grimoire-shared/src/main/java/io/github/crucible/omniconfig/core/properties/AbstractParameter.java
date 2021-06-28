@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.api.OmniconfigConstants;
 import io.github.crucible.omniconfig.api.core.SidedConfigType;
 import io.github.crucible.omniconfig.api.core.VersioningPolicy;
 import io.github.crucible.omniconfig.api.properties.IAbstractProperty;
@@ -147,7 +148,7 @@ public abstract class AbstractParameter<T extends IAbstractProperty> implements 
         protected final SidedConfigType sidedType;
         protected final String name;
 
-        protected String comment = "undefinedComment";
+        protected String comment = OmniconfigConstants.DEFAULT_COMMENT;
         protected boolean isSynchronized;
         protected String category;
         protected String prefix;

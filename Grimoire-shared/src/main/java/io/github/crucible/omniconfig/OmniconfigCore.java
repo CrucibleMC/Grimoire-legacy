@@ -33,7 +33,6 @@ import io.github.crucible.omniconfig.core.Omniconfig;
 
 public class OmniconfigCore {
     public static final Logger logger = LogManager.getLogger("Omniconfig");
-    public static final int STANDART_INTEGER_LIMIT = 32768;
     public static final String FILE_SEPARATOR = File.separator;
     public static final File CONFIG_DIR = GrimoireCore.INSTANCE.getConfigFolder();
 

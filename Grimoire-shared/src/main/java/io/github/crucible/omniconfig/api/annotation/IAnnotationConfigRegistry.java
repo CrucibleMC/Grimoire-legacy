@@ -15,7 +15,7 @@ public interface IAnnotationConfigRegistry {
 
     /**
      * @return Collections of valid classes that were registered as annotation
-     * configurations until this point. List is unmodifiable.
+     * configurations until this point. Unmodifiable.
      */
     public Collection<Class<?>> getRegisteredAnnotationConfigs();
 

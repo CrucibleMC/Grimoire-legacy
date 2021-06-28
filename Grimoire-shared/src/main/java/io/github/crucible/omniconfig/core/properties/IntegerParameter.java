@@ -2,7 +2,7 @@ package io.github.crucible.omniconfig.core.properties;
 
 import java.util.function.Function;
 
-import io.github.crucible.omniconfig.OmniconfigCore;
+import io.github.crucible.omniconfig.api.OmniconfigConstants;
 import io.github.crucible.omniconfig.api.builders.IIntegerPropertyBuilder;
 import io.github.crucible.omniconfig.api.properties.IIntegerProperty;
 import io.github.crucible.omniconfig.backing.Configuration;
@@ -99,7 +99,7 @@ public class IntegerParameter extends AbstractParameter<IIntegerProperty> implem
 
     public static class Builder extends AbstractParameter.Builder<IIntegerProperty, Builder> implements IIntegerPropertyBuilder {
         protected final int defaultValue;
-        protected int minValue = 0, maxValue = OmniconfigCore.STANDART_INTEGER_LIMIT;
+        protected int minValue = 0, maxValue = OmniconfigConstants.STANDART_INTEGER_LIMIT;
         protected Function<Integer, Integer> validator;
 
         protected Builder(Omniconfig.Builder parentBuilder, String name, int defaultValue) {

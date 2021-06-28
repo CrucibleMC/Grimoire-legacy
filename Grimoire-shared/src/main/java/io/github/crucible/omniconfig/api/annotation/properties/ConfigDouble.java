@@ -5,20 +5,48 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import io.github.crucible.omniconfig.api.OmniconfigConstants;
 import io.github.crucible.omniconfig.backing.Configuration;
+
+/**
+ * Decorate static <code>double</code> field with this annotation
+ * to mark it as annotation config property. Default value of property
+ * will be equal to value annotated field initially has.
+ *
+ * @author Aizistral
+ */
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ConfigDouble {
 
-    String name() default "";
+    /**
+     * @return Name of this property in config file.
+     * If not specified, field name will be used instead.
+     */
+    public String name() default "";
 
-    String category() default Configuration.CATEGORY_GENERAL;
+    /**
+     * @return Config category this property should belong to.
+     * It is allowed to specify subcategory hierarchy by separating
+     * category names with {@link OmniconfigConstants#CATEGORY_SPLITTER}.
+     */
+    public String category() default OmniconfigConstants.GENERAL_CATEGORY;
 
-    String comment() default "Undocumented property";
+    /**
+     * @return Human-readable comment describing the purpose
+     * of this config property.
+     */
+    public String comment() default OmniconfigConstants.DEFAULT_COMMENT;
 
-    double min() default Double.MIN_VALUE;
+    /**
+     * @return Minimum value this property is allowed to take.
+     */
+    public double min() default 0;
 
-    double max() default Double.MAX_VALUE;
+    /**
+     * @return Maximum value this property is allowed to take.
+     */
+    public double max() default OmniconfigConstants.STANDART_INTEGER_LIMIT;
 
 }

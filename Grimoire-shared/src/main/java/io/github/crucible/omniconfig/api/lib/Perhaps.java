@@ -27,9 +27,9 @@ public class Perhaps {
     }
 
     /**
-     * Create new
-     * @param percentage
-     * @return
+     * Create new {@link Perhaps} from percentage.
+     * @param percentage Percentage value.
+     * @return New {@link Perhaps} based on passed percentage value.
      */
     public static Perhaps fromPercent(double percentage) {
         return new Perhaps(percentage / 100.0);
