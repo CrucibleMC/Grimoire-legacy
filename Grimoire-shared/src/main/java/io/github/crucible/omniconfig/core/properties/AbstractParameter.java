@@ -1,6 +1,7 @@
 package io.github.crucible.omniconfig.core.properties;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableList;
 
@@ -197,7 +198,6 @@ public abstract class AbstractParameter<T extends IAbstractProperty> implements 
         public abstract E build();
 
         // Internal non-API methods
-
 
         protected Configuration getBackingConfig() {
             return this.parentBuilder.getBackingConfig();

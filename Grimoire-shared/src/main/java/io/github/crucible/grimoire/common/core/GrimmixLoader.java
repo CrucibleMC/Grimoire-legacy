@@ -238,7 +238,6 @@ public class GrimmixLoader {
                 List<EventHandlerCandidate> handlerList = new ArrayList<>();
                 List<String> configList = new ArrayList<>();
 
-                // TODO Dont forget to add files with forced configurations to classpath
                 boolean hadForcedConfigurations = this.examineForAnnotations(candidateFile, candidateList, handlerList, configList, null);
                 boolean alreadyThere = false;
 

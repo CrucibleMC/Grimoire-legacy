@@ -39,6 +39,13 @@ public class StringParameter extends AbstractParameter<IStringProperty> implemen
         return this.value;
     }
 
+
+    @Override
+    public String getDefault() {
+        this.assertValidEnvironment();
+        return this.defaultValue;
+    }
+
     @Override
     public List<String> getValidValues() {
         this.assertValidEnvironment();

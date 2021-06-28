@@ -26,7 +26,8 @@ public class OmniconfigAPI {
     /**
      * Start new {@link IOmniconfigBuilder}, with {@link SidedConfigType#COMMON} and
      * version equal to <code>new {@link Version}("1.0.0")</code>.
-     * @see {@link #configBuilder(String, Version, SidedConfigType)}.
+     *
+     * @see #configBuilder(String, Version, SidedConfigType)
      */
 
     public static IOmniconfigBuilder configBuilder(String fileName) {
@@ -35,7 +36,8 @@ public class OmniconfigAPI {
 
     /**
      * Start new {@link IOmniconfigBuilder}, with sided type {@link SidedConfigType#COMMON}.
-     * @see {@link #configBuilder(String, Version, SidedConfigType)}.
+     *
+     * @see #configBuilder(String, Version, SidedConfigType)
      */
 
     public static IOmniconfigBuilder configBuilder(String fileName, Version version) {
@@ -44,6 +46,7 @@ public class OmniconfigAPI {
 
     /**
      * Start new {@link IOmniconfigBuilder}.
+     *
      * @param fileName Name of config file. Suffix ".cfg" is optional, if not specified it will
      * automatically be added to file name. Subdirectories are allowed; for instance, you can
      * specify <code>specialmod/Configuration.cfg</code> to have you config inside
@@ -51,6 +54,7 @@ public class OmniconfigAPI {
      * @param version Current version of your file.
      * @param sidedType Sided type.
      * @return New {@link IOmniconfigBuilder}.
+     * @see SidedConfigType
      */
     public static IOmniconfigBuilder configBuilder(String fileName, Version version, SidedConfigType sidedType) {
         return Omniconfig.builder(OmniconfigCore.INSTANCE.sanitizeName(fileName), version, true, sidedType);
@@ -63,6 +67,7 @@ public class OmniconfigAPI {
      * annotations from {@link io.github.crucible.omniconfig.api.annotation.properties} package.<br/>
      * {@link IOmniconfigBuilder} will automatically be created for registered class, using data provided
      * by annotations to build appropriate config file, and fill in field values once it is loaded.
+     *
      * @param annotationConfigClass Class to register as annotation config.
      */
     public static void registerAnnotationConfig(Class<?> annotationConfigClass) {

@@ -437,6 +437,10 @@ public class Omniconfig implements IOmniconfig {
             return this.propertyMap;
         }
 
+        public boolean isReloadable() {
+            return this.reloadable;
+        }
+
         // TODO Wiki page explaining why both Omniconfig.Builder and @AnnotationConfig are useful
 
     }

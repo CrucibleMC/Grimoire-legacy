@@ -131,6 +131,10 @@ public class Configuration {
         this(file, null, caseSensitiveCustomCategories);
     }
 
+    public boolean isReloadable() {
+        return this.associatedBeholder != null && this.overloadingAction != null;
+    }
+
     public void setFile(File file) {
         this.file = file;
     }

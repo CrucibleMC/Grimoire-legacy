@@ -137,6 +137,10 @@ public class SynchronizationManager {
             OmniconfigCore.onRemoteServer = false;
 
             for (Omniconfig wrapper : OmniconfigRegistry.INSTANCE.getRegisteredConfigs()) {
+                if (wrapper.getSidedType().isSided()) {
+                    continue;
+                }
+
                 OmniconfigCore.logger.info("Dismissing values of " + wrapper.getFileID() + " in favor of local config...");
 
                 wrapper.forceReload();
