@@ -1,7 +1,9 @@
 publishing {
     publications {
         origin(MavenPublication) {
-            from components.java
+			artifact jar {
+				classifier = ""
+			}
 
             pom {
                 artifactId = project.name

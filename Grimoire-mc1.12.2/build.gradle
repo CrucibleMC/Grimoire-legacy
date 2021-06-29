@@ -71,3 +71,5 @@ tasks.withType(Jar) {
 		}
 	}
 }
+
+jar.finalizedBy('reobfJar')
