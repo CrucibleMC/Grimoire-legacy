@@ -12,6 +12,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
+/**
+ * Interface representation of EventHelper integration, designed for
+ * 1.12.2 specifically. See {@link EHIntegration} for more details on
+ * methods functionality.
+ *
+ * @author Aizistral
+ * @see EHIntegration
+ */
+
 public interface IEventHelperIntegration extends IModIntegration {
 
     public boolean canBreak(@Nonnull EntityPlayer player, @Nonnull BlockPos pos);
