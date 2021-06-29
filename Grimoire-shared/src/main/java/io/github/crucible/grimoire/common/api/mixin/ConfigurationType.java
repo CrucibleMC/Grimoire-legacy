@@ -21,7 +21,7 @@ import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
 
 public enum ConfigurationType {
     /**
-     * Signifies this configuration as one targeting Forge/Minecraft core.<br/>
+     * Signifies this configuration as one targeting Forge/Minecraft core.<br>
      * Core configurations are applied immediately after Grimoire has finished
      * dispatching {@link ICoreLoadEvent} instances to all currently valid controllers;
      * which in turn happens immediately after {@link IValidationEvent}s and
@@ -30,12 +30,12 @@ public enum ConfigurationType {
     CORE,
 
     /**
-     * Signifies this configuration as one targeting another mod.<br/>
+     * Signifies this configuration as one targeting another mod.<br>
      * Mod configurations are applied immediately after Grimoire has finished
      * dispatching {@link IModLoadEvent} instances to all currently valid controllers;
      * which in turn happens right before Forge is about to begin constructing mod instances.
      * This has to be delayed until then, since mods are not added to classpath
-     * at the time of coremod loading, when {@link #CORE} configurations are loaded.<br/>
+     * at the time of coremod loading, when {@link #CORE} configurations are loaded.<br>
      */
     MOD;
 

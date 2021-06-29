@@ -46,7 +46,7 @@ public abstract class GrimoireConfigsEvent extends GrimoireEvent {
     /**
      * This event is dispatched when Grimoire is about to load full set
      * of mixin configurations that have {@link ConfigurationType} associated
-     * with {@link LoadingStage} this event happens at.<br/><br/>
+     * with {@link LoadingStage} this event happens at.<br><br>
      *
      * This event is {@link ICancelable}. If canceled, none of configurations
      * listed in {@link #getPreparedConfigurations()} will be loaded.

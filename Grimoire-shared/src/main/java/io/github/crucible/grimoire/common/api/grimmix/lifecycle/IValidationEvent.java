@@ -7,11 +7,11 @@ import io.github.crucible.grimoire.common.api.events.grimmix.GrimmixValidationEv
 /**
  * This event is dispatched immediately after all grimmix controllers
  * were located and constructed. This is the earliest you are allowed to
- * execute any of your grimmix' logic, like internal configuration or setup.<br/>
+ * execute any of your grimmix' logic, like internal configuration or setup.<br>
  * The only exception is if you have an event handler that you want to
  * consistently receive {@link GrimmixValidationEvent}; in such cases you should
  * either subscribe it to {@link GrimoireAPI#EVENT_BUS} within constructor, or
- * use {@link CoreEventHandler} for the purpose of handling that event.<br/><br/>
+ * use {@link CoreEventHandler} for the purpose of handling that event.<br><br>
  *
  * Furthermore, this event is a good time to ensure validity of your controller
  * in case in is designed to load only under specific conditions.

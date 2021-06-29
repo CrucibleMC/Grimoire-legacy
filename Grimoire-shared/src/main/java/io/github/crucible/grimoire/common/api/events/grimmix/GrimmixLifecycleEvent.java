@@ -11,7 +11,7 @@ import io.github.crucible.grimoire.common.events.grimmix.abstraction.LifecycleEv
 /**
  * Generic Grimmix lifecycle event. Implementations of this event are
  * dispatched for each valid {@link GrimmixController}, before that
- * controller receives some form of {@link ILifecycleEvent}.<br/><br/>
+ * controller receives some form of {@link ILifecycleEvent}.<br><br>
  *
  * All implementations of this event are {@link ICancelable}. If canceled,
  * associated Grimmix will never receive particular instance of {@link ILifecycleEvent}

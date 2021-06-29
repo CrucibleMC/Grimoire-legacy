@@ -27,27 +27,27 @@ import static io.github.crucible.omniconfig.api.builders.BuildingPhase.*;
 
 /**
  * An interface for interaction with your personalized omniconfig builder.
- * You can get builder instance from {@link OmniconfigAPI#configBuilder(String, Version, SidedConfigType)}.<br/>
- * Be aware that building every omniconfig file is done in three stages:<br/><br/>
+ * You can get builder instance from {@link OmniconfigAPI#configBuilder(String, Version, SidedConfigType)}.<br>
+ * Be aware that building every omniconfig file is done in three stages:<br><br>
  *
- * <b>1)</b> Initialization;<br/>
- * <b>2)</b> Loading properties;<br/>
- * <b>3)</b> Finalization.<br/><br/>
+ * <b>1)</b> Initialization;<br>
+ * <b>2)</b> Loading properties;<br>
+ * <b>3)</b> Finalization.<br><br>
  *
  * These phases are represented by respective {@link BuildingPhase} enum constants.
  * In order for building to be performed correctly, you <b>must</b> go over these phases in specific
  * order described above, only calling any of the builder methods on particular phase they belong to.
- * <br/><br/>
+ * <br><br>
  *
  * For that sake, methods of this interface are decorated with {@link PhaseOnly} annotation, specifying
- * during which phases this method can be called.<br/><br/>
+ * during which phases this method can be called.<br><br>
  *
  * If a method is decorated with {@link Finalizes}, it means that calling it explicitly ends building
  * phase specified as annotation value. While <code>INITIALIZATION</code> phase must be ended by
  * calling {@link #loadFile()} method, <code>PROPERTY_LOADING</code> phase doesn't have such method;
  * it can be ended either by calling any of the methods from <code>FINALIZATION</code> phase, all
  * of which are currently optional, or by right away calling {@link #build()} method, which can end
- * both <code>INITIALIZATION</code> and <code>FINALIZATION</code> phases.<br/><br/>
+ * both <code>INITIALIZATION</code> and <code>FINALIZATION</code> phases.<br><br>
  *
  * After <code>FINALIZATION</code> phase is over, builder is automatically invalidated;
  * calling any of its methods in such case will result in {@link IllegalStateException} being thrown.
@@ -72,7 +72,7 @@ public interface IOmniconfigBuilder {
 
     /**
      * Allows you to dynamically choose versioning policy, depending on what version outdated
-     * config file has. As an example, consider the following snippet:<br/>
+     * config file has. As an example, consider the following snippet:<br>
      *
      * <pre>
      * if (foundVersion.isOlderThan("2.0.0")) {
@@ -83,7 +83,7 @@ public interface IOmniconfigBuilder {
      *
      * This will result in old config file being entirely discarded if its version is lower
      * than <code>2.0.0</code>, but if it is exactly <code>2.0.0</code> or above, yet still
-     * differs from current version - respectful policy will be used.<br/><br/>
+     * differs from current version - respectful policy will be used.<br><br>
      *
      * Result of determinator's execution will override versioning policy specified by
      * {@link #versioningPolicy(VersioningPolicy)}, if such was invoked.
@@ -102,7 +102,7 @@ public interface IOmniconfigBuilder {
      * its config file accordingly. Default implementation of Forge configs has a "feature" where
      * properties that are no longer retained at runtime still persist in physical file, along with their
      * category hierachy, but without any comments. The only way to get rid of them is if user deletes
-     * their file manually, otherwise they will remain stuck there permanently.<br/><br/>
+     * their file manually, otherwise they will remain stuck there permanently.<br><br>
      *
      * For omniconfig files, however, default behavior is to remove properties that are not retained
      * from physical file once building is finished. You can set this to false in case you desire that
@@ -157,7 +157,7 @@ public interface IOmniconfigBuilder {
     /**
      * Put specified category on top of current category stack.
      * You can create subcategory hierarchy of any complexity by pushing
-     * and popping category names in desired order.<br/><br/>
+     * and popping category names in desired order.<br><br>
      *
      * This method must be invoked at least once before building any properties;
      * if you attempt to create property builder with an empty category stack, an
@@ -289,11 +289,11 @@ public interface IOmniconfigBuilder {
     public <T extends Enum<T>> IEnumPropertyBuilder<T> getEnum(String name, T defaultValue);
 
     /**
-     * Mark this particular config as reloadable.<br/>
+     * Mark this particular config as reloadable.<br>
      * If config is marked as reloadable, physical file it is associated with it
      * will be monitored for any changes at runtime. If such changes do occur, it will be
      * automatically attempted to re-load values from that file and update all property objects
-     * constructed duing property loading phase accordingly to current file state.<br/><br/>
+     * constructed duing property loading phase accordingly to current file state.<br><br>
      *
      * This allows to apply user-made changes to physical file immediately after such changes
      * are made, thus letting these changes take effect without having them to re-start their
@@ -307,9 +307,9 @@ public interface IOmniconfigBuilder {
 
     /**
      * If this config is marked as reloadable, passed consumer will be invoked every time
-     * file change is detected, after it was attempted to re-load all properties from it.<br/>
+     * file change is detected, after it was attempted to re-load all properties from it.<br>
      * Argument passed to consumer will be same {@link IOmniconfig} instance as returned by
-     * {@link #build()}.<br/><br/>
+     * {@link #build()}.<br><br>
      *
      * It is also possible that cosumer will be invoked for non-reloadable file, in case
      * {@link IOmniconfig#forceReload()} method is invoked. Normally this only happens when
@@ -327,10 +327,10 @@ public interface IOmniconfigBuilder {
     /**
      * If you create property sub-builder during property loading phase, but never end up
      * calling its <code>build()</code> method, it will result in {@link IllegalStateException}
-     * being thrown when calling {@link #build()} method of {@link IOmniconfigBuilder} itself.<br/>
+     * being thrown when calling {@link #build()} method of {@link IOmniconfigBuilder} itself.<br>
      * However, since in some cases it might not be needed to retain actual property instances,
      * any amount of property sub-builders can be started without finishing previous ones;
-     * that will not be considered an error state.<br/><br/>
+     * that will not be considered an error state.<br><br>
      *
      * This method can be called at the end if initialization or during finalization phase,
      * and signifies that you allow {@link IOmniconfigBuilder} to build all unfinished property

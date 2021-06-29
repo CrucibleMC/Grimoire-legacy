@@ -4,7 +4,7 @@ import java.util.Random;
 
 /**
  * A percentage-based value that can be converted into factor,
- * or 1.0 + factor in case needed.<br/><br/>
+ * or 1.0 + factor in case needed.<br><br>
  *
  * For the reference, consider that <b><code>factor</code> =
  * <code>percentage/100.0</code></b>, and <b><code>percentage</code> =

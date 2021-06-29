@@ -26,7 +26,7 @@ public @interface AnnotationConfig {
     /**
      * @return Name of config file to be generated.
      * Same as with omniconfig builder, can include subdirectories;
-     * for instance: <code>specialmod/Configuration.cfg</code><br/>
+     * for instance: <code>specialmod/Configuration.cfg</code><br>
      * If name is not specified, simple class name of annotation config
      * class itself will be used for file naming.
      */

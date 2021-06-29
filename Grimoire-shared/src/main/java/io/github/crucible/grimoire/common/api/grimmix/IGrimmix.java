@@ -10,7 +10,7 @@ import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
  * Serves as a representation of grimmix in common registry and
  * before other grimmixes. Be aware that this <b>must never be implemented
  * by controller itself</b>, as instead it is implemented by container
- * which Grimoire uses to operate with that controller.<br/><br/>
+ * which Grimoire uses to operate with that controller.<br><br>
  *
  * Hereby, it serves as a possibility for grimmixes to retain some data
  * Grimoire have collected about themselves or about other grimmixes out

@@ -1,5 +1,5 @@
 /**
- * The API package for Omniconfig system.<br/><br/>
+ * The API package for Omniconfig system.<br><br>
  *
  * General contract is as per usual - external implementers are free to
  * use everything located within the bounds of API package, but whatever remains

@@ -22,7 +22,7 @@ public abstract class CoreEvent {
     /**
      * @return True if this event is already canceled and should
      * not propagate to event receivers that are not explicitly marked
-     * as such that receive canceled events; false if not.<br/>
+     * as such that receive canceled events; false if not.<br>
      * If event is not cancelable, this will always return false.
      */
     public boolean isCanceled() {
@@ -33,7 +33,7 @@ public abstract class CoreEvent {
      * Sets the cancel state of this event. Note, not all events are cancelable,
      * and any attempt to invoke this method on an event that is not cancelable
      * (as determined by {@link #isCancelable} will result in an
-     * {@link UnsupportedOperationException}.<br/>
+     * {@link UnsupportedOperationException}.<br>
      * The functionality of setting the canceled state is defined on a per-event
      * basis.
      *
@@ -57,7 +57,7 @@ public abstract class CoreEvent {
     }
 
     /**
-     * @return The {@link Result} of this event, if it {@link #hasResult()}.<br/>
+     * @return The {@link Result} of this event, if it {@link #hasResult()}.<br>
      * If event does not have a result, {@link Result#DEFAULT} will always
      * be returned.
      */
@@ -85,7 +85,7 @@ public abstract class CoreEvent {
 
     /**
      * Priority allows individual event receivers to change order in which they
-     * will receive an event instance, compared to other such receivers.<br/>
+     * will receive an event instance, compared to other such receivers.<br>
      * When dispatching any event, valid receivers for that event are sorted from
      * highest to lowers priority, and only then are iterated over and invoked.
      *
@@ -100,7 +100,7 @@ public abstract class CoreEvent {
     }
 
     /**
-     * Generic "result", may come in handy for certain events.<br/>
+     * Generic "result", may come in handy for certain events.<br>
      * It is normally used for events that are associated with some sort of
      * "conditional logic". And example of that from Forge events could be
      * mob spawn event - it is fired for any attempt to spawn a mod somewhere,

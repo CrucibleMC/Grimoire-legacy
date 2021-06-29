@@ -41,7 +41,7 @@ public class GrimoireAPI {
     }
 
     /**
-     * General-purpose EventBus for posting any Grimoire-related events.<br/>
+     * General-purpose EventBus for posting any Grimoire-related events.<br>
      * Any events posted via this bus must extend {@link GrimoireEvent}.
      */
     public static final CoreEventBus<GrimoireEvent> EVENT_BUS = CoreEventBus.create(GrimoireEvent.class, GrimoireConstants.MAIN_BUS_NAME);
@@ -49,7 +49,7 @@ public class GrimoireAPI {
     /**
      * If you <b>absolutely need</b> to register mixin configuration outside the
      * bounds of your controller's {@link ICoreLoadEvent} and {@link IModLoadEvent},
-     * you should use this method to do so.<br/><br/>
+     * you should use this method to do so.<br><br>
      * For the love of gods, <b>never call {@link Mixins#addConfiguration(String)} directly.</b>
      *
      * @param classpath Path to configuration .json.

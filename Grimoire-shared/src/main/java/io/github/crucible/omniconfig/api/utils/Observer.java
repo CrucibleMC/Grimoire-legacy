@@ -4,10 +4,10 @@ import io.github.crucible.omniconfig.api.annotation.AnnotationConfig;
 
 /**
  * In some cases it might be desired to make fields in {@link AnnotationConfig} class
- * visually final, so that only config proccessor itself will be able to modify their value.<br/>
+ * visually final, so that only config proccessor itself will be able to modify their value.<br>
  * While annotation config supports such possibility, Java compiler itself counteracts it by
  * replacing references to deterministic static final primitive fields with literal values of
- * those fields, making them unobservable at runtime.<br/><br/>
+ * those fields, making them unobservable at runtime.<br><br>
  *
  * This static class serves as a helper tool for surpassing that. Instead of assigning your fields
  * a value directry, you can call methods from this class, passing your primitive value into them

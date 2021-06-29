@@ -11,11 +11,11 @@ import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
 /**
  * Powerful tool that allows you to build your mixin configuration .json
  * at runtime instead of having to ship it as part of your mod. You can start this
- * builder in {@link IConfigBuildingEvent} of your grimmix controller.<br/><br/>
+ * builder in {@link IConfigBuildingEvent} of your grimmix controller.<br><br>
  *
  * Note that of all builder methods one that is mandatory to call is {@link #mixinPackage(String)},
  * otherwise your configuration will be recognized as invalid when you finish it with {@link #build()}.
- * <br/><br/>
+ * <br><br>
  *
  * It is also worth noting that configurations created with this builder <b>need not to be registered
  * in either {@link ICoreLoadEvent} or {@link IModLoadEvent}</b>; they will automatically be registered
@@ -29,7 +29,7 @@ public interface IMixinConfigurationBuilder {
 
     /**
      * Define configuration phase for Mixin itself that this configuration shall have.
-     * Don't touch this unless you know what you need it for.<br/><br/>
+     * Don't touch this unless you know what you need it for.<br><br>
      *
      * By default this remains unspecified ({@link Phase#DEFAULT} will be targeted).
      *
@@ -39,7 +39,7 @@ public interface IMixinConfigurationBuilder {
     public IMixinConfigurationBuilder targetEnvironment(MixinEnvironment.Phase envPhase);
 
     /**
-     * Specify refmap this mixin configuration will be pointing to.<br/><br/>
+     * Specify refmap this mixin configuration will be pointing to.<br><br>
      *
      * By default no refmap is specified.
      *
@@ -52,7 +52,7 @@ public interface IMixinConfigurationBuilder {
      * Mark mixins of this configuration as mandatory. If Mixin itself
      * fails to apply them, it will raise an application-crashing exception.
      * This is not the case for non-mandatory mixins, in case of which
-     * only an error message will be logged.<br/><br/>
+     * only an error message will be logged.<br><br>
      *
      * By default this is set to false.
      *
@@ -75,21 +75,21 @@ public interface IMixinConfigurationBuilder {
      * Specify list of mixin classes that that will be applied as part of
      * this configuration, on both client and dedicated server environment.
      * Class locations must be specified relative to mixin package specifed by
-     * {@link #mixinPackage(String)} call.<br/><br/>
+     * {@link #mixinPackage(String)} call.<br><br>
      *
      * One advantage this builder has is that it allows you to use wildcards
      * in class name specification. Whatever file your grimmix resides within
      * will be analyzed for classes that match wildcard specification, and
      * class list in generated .json file will include all that do. A couple
-     * examples on how to use wildcards:<br/><br/>
+     * examples on how to use wildcards:<br><br>
      *
      * String of format <code>"*"</code> will match all classes contained within
      * mixin package specifed by by {@link #mixinPackage(String)} call, including
-     * classes in all subpackages.<br/><br/>
+     * classes in all subpackages.<br><br>
      *
      * String of format <code>"common.*"</code> will match all classes that reside
      * in <code>common</code> subpackage of mixin package, including classes in
-     * all subpackages of <code>common</code> subpackage, if such exist.<br/><br/>
+     * all subpackages of <code>common</code> subpackage, if such exist.<br><br>
      *
      * String of format <code>"Mixin*"</code> will match all classes that reside
      * in the root of mixin package and which have their name starting with
@@ -123,7 +123,7 @@ public interface IMixinConfigurationBuilder {
     public IMixinConfigurationBuilder serverMixins(String... mixinClasses);
 
     /**
-     * Specify priority of this mixin set relative to other configurations.<br/><br/>
+     * Specify priority of this mixin set relative to other configurations.<br><br>
      *
      * By default it remains unspecified (priority 1000 will be assigned).
      *
@@ -135,7 +135,7 @@ public interface IMixinConfigurationBuilder {
     /**
      * Causes the mixin processor to overwrite the source file property in target
      * classes with the source file of the mixin class. This can be useful when
-     * debugging mixins.<br/><br/>
+     * debugging mixins.<br><br>
      *
      * By default this is set to false.
      *
@@ -146,7 +146,7 @@ public interface IMixinConfigurationBuilder {
 
     /**
      * Promotes all <code>DEBUG</code>-level log messages to <code>INFO</code> level
-     * for this mixin set.<br/><br/>
+     * for this mixin set.<br><br>
      *
      * By default this is set to false.
      *
@@ -157,7 +157,7 @@ public interface IMixinConfigurationBuilder {
 
     /**
      * Specify the name of an optional companion plugin class for the mixin configuration
-     * which can tweak the mixin configuration programmatically at runtime.<br/><br/>
+     * which can tweak the mixin configuration programmatically at runtime.<br><br>
      *
      * By default no plugin is specified.
      *
@@ -170,7 +170,7 @@ public interface IMixinConfigurationBuilder {
     /**
      * Specify {@link ConfigurationType} for this configuration. Since runtime-built
      * configurations are not registered in {@link IModLoadEvent} or {@link ICoreLoadEvent},
-     * this is your only opportunity to do so.<br/><br/>
+     * this is your only opportunity to do so.<br><br>
      *
      * By default {@link ConfigurationType#CORE} is used.
      *

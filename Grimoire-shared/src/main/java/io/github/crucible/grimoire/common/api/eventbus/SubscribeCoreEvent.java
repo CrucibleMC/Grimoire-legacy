@@ -11,7 +11,7 @@ import io.github.crucible.grimoire.common.api.eventbus.CoreEvent.Priority;
 /**
  * Serves as version-independent edition of Forge's
  * <code>@SubscribeEvent</code> annotation, providing exactly
- * the same data about event receiver it decorates.<br/><br/>
+ * the same data about event receiver it decorates.<br><br>
  *
  * It also allows to avoid conflict with Forge event buses when
  * subscribing single event handler instance to both {@link CoreEventBus}

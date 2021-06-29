@@ -45,7 +45,7 @@ public abstract interface IAbstractProperty {
      * to every remote client that logs into it. On client, synchronized properties keep
      * their values equal to those present on remote server, from the time of logging in
      * to the server and until logging out of it. When logging out, synchronized values
-     * are discarded and automatically reloaded from local file.<br/><br/>
+     * are discarded and automatically reloaded from local file.<br><br>
      *
      * Proberties <b>can</b> be synchronized even if their config file is not marked as
      * reloadable. Logging into and out of server will then be the only time their value

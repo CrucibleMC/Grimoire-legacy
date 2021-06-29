@@ -9,7 +9,7 @@ import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
 
 /**
  * This event is dispatched whenever Grimoire is about to load
- * every particular {@link IMixinConfiguration}.<br/><br/>
+ * every particular {@link IMixinConfiguration}.<br><br>
  *
  * This event is {@link ICancelable}. If canceled, configuration
  * will not be loaded, and will become invalid for subsequent

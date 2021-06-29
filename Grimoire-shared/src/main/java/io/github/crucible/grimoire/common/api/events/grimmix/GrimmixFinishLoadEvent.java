@@ -8,7 +8,7 @@ import io.github.crucible.grimoire.common.events.grimmix.FinishLoadEvent;
 
 /**
  * This event is dispatched for every valid {@link GrimmixController}, before
- * that controller receives its instance of {@link IFinishLoadEvent}.<br/><br/>
+ * that controller receives its instance of {@link IFinishLoadEvent}.<br><br>
  *
  * This event is {@link ICancelable}. If canceled, grimmix controller associated with
  * it will never receive {@link IFinishLoadEvent}.

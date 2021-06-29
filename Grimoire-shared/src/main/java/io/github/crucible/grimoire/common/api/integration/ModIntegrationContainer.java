@@ -10,7 +10,7 @@ import io.github.crucible.grimoire.common.api.GrimoireAPI;
  * dummy integration handler in which methods will perform no logic and return some
  * dummy values. Such system allows to safely refer to classes and methods from other mod
  * without your own mod dying in hellfire of exceptions if that other mod is not present
- * at runtime.<br/><br/>
+ * at runtime.<br><br>
  *
  * This approach have proven an effective strategy for integrating with mods like
  * EventHelper, which can only exist in an environment of dedicated server that supports
@@ -30,7 +30,7 @@ public abstract class ModIntegrationContainer<T extends IModIntegration> {
 
     /**
      * {@link IModIntegrationRegistry} will construct this at the time
-     * of <code>FMLPreInitializationEvent</code><br/>
+     * of <code>FMLPreInitializationEvent</code><br>
      * About good time to check whether we need real or dummy integration.
      */
     public ModIntegrationContainer() {

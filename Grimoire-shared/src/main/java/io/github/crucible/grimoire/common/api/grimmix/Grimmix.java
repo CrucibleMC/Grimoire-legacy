@@ -12,7 +12,7 @@ import io.github.crucible.grimoire.common.api.grimmix.lifecycle.LoadingStage;
  * Indicates annotated class as Grimmix controller. Grimoire will
  * automatically discover and load all annotated controllers from .jar files
  * within Minecraft mods folder, as well as all that reside on classpath; latter
- * is important for development environments.<br/><br/>
+ * is important for development environments.<br><br>
  *
  * All classes decorated with this annotation must inherit {@link GrimmixController},
  * and have at least one public constructor that requires no arguments; otherwise

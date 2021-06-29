@@ -23,7 +23,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  * work correctly with WorldGuard regions, for instance. However, since EventHelper refers to
  * Bukkit methods directly, it can only properly load on dedicated servers that support
  * Bukkit API, which makes sure mods that directly refer to its methods in their server code
- * will break in singleplayer.<br/><br/>
+ * will break in singleplayer.<br><br>
  *
  * This integration solves such issue. If EventHelper is present at runtime, it will proxy
  * calls from here to EventHelper; if not, dummy integration instance is created instead,

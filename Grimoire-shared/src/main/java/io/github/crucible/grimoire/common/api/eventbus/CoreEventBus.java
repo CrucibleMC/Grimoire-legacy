@@ -24,7 +24,7 @@ import io.github.crucible.grimoire.common.events.SubscribeAnnotationWrapper;
 
 /**
  * Glorified version-independent event bus implementation, stripped of
- * all ASM thingies Forge's event buses really need for some reason.<br/>
+ * all ASM thingies Forge's event buses really need for some reason.<br>
  * Designed with maximum extensibility in mind.
  *
  * @param <T> Type of event all events dispatched via this bus must inherit.
@@ -91,18 +91,18 @@ public class CoreEventBus<T extends CoreEvent> implements IExceptionHandler<T> {
     }
 
     /**
-     * Register given object as an event handler for this bus.<br/>
+     * Register given object as an event handler for this bus.<br>
      * It is anticipated that given object will have one or more public methods
      * decorated either with {@link SubscribeCoreEvent} annotation, or with
      * version-dependent <code>@SubscribeEvent</code> annotation provided by
      * Forge itself; and receive a single argument, that being event type it
      * wants to handle, which extends base event class this bus is designed
-     * to dispatch.<br/><br/>
+     * to dispatch.<br><br>
      *
      * It is possible to register two types of handler - instance handler
      * and static handler. First must be an instance of class that contains
      * non-static event receiver methods; second should be {@link Class} of
-     * handler which contains static event receiver methods.<br/><br/>
+     * handler which contains static event receiver methods.<br><br>
      *
      * Registered handlers are wrapped into {@link CoreEventHandler} object
      * for interaction convenience.

@@ -63,10 +63,10 @@ public class OmniconfigAPI {
     }
 
     /**
-     * Register class as annotation config.<br/>
+     * Register class as annotation config.<br>
      * Annotation config class must be decorated with {@link AnnotationConfig} annotation,
      * and is generally anticipated to contain one or more non-final static fields decorated with
-     * annotations from {@link io.github.crucible.omniconfig.api.annotation.properties} package.<br/>
+     * annotations from {@link io.github.crucible.omniconfig.api.annotation.properties} package.<br>
      * {@link IOmniconfigBuilder} will automatically be created for registered class, using data provided
      * by annotations to build appropriate config file, and fill in field values once it is loaded.
      *

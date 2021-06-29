@@ -5,18 +5,18 @@ import java.util.function.Consumer;
 import io.github.crucible.omniconfig.api.properties.IAbstractProperty;
 
 /**
- * Generic interface that all specialized sub-property builders inherit from.<br/><br/>
+ * Generic interface that all specialized sub-property builders inherit from.<br><br>
  *
  * One thing that this interface does not reflect, but which is common for all
  * sub-property builders is a possibility to assign validator function to future property,
- * so it will be described below:<br/><br/>
+ * so it will be described below:<br><br>
  *
  * Validator function accepts bare property value immediately after it is parsed
  * from physical config file, and may perform checks to ensure that value satisfies
  * some arbitrary conditions. If it does, function should return same value it
  * received; otherwise it is free to return any sort of "closest valid" or "default"
  * value which will be assigned to property instance instead, and saved back to file if
- * this is the first time file is loaded from disc.<br/>
+ * this is the first time file is loaded from disc.<br>
  * This allows to assign complex validitation conditions to config properties, for
  * instance - to restrict a value property can take based on which value another property
  * has, and serves as an alternative to raising application-crashing exception with

@@ -101,6 +101,30 @@ task apiSourcesJar(type: Jar) {
 	}
 }
 
+// TODO Fix all these errors someday
+
+/*
+task commonJavadoc(type: Javadoc) {
+	classpath += configurations.compile
+	source = project(':Grimoire-shared').sourceSets.main.allJava
+}
+
+javadoc {
+	classpath += configurations.compile
+}
+
+
+task javadocJar(type: Jar) {
+    classifier = "javadoc"
+	
+    from javadoc
+    from commonJavadoc
+}
+
+javadocJar.dependsOn javadoc
+javadocJar.dependsOn commonJavadoc
+*/
+
 processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.mcVersion
