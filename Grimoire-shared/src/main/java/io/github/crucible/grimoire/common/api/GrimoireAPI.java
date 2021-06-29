@@ -194,7 +194,7 @@ public class GrimoireAPI {
     }
 
     /**
-     * Serves as version-independent way to verify which Minecraft
+     * Serves as version-independent way to verify which sided Minecraft
      * environment we currently reside within.
      *
      * @return Current {@link Environment} we are in.

@@ -29,6 +29,7 @@ public class MixinConfigBuilder implements IMixinConfigurationBuilder {
     private final IGrimmix owner;
 
     private List<String> ownerMixinClasses = null;
+    protected boolean built = false;
 
     public MixinConfigBuilder(IGrimmix owner, String classpath) {
         if (!classpath.endsWith(".json")) {
@@ -87,7 +88,6 @@ public class MixinConfigBuilder implements IMixinConfigurationBuilder {
         return this;
     }
 
-    @Override
     public MixinConfigBuilder mixinPriority(int priority) {
         this.json.setMixinPriority(priority);
         return this;
@@ -119,6 +119,11 @@ public class MixinConfigBuilder implements IMixinConfigurationBuilder {
 
     @Override
     public IMixinConfiguration build() {
+        if (this.built)
+            throw new IllegalStateException("This mixin configuration was already built!");
+
+        this.built = true;
+
         Preconditions.checkArgument(this.json.isValidConfiguration(), "Invalid configuration built. Have you specifed "
                 + "all mandatory arguments, like package name and stuff?");
 

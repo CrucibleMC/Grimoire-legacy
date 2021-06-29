@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
@@ -63,8 +64,15 @@ public class GrimmixContainer implements Comparable<GrimmixContainer>, IGrimmix 
                 name = grimmix.name();
                 version = grimmix.version();
                 priority = grimmix.priority();
+                break;
             }
         }
+
+        String filteredID = modid.replaceAll("[^a-zA-Z0-9]", "");
+
+        if (!Objects.equal(modid, filteredID))
+            throw new IllegalArgumentException("Grimmix controller of class " + constructor.getDeclaringClass()
+            + " has invalid ID: " + modid + ". Special characters and whitespacing are not allowed!");
 
         this.name = name.isEmpty() ? constructor.getDeclaringClass().getSimpleName() : name;
         this.modid = modid.isEmpty() ? name.toLowerCase() : modid;

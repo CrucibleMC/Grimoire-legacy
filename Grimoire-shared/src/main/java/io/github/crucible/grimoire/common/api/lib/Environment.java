@@ -3,6 +3,13 @@ package io.github.crucible.grimoire.common.api.lib;
 import java.util.function.Supplier;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
+import io.github.crucible.grimoire.common.api.GrimoireAPI;
+
+/**
+ * Version-independent representation of sided Minecraft environment.
+ *
+ * @author Aizistral
+ */
 
 public enum Environment {
 
@@ -11,6 +18,7 @@ public enum Environment {
      * Usually in the game client.
      */
     CLIENT,
+
     /**
      * The server side. Specifically, an environment where NO rendering capability exists.
      * Usually on the dedicated server.
@@ -34,11 +42,12 @@ public enum Environment {
     /**
      * Execute some arbitrary code if we are in this specific environment.
      * Double lamda wrapping to avoid classloading the target.
-     * @param code
+     *
+     * @param code Your code.
      */
 
     public void execute(Supplier<Runnable> code) {
-        if (GrimoireCore.INSTANCE.getEnvironment() == this) {
+        if (GrimoireAPI.getEnvironment() == this) {
             code.get().run();
         }
     }
