@@ -448,7 +448,6 @@ public class Omniconfig implements IOmniconfig {
             }
 
             if (!validPhase) {
-
                 if (this.phase == null)
                     throw new IllegalStateException("Cannot invoke builder methods after config building is already finished.");
                 else {

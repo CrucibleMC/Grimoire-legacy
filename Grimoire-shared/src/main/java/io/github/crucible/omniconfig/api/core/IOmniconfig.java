@@ -10,7 +10,7 @@ import io.github.crucible.omniconfig.api.lib.Version;
 import io.github.crucible.omniconfig.api.properties.IAbstractProperty;
 
 /**
- * Reflects the state of omniconfig file created using {@link IOmniconfig} builder,
+ * Reflects the state of omniconfig file created using {@link IOmniconfigBuilder},
  * once builder have finished execution and until the end of runtime.
  *
  * @author Aizistral

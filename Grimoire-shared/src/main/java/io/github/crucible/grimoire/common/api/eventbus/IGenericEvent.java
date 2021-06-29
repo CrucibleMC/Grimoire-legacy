@@ -2,8 +2,16 @@ package io.github.crucible.grimoire.common.api.eventbus;
 
 import java.lang.reflect.Type;
 
-public interface IGenericEvent<T> {
+/**
+ * Marker interface for events. Reserved for future,
+ * no functional implementation yet.
+ *
+ * @param <T> Generic type?
+ * @author Aizistral
+ */
 
-    public Type getGenericType();
+interface IGenericEvent<T> {
+
+    // public Type getGenericType();
 
 }
