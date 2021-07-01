@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -34,6 +35,7 @@ class GrimoireAnnotationAnalyzer extends ClassVisitor {
         return this.handlerCandidate;
     }
 
+    @Nullable
     public static GrimoireAnnotationAnalyzer examineClass(File classFile) {
         try {
             FileInputStream stream = new FileInputStream(classFile);
@@ -48,6 +50,7 @@ class GrimoireAnnotationAnalyzer extends ClassVisitor {
         return null;
     }
 
+    @Nullable
     public static GrimoireAnnotationAnalyzer examineClass(ZipFile archive, ZipEntry entry) {
         try {
             InputStream stream = archive.getInputStream(entry);
@@ -61,6 +64,7 @@ class GrimoireAnnotationAnalyzer extends ClassVisitor {
         return null;
     }
 
+    @Nullable
     public static GrimoireAnnotationAnalyzer examineClass(InputStream classStream) {
         try {
             ClassReader reader = new ClassReader(classStream);
@@ -69,7 +73,7 @@ class GrimoireAnnotationAnalyzer extends ClassVisitor {
 
             return visitor;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            // Ignore, likely invalid class file
         }
 
         return null;

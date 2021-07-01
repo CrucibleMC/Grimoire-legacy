@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
@@ -24,7 +25,6 @@ import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.service.MixinService;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
@@ -209,6 +209,28 @@ public class GrimmixLoader {
         return hadForcedConfigurations;
     }
 
+    private boolean arePathsEqual(URL one, URL two) {
+        try {
+            for (URL url : new URL[] { one, two }) {
+                URI uri = url.toURI();
+
+                if (!"file".equals(uri.getScheme()) || !new File(uri).exists())
+                    return Objects.equals(one, two);
+            }
+
+            File fileOne = new File(one.toURI().getPath());
+            File fileTwo = new File(two.toURI().getPath());
+
+            if (Objects.equals(fileOne.getCanonicalFile(), fileTwo.getCanonicalFile()))
+                return true;
+            else
+                return false;
+
+        } catch (Exception ex) {
+            return Objects.equals(one, two);
+        }
+    }
+
     protected void seekGrimmixes(Collection<URL> paths, @Nullable LaunchClassLoader classLoader, boolean ignoreFolders) {
         for (URL url : paths) {
             try {
@@ -218,9 +240,15 @@ public class GrimmixLoader {
                     continue;
                 }
 
-                File candidateFile = new File(url.toURI().getPath());
+                File candidateFile = new File(url.toURI().getPath()).getCanonicalFile();
                 Manifest manifest = null;
                 boolean isDirectory = candidateFile.isDirectory();
+
+                for (IGrimmix grimmix : this.getAllContainers()) {
+                    if (Objects.equals(grimmix.getGrimmixFile(), candidateFile)) {
+                        GrimoireCore.logger.info("Skipping {} {}, already scanned...", isDirectory ? "directory" : "file", GrimoireInternals.sanitizePath(uri.toString()));
+                    }
+                }
 
                 GrimoireCore.logger.info("Scanning {} {} for grimmix controllers...", isDirectory ? "directory" : "file", GrimoireInternals.sanitizePath(uri.toString()));
 
@@ -249,7 +277,7 @@ public class GrimmixLoader {
                 boolean isGrimoireGrimmix = false;
                 if (manifest != null) {
                     String isGrimoireAttribute = manifest.getMainAttributes().getValue("IsThatYouGrimoire");
-                    if (Objects.equal(isGrimoireAttribute, "Indeed")) {
+                    if (Objects.equals(isGrimoireAttribute, "Indeed")) {
                         isGrimoireGrimmix = true;
                     }
                 }
@@ -264,7 +292,7 @@ public class GrimmixLoader {
                 if (classLoader != null && !candidateFile.isDirectory())
                     if (candidateList.size() > 0 || handlerList.size() > 0 || hadForcedConfigurations) {
                         for (URL classURL : classLoader.getURLs()) {
-                            if (url.equals(classURL)) {
+                            if (this.arePathsEqual(url, classURL)) {
                                 alreadyThere = true;
                                 break;
                             }
