@@ -34,7 +34,10 @@ tasks.withType(Jar) {
 jar {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':Grimoire-shared').sourceSets.main.output
-	from zipTree(mixinRepackFile)
+	from(zipTree(mixinRepackFile)) {
+		exclude 'META-INF/MANIFEST.MF'
+		exclude 'LICENSE.txt'
+	}
 }
 
 task devJar(type: Jar) {
@@ -44,7 +47,10 @@ task devJar(type: Jar) {
 	
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from project(':Grimoire-shared').sourceSets.main.output
-	from zipTree(mixinRepackFile)
+	from(zipTree(mixinRepackFile)) {
+		exclude 'META-INF/MANIFEST.MF'
+		exclude 'LICENSE.txt'
+	}
 }
 
 task sourcesJar(type: Jar) {
@@ -54,7 +60,10 @@ task sourcesJar(type: Jar) {
 	from sourceSets.main.allSource
 	from project(':Grimoire-shared').sourceSets.main.allSource
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-	from zipTree(mixinRepackFileSources)
+	from(zipTree(mixinRepackFileSources)) {
+		exclude 'META-INF/MANIFEST.MF'
+		exclude 'LICENSE.txt'
+	}
 }
 
 task apiJar(type: Jar) {
@@ -76,6 +85,8 @@ task apiJar(type: Jar) {
 		exclude 'org/spongepowered/asm/mixin/Mixins**'
 		exclude 'com/google/gson/**'
 		exclude 'org/apache/**'
+		exclude 'META-INF/MANIFEST.MF'
+		exclude 'LICENSE.txt'
 	}
 }
 
@@ -98,6 +109,8 @@ task apiSourcesJar(type: Jar) {
 		exclude 'org/spongepowered/asm/mixin/Mixins**'
 		exclude 'com/google/gson/**'
 		exclude 'org/apache/**'
+		exclude 'META-INF/MANIFEST.MF'
+		exclude 'LICENSE.txt'
 	}
 }
 
