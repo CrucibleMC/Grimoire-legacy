@@ -138,14 +138,22 @@ public class GrimmixLoader {
 
                 for (ZipEntry ze : Collections.list(jar.entries())) {
                     if (this.isClassFile(ze.getName())) {
-                        GrimoireAnnotationAnalyzer analyzer = GrimoireAnnotationAnalyzer.examineClass(jar, ze);
+                        GrimoireAnnotationAnalyzer analyzer = null;
 
-                        if (analyzer.getGrimmixCandidate().validate()) {
-                            candidates.add(analyzer.getGrimmixCandidate());
+                        try {
+                            analyzer = GrimoireAnnotationAnalyzer.examineClass(jar, ze);
+                        } catch (Exception ex) {
+                            // Ignore, likely invalid class file
                         }
 
-                        if (analyzer.getHandlerCandidate().validate()) {
-                            handlers.add(analyzer.getHandlerCandidate());
+                        if (analyzer != null) {
+                            if (analyzer.getGrimmixCandidate().validate()) {
+                                candidates.add(analyzer.getGrimmixCandidate());
+                            }
+
+                            if (analyzer.getHandlerCandidate().validate()) {
+                                handlers.add(analyzer.getHandlerCandidate());
+                            }
                         }
                     } else if (this.isJson(ze.getName())) {
                         DeserializedMixinJson json = DeserializedMixinJson.deserialize(() -> this.tryGetInputStream(jar, ze));
@@ -166,14 +174,22 @@ public class GrimmixLoader {
                 e.printStackTrace();
             }
         } else if (this.isClassFile(file.getName())) { // Its a .class file
-            GrimoireAnnotationAnalyzer analyzer = GrimoireAnnotationAnalyzer.examineClass(file);
+            GrimoireAnnotationAnalyzer analyzer = null;
 
-            if (analyzer.getGrimmixCandidate().validate()) {
-                candidates.add(analyzer.getGrimmixCandidate());
+            try {
+                analyzer = GrimoireAnnotationAnalyzer.examineClass(file);
+            } catch (Exception ex) {
+                // Ignore, likely invalid class file
             }
 
-            if (analyzer.getHandlerCandidate().validate()) {
-                handlers.add(analyzer.getHandlerCandidate());
+            if (analyzer != null) {
+                if (analyzer.getGrimmixCandidate().validate()) {
+                    candidates.add(analyzer.getGrimmixCandidate());
+                }
+
+                if (analyzer.getHandlerCandidate().validate()) {
+                    handlers.add(analyzer.getHandlerCandidate());
+                }
             }
         } else if (this.isJson(file.getName())) {
             DeserializedMixinJson json = DeserializedMixinJson.deserialize(() -> this.tryGetInputStream(file));
@@ -207,6 +223,10 @@ public class GrimmixLoader {
                 boolean isDirectory = candidateFile.isDirectory();
 
                 GrimoireCore.logger.info("Scanning {} {} for grimmix controllers...", isDirectory ? "directory" : "file", GrimoireInternals.sanitizePath(uri.toString()));
+
+                if (!candidateFile.canRead()) {
+                    continue;
+                }
 
                 if (isDirectory) {
                     if (ignoreFolders) {
