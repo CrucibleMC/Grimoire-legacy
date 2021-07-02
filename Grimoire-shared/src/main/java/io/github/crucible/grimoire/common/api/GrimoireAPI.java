@@ -173,8 +173,8 @@ public class GrimoireAPI {
      * Version-independent way to determine whether mod with particular Mod ID is currently
      * present. Be aware that at the time of grimmix lifecycle events no mods are discovered
      * and loaded yet, and trying to call this method at such time will always return false;
-     * you should only call it from your <b><code>@Mod</code></b> class, ideally no earlier than at
-     * the time of <b><code>FMLPreInitializationEvent</code></b>.
+     * you should only call it at or after the time your <b><code>@Mod</code></b> class is loaded,
+	 * no earlier than at <b><code>FMLPreInitializationEvent</code></b>.
      *
      * @param modID ID of mod to verify existance of.
      * @return True if such mod exists and is loaded, false otherwise.
@@ -214,7 +214,7 @@ public class GrimoireAPI {
 
     /**
      * @return True if we are in environment with obfuscated Minecraft
-     * classes, false if classes are obfuscated. Normally it is expected
+     * classes, false if classes are deobfuscated. Normally it is expected
      * that returned value will always be opposite to that of
      * {@link #isDevEnvironment()}.
      */
@@ -224,7 +224,7 @@ public class GrimoireAPI {
 
     /**
      * @return {@link File} representing location of Minecraft directory itself.
-     * In client production environment normally goes by the name
+     * In client production environment mostly goes by the name
      * <code>.minecraft</code>.
      */
     public static File getMinecraftFolder() {
@@ -241,8 +241,8 @@ public class GrimoireAPI {
 
     /**
      * @return Version-specific subfolder within mod folder within Minecraft
-     * directory. If current Minecraft version is 1.7.10, it will normally be
-     * <code>.minecraft/mods/1.7.10</code>; if version is 1.12.2, it will normally
+     * directory. If current Minecraft version is 1.7.10, it will be
+     * <code>.minecraft/mods/1.7.10</code>; if version is 1.12.2, it will
      * be <code>.minecraft/mods/1.12.2</code>.
      */
     public static File getVersionedModFolder() {
