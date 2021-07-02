@@ -1,6 +1,6 @@
 # Grimoire
 
-In front of you lies a general purpose Mixin-loader framework, designed to serve as a way to develop and load mixins on both 1.7.10 and 1.12.2 versions of Minecraft. In the past it used to be just a tool for loading simple patches in the form of [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins-1.7.10), but have since evolved beyond that, to provide a convenient way of implementing mixins in any project which may require them on legacy versions of Minecraft.
+In front of you lies a general-purpose Mixin loader framework, designed to serve as a way to develop and load mixins on both 1.7.10 and 1.12.2 versions of Minecraft. In the past it used to be just a tool for loading simple patches in the form of [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins-1.7.10), but have since evolved beyond that, to provide a convenient way of implementing mixins in any project which may require them on legacy versions of Minecraft.
 
 ## Features:
 - Embedded [Sponge Mixin](https://github.com/SpongePowered/Mixin), which allows you to avoid shading full Mixin implementation into your mod. I certainly hope you are aware that shading it is an **inherently bad practice**;
