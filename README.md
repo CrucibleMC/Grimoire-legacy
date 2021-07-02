@@ -10,6 +10,7 @@ In front of you lies a general purpose Mixin-loader framework, designed to serve
 - Mixin configurations are divided in two main categories - those that target Minecraft/Forge, and those that target other mods. They need to loaded at different time, since at the time of coremod loading where Minecraft-targeting configurations are applied no mods are discovered and added to the classpath yet. Grimoire takes care of loading each configuration at proper time, all you need is to use appropriate lifecycle event for registering your configuration, or properly specify `ConfigurationType` if you build it at runtime;
 - Version-independent `EventBus` implementation, stripped of unnecessary ASM thingies Forge's bus really needs for some reason, and much more friendly to being extended;
 - Included Omniconfig API, which serves as convenient version-independent a way to create config files, either via `IOmniconfigBuilder` or `@AnnotationConfig`;
+- Version-dependent [EventHelper](https://github.com/gamerforEA/EventHelper) integration, which allows you to safely use `EventUtils` without rendering your mod utterly incompatible with singleplayer;
 - Proper development environment support.
 
 ## Workspace Setup:
