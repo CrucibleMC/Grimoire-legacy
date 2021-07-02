@@ -1,4 +1,4 @@
-# Grimoire
+# Grimoire: Legacy 1.7.10
 
 Higher beings, these words are for you alone.
 
