@@ -1,32 +1,21 @@
 # Grimoire
 
-A coremod that ships mixin and loads all necessary things for io.github.crucible.grimoire mixins.
+In front of you lies a general purpose Mixin-loader framework, designed to serve as a way to develop and load mixins on both 1.7.10 and 1.12.2 versions of Minecraft. In the past it used to be just a tool for loading simple patches in the form of [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins-1.7.10), but have since evolved beyond that, to provide a convenient way of implementing mixins in any project which may require them on legacy versions of Minecraft.
 
-### What is it?
+## Features:
+- Embedded [Sponge Mixin](https://github.com/SpongePowered/Mixin), which allows you to avoid shading full Mixin implementation into your mod. I certainly hope you are aware that shading it is an **inherently bad practice**;
+- Version-independent core. Most of the Grimoire API is completely independent from Minecraft version you are using, and will work in perfectly the same way on both 1.7.10 and 1.12.2;
+- Grimmix system, which serves as a way for framework implementers to declare their presence, easily handle important events and programatically communicate with other implementers if such need exists;
+- Simple API that provides an option to build mixin configuration at runtime, instead of having to ship it as `.json` within modfile;
+- Mixin configurations are divided in two main categories - those that target Minecraft/Forge, and those that target other mods. They need to loaded at different time, since at the time of coremod loading where Minecraft-targeting configurations are applied no mods are discovered and added to the classpath yet. Grimoire takes care of loading each configuration at proper time, all you need is to use appropriate lifecycle event for registering your configuration, or properly specify `ConfigurationType` if you build it at runtime;
+- Version-independent `EventBus` implementation, stripped of unnecessary ASM thingies Forge's bus really needs for some reason, and much more friendly to being extended;
+- Included Omniconfig API, which serves as convenient version-independent a way to create config files, either via `IOmniconfigBuilder` or `@AnnotationConfig`;
+- Version-dependent [EventHelper](https://github.com/gamerforEA/EventHelper) integration, which allows you to safely use `EventUtils` without rendering your mod utterly incompatible with singleplayer;
+- Proper development environment support.
 
-Grimoire is a coremod that ships and uses [Sponge Mixin](https://github.com/SpongePowered/Mixin) allowing you to create
-a patch module which will contain mixins to be applied.
+## Workspace Setup:
+Here are the examples of how to setup Grimoire-dependent mod workspace:
+- For 1.7.10: https://github.com/CrucibleMC/ForgeWorkspaceSetup/tree/1.7.10-grimmix
+- For 1.12.2: https://github.com/CrucibleMC/ForgeWorkspaceSetup/tree/1.12.2-grimmix
 
-These modules are internally called 'nop'.
-
-#### Why I need it?
-
-As server owner sometimes you need to patch some buggy or laggy mod, this coremod helps you to organize patches.
-
-#### Isn't patching mods a bad practice?
-
-Yes! it is, and you should not be doing it at all. Due to classloading issues mixins can't be applied to mods without
-hacks but sometimes following best practices isn't an option when your only option is fixing a mod with your own hands.  
-
-### Where are the Grimoire Modules/Patches ?
-
-You can find them over here: [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins)
-
-### How to Install?
-
-* 0 - Notice that io.github.crucible.grimoire will work in both server and client side. But, almost all of our Grim-Patches are for ServerSide Only!
-* 1 - Download [Grimoire](https://github.com/CrucibleMC/Grimoire/releases).
-* 2 - Put it inside the mods folder.
-* 5 - Download any Grimoire-Mixins modules you want from [here](https://github.com/CrucibleMC/Grimoire-Mixins) and put inside the mods folder.
-* 5a - If the patch does not work (an legacy patch), create a folder named io.github.crucible.grimoire alongside the mods folder and put it there.  
-* 6 - Start the server again.
+You can find most details over there, but to praise what was achieved through our hard work, I will mention once more: **Grimoire has proper development environment support!** Starting a client via `runClient` command or IDE launch configuration will have Grimoire, all dependent grimmixes and that one grimmix you might be developing yourself properly loaded. Refmap generation also works perfectly fine, so no need to target production-time obfuscated names and sacrifice compatibility with development environment.
