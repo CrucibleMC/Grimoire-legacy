@@ -17,7 +17,7 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-		classpath 'com.integral.grimoire:GrimoireShenanigans:' + grimoireShenanigansVersion
+		classpath 'com.integral.grimoire:GrimoireShenanigans:1.2.5' // Has to be this or lower
     }
 }
 
