@@ -4,6 +4,7 @@ Implementation-Version: 3.0.0
 Specification-Vendor: Grimoire
 Specification-Title: io.github.crucible.grimoire
 Implementation-Timestamp: 2021-06-05T00:05:54+0200
+TweakOrder: -2147482648
 TweakClass: org.spongepowered.asm.launch.MixinTweaker
 Implementation-Vendor: Grimoire
 FMLCorePluginContainsFMLMod: true

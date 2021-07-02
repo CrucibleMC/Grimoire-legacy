@@ -32,8 +32,6 @@ public class MixinLoader {
     @Shadow(remap = false)
     private ModClassLoader modClassLoader;
 
-    // TODO Test if below redirect actually properly works in production
-
     /**
      * @reason Mod discovery process will add duplicate instances of files
      * that embed normal {@link Mod} along with {@link Grimmix}. Prevent this

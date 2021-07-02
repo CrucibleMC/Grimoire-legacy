@@ -5,6 +5,7 @@ FMLCorePluginContainsFMLMod: true
 Specification-Vendor: Grimoire
 Specification-Title: io.github.crucible.grimoire
 Implementation-Timestamp: 2021-06-05T00:06:21+0200
+TweakOrder: -2147482648
 TweakClass: org.spongepowered.asm.launch.MixinTweaker
 ForceLoadAsMod: true
 IsThatYouGrimoire: Indeed

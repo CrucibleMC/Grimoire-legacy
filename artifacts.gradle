@@ -25,6 +25,7 @@ tasks.withType(Jar) {
 					'IsThatYouGrimoire': "Indeed",
 					'FMLCorePluginContainsFMLMod': 'true',
 					"ForceLoadAsMod": "true",
+					'TweakOrder': '-2147482648',
 					'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
 			])
 		}
