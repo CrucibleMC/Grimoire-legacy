@@ -12,7 +12,7 @@ public interface IFloatPropertyBuilder extends IAbstractPropertyBuilder<IFloatPr
      * @param maxValue Maximal value of your choice.
      * @return This sub-builder instance.
      */
-    public IFloatPropertyBuilder max(float maxValue);
+    IFloatPropertyBuilder max(float maxValue);
 
     /**
      * Specifies minimum value this property will be allowed to take.
@@ -20,7 +20,7 @@ public interface IFloatPropertyBuilder extends IAbstractPropertyBuilder<IFloatPr
      * @param minValue Minimal value of your choice.
      * @return This sub-builder instance.
      */
-    public IFloatPropertyBuilder min(float minValue);
+    IFloatPropertyBuilder min(float minValue);
 
     /**
      * Specifies both minimum and maximum values thes property will
@@ -35,7 +35,7 @@ public interface IFloatPropertyBuilder extends IAbstractPropertyBuilder<IFloatPr
      * @param minMax Min-max bound of your choice.
      * @return This sub-builder instance.
      */
-    public IFloatPropertyBuilder minMax(float minMax);
+    IFloatPropertyBuilder minMax(float minMax);
 
     /**
      * Supply validator function for this property.
@@ -45,6 +45,6 @@ public interface IFloatPropertyBuilder extends IAbstractPropertyBuilder<IFloatPr
      * @return This sub-builder instance
      * @see {@link IAbstractPropertyBuilder}
      */
-    public IFloatPropertyBuilder validator(Function<Float, Float> validator);
+    IFloatPropertyBuilder validator(Function<Float, Float> validator);
 
 }

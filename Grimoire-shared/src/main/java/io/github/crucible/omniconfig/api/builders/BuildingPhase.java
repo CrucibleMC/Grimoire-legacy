@@ -27,7 +27,7 @@ public enum BuildingPhase {
      */
     FINALIZATION;
 
-    private BuildingPhase() {
+    BuildingPhase() {
         // NO-OP
     }
 

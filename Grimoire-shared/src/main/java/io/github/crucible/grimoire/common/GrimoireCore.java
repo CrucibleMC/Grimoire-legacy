@@ -24,7 +24,7 @@ public class GrimoireCore {
     public static final Logger logger = LogManager.getLogger("Grimoire");
     public static final GrimoireCore INSTANCE = new GrimoireCore();
 
-    private List<String> forcedFilenames = new ArrayList<String>();;
+    private List<String> forcedFilenames = new ArrayList<String>();
     private final GrimmixLoader grimmixLoader;
     private File mcLocation;
     private File modFolder;

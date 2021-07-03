@@ -635,7 +635,7 @@ public class Property {
      * @return True if it is a boolean value
      */
     public boolean isBooleanValue() {
-        return ("true".equals(this.value.toLowerCase()) || "false".equals(this.value.toLowerCase()));
+        return ("true".equalsIgnoreCase(this.value) || "false".equalsIgnoreCase(this.value));
     }
 
     /**

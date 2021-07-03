@@ -165,7 +165,7 @@ public final class Mixins {
      * consumed are present in this set
      */
     public static Set<Config> getConfigs() {
-        Set<Config> mixinConfigs = GlobalProperties.<Set<Config>>get(Mixins.CONFIGS_KEY);
+        Set<Config> mixinConfigs = GlobalProperties.get(Mixins.CONFIGS_KEY);
         if (mixinConfigs == null) {
             mixinConfigs = new LinkedHashSet<Config>();
             GlobalProperties.put(Mixins.CONFIGS_KEY, mixinConfigs);
@@ -184,7 +184,7 @@ public final class Mixins {
         ClassInfo classInfo = ClassInfo.fromCache(className);
         if (classInfo != null)
             return classInfo.getAppliedMixins();
-        return Collections.<IMixinInfo>emptySet();
+        return Collections.emptySet();
     }
 
     /**
@@ -202,7 +202,7 @@ public final class Mixins {
      * Get current error handlers
      */
     public static Set<String> getErrorHandlerClasses() {
-        return Collections.<String>unmodifiableSet(Mixins.errorHandlers);
+        return Collections.unmodifiableSet(Mixins.errorHandlers);
     }
 
 }

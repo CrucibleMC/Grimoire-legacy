@@ -22,7 +22,7 @@ public interface IOmniconfigRegistry {
      * Returned collection is unmodifiable.
      * @see IOmniconfig
      */
-    public Collection<IOmniconfig> getRegisteredConfigs();
+    Collection<IOmniconfig> getRegisteredConfigs();
 
     /**
      * Try to locate {@link IOmniconfig} instance with supplied file ID.
@@ -32,6 +32,6 @@ public interface IOmniconfigRegistry {
      * or empty {@link Optional} if no such instance exists.
      * @see IOmniconfig#getFileID()
      */
-    public Optional<IOmniconfig> getConfig(String fileID);
+    Optional<IOmniconfig> getConfig(String fileID);
 
 }

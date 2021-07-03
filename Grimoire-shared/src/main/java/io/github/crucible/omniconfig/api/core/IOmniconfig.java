@@ -23,7 +23,7 @@ public interface IOmniconfig {
      * @return Full list of properties associated with this config file.
      * Returned list is an unmodifiable collection.
      */
-    public Collection<IAbstractProperty> getLoadedProperties();
+    Collection<IAbstractProperty> getLoadedProperties();
 
     /**
      * @param propertyID ID of property to try and locate.
@@ -31,49 +31,49 @@ public interface IOmniconfig {
      * ID equal to passed argument. If no such property exists, an empty
      * {@link Optional} is returned instead.
      */
-    public Optional<IAbstractProperty> getProperty(String propertyID);
+    Optional<IAbstractProperty> getProperty(String propertyID);
 
     /**
      * Force configuration to reload its property values from physical
      * config file, regardless of whether this configuration {@link #isReloadable()}
      * or not.
      */
-    public void forceReload();
+    void forceReload();
 
     /**
      * @return True if this configuration is marked as reloadable and its
      * associated physical file is currently monitored for changes; false otherwise.
      */
-    public boolean isReloadable();
+    boolean isReloadable();
 
     /**
      * @return {@link File} representing physical file associated with this
      * configuration instance.
      */
-    public File getFile();
+    File getFile();
 
     /**
      * @return Equivalent to invokation <code>{@link #getFile()}.getName()</code>.
      */
-    public String getFileName();
+    String getFileName();
 
     /**
      * @return {@link String} ID used to distinguish this config file among others.
      * Equals to the file name prefixed with entire directory path it has relative
      * to main config directory denoted by {@link OmniconfigAPI#getConfigFolder()}.
      */
-    public String getFileID();
+    String getFileID();
 
     /**
      * @return {@link Version} of this config file.
      * @see Version
      */
-    public Version getVersion();
+    Version getVersion();
 
     /**
      * @return {@link SidedConfigType} this config file has.
      * @see SidedConfigType
      */
-    public SidedConfigType getSidedType();
+    SidedConfigType getSidedType();
 
 }

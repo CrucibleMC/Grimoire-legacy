@@ -12,7 +12,7 @@ public class ChadOPChecker {
     }
 
     public static boolean isPlayerOP(EntityPlayer player) {
-        return MinecraftServer.getServer() != null ? MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile()) : false;
+        return MinecraftServer.getServer() != null && MinecraftServer.getServer().getConfigurationManager().func_152596_g(player.getGameProfile());
     }
 
     public static boolean isPlayerOP(UUID playerID) {

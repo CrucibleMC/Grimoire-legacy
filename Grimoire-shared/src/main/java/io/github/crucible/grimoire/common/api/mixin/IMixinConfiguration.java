@@ -20,31 +20,31 @@ public interface IMixinConfiguration {
      * return its {@link IGrimmix} container. Otherwise and empty
      * {@link Optional} is returned.
      */
-    public Optional<IGrimmix> getOwner();
+    Optional<IGrimmix> getOwner();
 
     /**
      * @return Path to this configuration in runtime classpath.
      */
-    public String getClasspath();
+    String getClasspath();
 
     /**
      * @return Type of this configuration.
      * @see ConfigurationType
      */
-    public ConfigurationType getConfigurationType();
+    ConfigurationType getConfigurationType();
 
     /**
      * @return True if this configuration was already loaded and applied.
      * False if it yet awaits to actually be loaded.
      */
-    public boolean isLoaded();
+    boolean isLoaded();
 
     /**
      * @return True if this configuration was built at runtime with the
      * helf of {@link IMixinConfigurationBuilder}; false if this is native
      * configuration shipped within mod file.
      */
-    public boolean isRuntimeGenerated();
+    boolean isRuntimeGenerated();
 
     /**
      * @return True if this configuration could potentially load at this
@@ -52,14 +52,14 @@ public interface IMixinConfiguration {
      * this will return false until actual .jar file containing them is
      * not created by Grimoire.
      */
-    public boolean canLoad();
+    boolean canLoad();
 
     /**
      * @return False if this configuration was invalidated in
      * {@link MixinConfigLoadEvent} and dropped from overall registry of
      * configurations; true if not (or not yet).
      */
-    public boolean isValid();
+    boolean isValid();
 
     // public void load();
 

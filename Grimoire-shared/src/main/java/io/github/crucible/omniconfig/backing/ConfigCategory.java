@@ -293,7 +293,7 @@ public class ConfigCategory implements Map<String, Property> {
     }
 
     private String getIndent(int indent) {
-        StringBuilder buf = new StringBuilder("");
+        StringBuilder buf = new StringBuilder();
         for (int x = 0; x < indent; x++) {
             buf.append("    ");
         }

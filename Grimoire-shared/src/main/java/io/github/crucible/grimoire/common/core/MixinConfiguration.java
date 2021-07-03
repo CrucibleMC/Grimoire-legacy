@@ -117,7 +117,7 @@ public class MixinConfiguration implements IMixinConfiguration {
 
     @Override
     public boolean canLoad() {
-        return !this.isLoaded && this.isRuntimeGenerated() ? ConfigBuildingManager.areRuntimeConfigsGenerated() : true;
+        return this.isLoaded || !this.isRuntimeGenerated() || ConfigBuildingManager.areRuntimeConfigsGenerated();
     }
 
     public void load() {

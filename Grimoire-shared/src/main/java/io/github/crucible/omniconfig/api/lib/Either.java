@@ -113,7 +113,7 @@ public class Either<A, B> {
      * @return New {@link Either} of first type.
      */
     public static <A, B> Either<A, B> fromFirst(@NotNull A first) {
-        return new Either<A, B>(Objects.requireNonNull(first), (B)null);
+        return new Either<A, B>(Objects.requireNonNull(first), null);
     }
 
     /**
@@ -123,6 +123,6 @@ public class Either<A, B> {
      * @return New {@link Either} of second type.
      */
     public static <A, B> Either<A, B> fromSecond(@NotNull B second) {
-        return new Either<A, B>((A)null, Objects.requireNonNull(second));
+        return new Either<A, B>(null, Objects.requireNonNull(second));
     }
 }

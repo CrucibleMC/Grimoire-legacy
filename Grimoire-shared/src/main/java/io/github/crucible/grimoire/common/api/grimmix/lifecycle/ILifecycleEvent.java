@@ -8,18 +8,18 @@ import io.github.crucible.grimoire.common.api.grimmix.IGrimmix;
  * @author Aizistral
  */
 
-public abstract interface ILifecycleEvent {
+public interface ILifecycleEvent {
 
     /**
      * @return {@link IGrimmix} representation of your Grimmix controller.
      * @see IGrimmix
      */
-    public IGrimmix getOwner();
+    IGrimmix getOwner();
 
     /**
      * @return Loading stage this event happens at.
      * @see LoadingStage
      */
-    public LoadingStage getLoadingStage();
+    LoadingStage getLoadingStage();
 
 }

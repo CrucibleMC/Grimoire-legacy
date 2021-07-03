@@ -7,6 +7,6 @@ package io.github.crucible.grimoire.common.api.integration;
  * @author Aizistral
  */
 
-public abstract interface IModIntegration {
+public interface IModIntegration {
 
 }

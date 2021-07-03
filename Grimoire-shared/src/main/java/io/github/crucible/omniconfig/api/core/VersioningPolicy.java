@@ -67,5 +67,5 @@ public enum VersioningPolicy {
      * action if config versions do not match. It will simply update config version
      * to defined one upon saving the file, and leave anything else as is.
      */
-    DISMISSIVE;
+    DISMISSIVE
 }

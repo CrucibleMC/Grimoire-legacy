@@ -18,7 +18,7 @@ public interface IDoublePropertyBuilder extends IAbstractPropertyBuilder<IDouble
      * @param maxValue Maximal value of your choice.
      * @return This sub-builder instance.
      */
-    public IDoublePropertyBuilder max(double maxValue);
+    IDoublePropertyBuilder max(double maxValue);
 
     /**
      * Specifies minimum value this property will be allowed to take.
@@ -26,7 +26,7 @@ public interface IDoublePropertyBuilder extends IAbstractPropertyBuilder<IDouble
      * @param minValue Minimal value of your choice.
      * @return This sub-builder instance.
      */
-    public IDoublePropertyBuilder min(double minValue);
+    IDoublePropertyBuilder min(double minValue);
 
     /**
      * Specifies both minimum and maximum values thes property will
@@ -41,7 +41,7 @@ public interface IDoublePropertyBuilder extends IAbstractPropertyBuilder<IDouble
      * @param minMax Min-max bound of your choice.
      * @return This sub-builder instance.
      */
-    public IDoublePropertyBuilder minMax(double minMax);
+    IDoublePropertyBuilder minMax(double minMax);
 
     /**
      * Supply validator function for this property.
@@ -51,6 +51,6 @@ public interface IDoublePropertyBuilder extends IAbstractPropertyBuilder<IDouble
      * @return This sub-builder instance
      * @see {@link IAbstractPropertyBuilder}
      */
-    public IDoublePropertyBuilder validator(Function<Double, Double> validator);
+    IDoublePropertyBuilder validator(Function<Double, Double> validator);
 
 }

@@ -91,12 +91,12 @@ public abstract class CoreEvent {
      *
      * @author Aizistral
      */
-    public static enum Priority {
+    public enum Priority {
         HIGHEST, // First to execute
         HIGH,
         NORMAL,
         LOW,
-        LOWEST; // Last to execute
+        LOWEST // Last to execute
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class CoreEvent {
      *
      * @author Aizistral
      */
-    public static enum Result {
+    public enum Result {
 
         /**
          * Forbid or brevent some sort of behavior associated with this event,
@@ -131,6 +131,6 @@ public abstract class CoreEvent {
          * Force some sort of behavior associated with this event to happen,
          * regardless of whether or not it satisfies its "normal" conditions.
          */
-        ALLOW;
+        ALLOW
     }
 }

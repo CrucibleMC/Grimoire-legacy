@@ -109,9 +109,9 @@ public class Perhaps {
         double percent = this.asPercent();
 
         if (Math.floor(percent) == percent)
-            return Integer.toString((int) percent) + "%";
+            return (int) percent + "%";
         else
-            return Double.toString(percent) + "%";
+            return percent + "%";
     }
 
     @Override

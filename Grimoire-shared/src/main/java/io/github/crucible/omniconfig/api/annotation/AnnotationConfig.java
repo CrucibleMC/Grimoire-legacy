@@ -30,40 +30,40 @@ public @interface AnnotationConfig {
      * If name is not specified, simple class name of annotation config
      * class itself will be used for file naming.
      */
-    public String name() default "";
+    String name() default "";
 
     /**
      * @return String representation of current config version.
      * Appropriate {@link Version} object will be constructed from
      * this representation.
      */
-    public String version() default "1.0.0";
+    String version() default "1.0.0";
 
     /**
      * @return Whether or not non-invoked keys in physical config file
      * should be removed when saving it back to disc.
      * @see IOmniconfigBuilder#terminateNonInvokedKeys(boolean)
      */
-    public boolean terminateNonInvokedKeys() default true;
+    boolean terminateNonInvokedKeys() default true;
 
     /**
      * @return Whether physical config file should be watched for changes and
      * automatically reloaded if such occur.
      * @see IOmniconfigBuilder#setReloadable()
      */
-    public boolean reloadable() default true;
+    boolean reloadable() default true;
 
     /**
      * @return Versioning policy to use for this config file.
      * @see VersioningPolicy
      * @see IOmniconfigBuilder#versioningPolicy(VersioningPolicy)
      */
-    public VersioningPolicy policy() default VersioningPolicy.DISMISSIVE;
+    VersioningPolicy policy() default VersioningPolicy.DISMISSIVE;
 
     /**
      * @return Sided type this config file should have.
      * @see SidedConfigType
      */
-    public SidedConfigType sided() default SidedConfigType.COMMON;
+    SidedConfigType sided() default SidedConfigType.COMMON;
 
 }

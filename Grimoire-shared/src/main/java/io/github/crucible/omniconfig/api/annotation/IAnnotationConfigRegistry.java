@@ -17,7 +17,7 @@ public interface IAnnotationConfigRegistry {
      * @return Collections of valid classes that were registered as annotation
      * configurations until this point. Unmodifiable.
      */
-    public Collection<Class<?>> getRegisteredAnnotationConfigs();
+    Collection<Class<?>> getRegisteredAnnotationConfigs();
 
     /**
      * @param annotationConfigClass Class which supposedly was already registered as
@@ -25,6 +25,6 @@ public interface IAnnotationConfigRegistry {
      * @return If it indeed was registered, returns instance of {@link IOmniconfig}
      * associated with that class; or empty {@link Optional} if it wasn't.
      */
-    public Optional<IOmniconfig> getAssociatedOmniconfig(Class<?> annotationConfigClass);
+    Optional<IOmniconfig> getAssociatedOmniconfig(Class<?> annotationConfigClass);
 
 }

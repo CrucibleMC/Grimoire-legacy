@@ -25,32 +25,32 @@ public interface IGrimmix {
      * @return {@link String}-form ID used to distinguish this
      * grimmix among others, as specified by {@link Grimmix#id()}.
      */
-    public String getID();
+    String getID();
 
     /**
      * @return Textual name of this grimmix, as specified by
      * {@link Grimmix#name()}.
      */
-    public String getName();
+    String getName();
 
     /**
      * @return Priority this grimmix should have compared to other
      * grimmixes, as specified by {@link Grimmix#priority()}
      */
-    public long getPriority();
+    long getPriority();
 
     /**
      * @return Version of this grimmix, as specified by
      * {@link Grimmix#version()}
      */
-    public String getVersion();
+    String getVersion();
 
     /**
      * @return {@link LoadingStage} this grimmix currently goes
      * through.
      * @see LoadingStage
      */
-    public LoadingStage getLoadingStage();
+    LoadingStage getLoadingStage();
 
     /**
      * @return True if this grimmix is valid and fully capable
@@ -58,20 +58,20 @@ public interface IGrimmix {
      * or externally invalidated at the time of
      * {@link LoadingStage#VALIDATION}.
      */
-    public boolean isValid();
+    boolean isValid();
 
     /**
      * @return True if this grimmix is shipped as part of and
      * operated by Grimoire itself, false otherwise.
      */
-    public boolean isGrimoireGrimmix();
+    boolean isGrimoireGrimmix();
 
     /**
      * @return List of valid {@link IMixinConfiguration} instances
      * that are registered and owned by this grimmix.
      * Unmodifiable.
      */
-    public List<IMixinConfiguration> getOwnedConfigurations();
+    List<IMixinConfiguration> getOwnedConfigurations();
 
     /**
      * @return File that controller of this grimmix was discovered
@@ -79,6 +79,6 @@ public interface IGrimmix {
      * development environment it can be one of the folders on
      * classpath.
      */
-    public File getGrimmixFile();
+    File getGrimmixFile();
 
 }

@@ -39,7 +39,7 @@ public enum ConfigurationType {
      */
     MOD;
 
-    private ConfigurationType() {
+    ConfigurationType() {
         // NO-OP
     }
 

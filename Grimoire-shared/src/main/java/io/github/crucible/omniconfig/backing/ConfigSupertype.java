@@ -7,5 +7,5 @@ public enum ConfigSupertype {
     DOUBLE,
     COLOR,
     MOD_ID,
-    CONFIG_CATEGORY;
+    CONFIG_CATEGORY
 }

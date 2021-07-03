@@ -29,22 +29,22 @@ public @interface Grimmix {
      * @return {@link String}-form ID used to distinguish this grimmix among others.
      * Must only contain latin letters or digits.
      */
-    public String id();
+    String id();
 
     /**
      * @return Textual name of this grimmix.
      */
-    public String name() default "";
+    String name() default "";
 
     /**
      * @return Version of this grimmix.
      */
-    public String version() default "1.0.0";
+    String version() default "1.0.0";
 
     /**
      * @return Priority this grimmix should have compared to other grimmixes.
      * Matters for order of dispatching lifecycle events.
      */
-    public long priority() default 0L;
+    long priority() default 0L;
 
 }

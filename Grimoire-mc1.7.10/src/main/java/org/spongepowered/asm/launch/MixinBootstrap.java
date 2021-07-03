@@ -97,7 +97,7 @@ public abstract class MixinBootstrap {
      */
     public static MixinPlatformManager getPlatform() {
         if (MixinBootstrap.platform == null) {
-            Object globalPlatformManager = GlobalProperties.<Object>get(GlobalProperties.Keys.PLATFORM_MANAGER);
+            Object globalPlatformManager = GlobalProperties.get(GlobalProperties.Keys.PLATFORM_MANAGER);
             if (globalPlatformManager instanceof MixinPlatformManager) {
                 MixinBootstrap.platform = (MixinPlatformManager)globalPlatformManager;
             } else {
@@ -191,7 +191,7 @@ public abstract class MixinBootstrap {
     }
 
     private static boolean isSubsystemRegistered() {
-        return GlobalProperties.<Object>get(GlobalProperties.Keys.INIT) != null;
+        return GlobalProperties.get(GlobalProperties.Keys.INIT) != null;
     }
 
     private static boolean checkSubsystemVersion() {

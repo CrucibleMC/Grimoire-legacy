@@ -21,6 +21,6 @@ public interface IConfigBuildingEvent extends ILifecycleEvent {
      * @return Fresh instance of {@link IMixinConfigurationBuilder}.
      * @see IMixinConfigurationBuilder
      */
-    public IMixinConfigurationBuilder createBuilder(String configurationPath);
+    IMixinConfigurationBuilder createBuilder(String configurationPath);
 
 }

@@ -221,10 +221,7 @@ public class GrimmixLoader {
             File fileOne = new File(one.toURI().getPath());
             File fileTwo = new File(two.toURI().getPath());
 
-            if (Objects.equals(fileOne.getCanonicalFile(), fileTwo.getCanonicalFile()))
-                return true;
-            else
-                return false;
+            return Objects.equals(fileOne.getCanonicalFile(), fileTwo.getCanonicalFile());
 
         } catch (Exception ex) {
             return Objects.equals(one, two);

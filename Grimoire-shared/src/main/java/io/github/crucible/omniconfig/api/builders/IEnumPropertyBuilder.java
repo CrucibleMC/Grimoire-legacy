@@ -13,7 +13,7 @@ public interface IEnumPropertyBuilder<T extends Enum<T>> extends IAbstractProper
      * @param values Valid values.
      * @return This sub-builder instance.
      */
-    public IEnumPropertyBuilder<T> validValues(T... values);
+    IEnumPropertyBuilder<T> validValues(T... values);
 
     /**
      * Supply validator function for this property.
@@ -23,6 +23,6 @@ public interface IEnumPropertyBuilder<T extends Enum<T>> extends IAbstractProper
      * @return This sub-builder instance
      * @see {@link IAbstractPropertyBuilder}
      */
-    public IEnumPropertyBuilder<T> validator(Function<T, T> validator);
+    IEnumPropertyBuilder<T> validator(Function<T, T> validator);
 
 }

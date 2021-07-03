@@ -15,7 +15,7 @@ import io.github.crucible.grimoire.common.api.mixin.IMixinConfiguration;
  * @author Aizistral
  */
 
-public abstract interface IConfigRegistryEvent extends ILifecycleEvent {
+public interface IConfigRegistryEvent extends ILifecycleEvent {
 
     /**
      * Register mixin configuration .json, with {@link ConfigurationType}
@@ -27,7 +27,7 @@ public abstract interface IConfigRegistryEvent extends ILifecycleEvent {
      * @return {@link IMixinConfiguration} instance.
      * @see IMixinConfiguration.
      */
-    public IMixinConfiguration registerConfiguration(String path);
+    IMixinConfiguration registerConfiguration(String path);
 
     /**
      * Does the same work as {@link #registerConfiguration(String)}, but for
@@ -37,7 +37,7 @@ public abstract interface IConfigRegistryEvent extends ILifecycleEvent {
      * @return List of all {@link IMixinConfiguration} instances created.
      * @see IMixinConfiguration
      */
-    public List<IMixinConfiguration> registerConfigurations(String... paths);
+    List<IMixinConfiguration> registerConfigurations(String... paths);
 
     /**
      * During annotation analysis phase, Grimoire does automatically discover
@@ -46,7 +46,7 @@ public abstract interface IConfigRegistryEvent extends ILifecycleEvent {
      *
      * @return List of .json configurations found within your .jar file.
      */
-    public List<String> getConfigurationCandidates();
+    List<String> getConfigurationCandidates();
 
     /**
      * Automatically register all configuration candidates provided by
@@ -54,7 +54,7 @@ public abstract interface IConfigRegistryEvent extends ILifecycleEvent {
      *
      * @return List of {@link IMixinConfiguration} instances created.
      */
-    public List<IMixinConfiguration> registerConfigurationCandidates();
+    List<IMixinConfiguration> registerConfigurationCandidates();
 
     /**
      * Automatically register all configuration candidates provided by
@@ -63,6 +63,6 @@ public abstract interface IConfigRegistryEvent extends ILifecycleEvent {
      * @param withPredicate Predicate configuration candidates must satisfy.
      * @return List of {@link IMixinConfiguration} instances created.
      */
-    public List<IMixinConfiguration> registerConfigurationCandidates(Predicate<String> withPredicate);
+    List<IMixinConfiguration> registerConfigurationCandidates(Predicate<String> withPredicate);
 
 }

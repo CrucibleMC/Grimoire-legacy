@@ -237,7 +237,7 @@ public class Configuration {
      * @return a boolean Property object without a comment
      */
     public Property get(String category, String key, boolean defaultValue) {
-        return this.get(category, key, defaultValue, (String) null);
+        return this.get(category, key, defaultValue, null);
     }
 
     /**
@@ -269,7 +269,7 @@ public class Configuration {
      * @return a boolean array Property without a comment using these defaults: isListLengthFixed = false, maxListLength = -1
      */
     public Property get(String category, String key, boolean[] defaultValues) {
-        return this.get(category, key, defaultValues, (String) null);
+        return this.get(category, key, defaultValues, null);
     }
 
     /**
@@ -330,7 +330,7 @@ public class Configuration {
      * @return an integer Property object with default bounds of Integer.MIN_VALUE and Integer.MAX_VALUE
      */
     public Property get(String category, String key, int defaultValue) {
-        return this.get(category, key, defaultValue, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return this.get(category, key, defaultValue, null, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     /**
@@ -379,7 +379,7 @@ public class Configuration {
      *         maxListLength = -1
      */
     public Property get(String category, String key, int[] defaultValues) {
-        return this.get(category, key, defaultValues, (String) null);
+        return this.get(category, key, defaultValues, null);
     }
 
     /**
@@ -461,7 +461,7 @@ public class Configuration {
      * @return a double Property object with default bounds of Double.MIN_VALUE and Double.MAX_VALUE
      */
     public Property get(String category, String key, double defaultValue) {
-        return this.get(category, key, defaultValue, (String) null);
+        return this.get(category, key, defaultValue, null);
     }
 
     /**
@@ -592,7 +592,7 @@ public class Configuration {
      * @return a string Property with validationPattern = null, validValues = null
      */
     public Property get(String category, String key, String defaultValue) {
-        return this.get(category, key, defaultValue, (String) null);
+        return this.get(category, key, defaultValue, null);
     }
 
     /**
@@ -650,7 +650,7 @@ public class Configuration {
      * @return a string array Property with validationPattern = null, isListLengthFixed = false, maxListLength = -1
      */
     public Property get(String category, String key, String[] defaultValues) {
-        return this.get(category, key, defaultValues, (String) null, false, -1, (Pattern) null);
+        return this.get(category, key, defaultValues, null, false, -1, null);
     }
 
     /**
@@ -663,7 +663,7 @@ public class Configuration {
      * @return a string array Property with validationPattern = null, isListLengthFixed = false, maxListLength = -1
      */
     public Property get(String category, String key, String[] defaultValues, String comment) {
-        return this.get(category, key, defaultValues, comment, false, -1, (Pattern) null);
+        return this.get(category, key, defaultValues, comment, false, -1, null);
     }
 
     /**
@@ -1057,19 +1057,19 @@ public class Configuration {
                 OmniconfigCore.logger.info("Loaded version: " + this.loadedConfigVersion + ", provider-defined version: " + this.definedConfigVersion);
 
                 if (this.versioningPolicy == VersioningPolicy.AGGRESSIVE) {
-                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy.toString() + "; "
+                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy + "; "
                             + "full reset of config file will be executed.");
 
                     this.categories.clear();
                     this.children.clear();
                 } else if (this.versioningPolicy == VersioningPolicy.DISMISSIVE) {
-                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy.toString() + "; "
+                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy + "; "
                             + "everythying in the config file will be left untouched, apart from config version parameter being updated.");
                 } else if (this.versioningPolicy == VersioningPolicy.RESPECTFUL) {
-                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy.toString() + "; "
+                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy + "; "
                             + "values of properties that had their defaults updated since old version will be discarded, everything else will persist.");
                 } else if (this.versioningPolicy == VersioningPolicy.NOBLE) {
-                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy.toString() + "; "
+                    OmniconfigCore.logger.info("The config versioning policy is defined as " + this.versioningPolicy + "; "
                             + "values of properties that had their defaults updated since old version will be discarded if user did not modify them, everything else will persist.");
                 }
 
@@ -1599,7 +1599,7 @@ public class Configuration {
      * @return The value of the new string property.
      */
     public String[] getStringList(String name, String category, String[] defaultValues, String comment) {
-        return this.getStringList(name, category, defaultValues, comment, (String[]) null, name);
+        return this.getStringList(name, category, defaultValues, comment, null, name);
     }
 
     /**

@@ -11,21 +11,21 @@ public interface IFloatProperty extends IAbstractProperty {
     /**
      * @return Current value of this property.
      */
-    public float getValue();
+    float getValue();
 
     /**
      * @return Maximum possible value this property can take.
      */
-    public float getMax();
+    float getMax();
 
     /**
      * @return Minimum possible value this property can take.
      */
-    public float getMin();
+    float getMin();
 
     /**
      * @return Default value of this property, as declared in config file.
      */
-    public float getDefault();
+    float getDefault();
 
 }

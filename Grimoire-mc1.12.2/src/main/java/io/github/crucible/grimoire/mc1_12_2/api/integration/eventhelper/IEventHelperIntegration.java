@@ -23,22 +23,22 @@ import net.minecraft.util.math.BlockPos;
 
 public interface IEventHelperIntegration extends IModIntegration {
 
-    public boolean canBreak(@Nonnull EntityPlayer player, @Nonnull BlockPos pos);
+    boolean canBreak(@Nonnull EntityPlayer player, @Nonnull BlockPos pos);
 
-    public boolean canPlace(@Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState blockState);
+    boolean canPlace(@Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState blockState);
 
-    public boolean canReplace(@Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState blockState);
+    boolean canReplace(@Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState blockState);
 
-    public boolean canAttack(@Nonnull EntityPlayer player, @Nonnull Entity victim);
+    boolean canAttack(@Nonnull EntityPlayer player, @Nonnull Entity victim);
 
-    public boolean canInteract(@Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull BlockPos targetPos, @Nonnull EnumFacing targetSide);
+    boolean canInteract(@Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull BlockPos targetPos, @Nonnull EnumFacing targetSide);
 
-    public boolean canInteract(@Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull BlockPos interactionPos, @Nonnull BlockPos targetPos, @Nonnull EnumFacing targetSide);
+    boolean canInteract(@Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull BlockPos interactionPos, @Nonnull BlockPos targetPos, @Nonnull EnumFacing targetSide);
 
-    public boolean hasPermission(@Nonnull EntityPlayer player, @Nonnull String permission);
+    boolean hasPermission(@Nonnull EntityPlayer player, @Nonnull String permission);
 
-    public boolean hasPermission(@Nonnull UUID playerID, @Nonnull String permission);
+    boolean hasPermission(@Nonnull UUID playerID, @Nonnull String permission);
 
-    public boolean hasPermission(@Nonnull String playerName, @Nonnull String permission);
+    boolean hasPermission(@Nonnull String playerName, @Nonnull String permission);
 
 }

@@ -32,7 +32,7 @@ import io.github.crucible.omniconfig.api.properties.IAbstractProperty;
  * @author Aizistral
  */
 
-public abstract interface IAbstractPropertyBuilder<E extends IAbstractProperty, T extends IAbstractPropertyBuilder<E, T>> {
+public interface IAbstractPropertyBuilder<E extends IAbstractProperty, T extends IAbstractPropertyBuilder<E, T>> {
 
     /**
      * Add human-readable comment for this config property.
@@ -40,7 +40,7 @@ public abstract interface IAbstractPropertyBuilder<E extends IAbstractProperty, 
      * @param comment The comment.
      * @return This sub-builder instance.
      */
-    public T comment(String comment);
+    T comment(String comment);
 
     /**
      * Mark this property as synchronized or non-synchronized, depending
@@ -49,7 +49,7 @@ public abstract interface IAbstractPropertyBuilder<E extends IAbstractProperty, 
      * @param isSyncable True if property should be synchronized, false otherwise.
      * @return This sub-builder instance.
      */
-    public T sync(boolean isSyncable);
+    T sync(boolean isSyncable);
 
     /**
      * Mark this property as synchronized.
@@ -57,7 +57,7 @@ public abstract interface IAbstractPropertyBuilder<E extends IAbstractProperty, 
      *
      * @return This sub-builder instance.
      */
-    public T sync();
+    T sync();
 
     /**
      * Same as {@link #uponLoad(Consumer)}, but if second argument is false,
@@ -72,7 +72,7 @@ public abstract interface IAbstractPropertyBuilder<E extends IAbstractProperty, 
      * when property is loaded for the first time.
      * @return This sub-builder instance.
      */
-    public T uponLoad(Consumer<E> consumer, boolean invokeOnFirstLoad);
+    T uponLoad(Consumer<E> consumer, boolean invokeOnFirstLoad);
 
     /**
      * Specify consumer which will be invoked every time a property value is
@@ -109,12 +109,12 @@ public abstract interface IAbstractPropertyBuilder<E extends IAbstractProperty, 
      * @param consumer Consumer to invoke
      * @return This sub-builder instance.
      */
-    public T uponLoad(Consumer<E> consumer);
+    T uponLoad(Consumer<E> consumer);
 
     /**
      * Build appropriate property instance and thus finish this sub-builder's execution.
      * @return Property instance.
      */
-    public E build();
+    E build();
 
 }

@@ -11,11 +11,11 @@ public interface IBooleanProperty extends IAbstractProperty {
     /**
      * @return Current value of this property.
      */
-    public boolean getValue();
+    boolean getValue();
 
     /**
      * @return Default value of this property, as declared in config file.
      */
-    public boolean getDefault();
+    boolean getDefault();
 
 }

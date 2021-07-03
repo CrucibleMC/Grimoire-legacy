@@ -14,7 +14,7 @@ public interface IPerhapsPropertyBuilder extends IAbstractPropertyBuilder<IPerha
      * @param maxValue Maximal value of your choice.
      * @return This sub-builder instance.
      */
-    public IPerhapsPropertyBuilder max(double percent);
+    IPerhapsPropertyBuilder max(double percent);
 
     /**
      * Specifies minimum percentage-based value this property will be allowed
@@ -23,7 +23,7 @@ public interface IPerhapsPropertyBuilder extends IAbstractPropertyBuilder<IPerha
      *
      * @return This sub-builder instance.
      */
-    public IPerhapsPropertyBuilder min(double percent);
+    IPerhapsPropertyBuilder min(double percent);
 
     /**
      * Specifies both minimum and maximum percentage-based values thes property
@@ -38,7 +38,7 @@ public interface IPerhapsPropertyBuilder extends IAbstractPropertyBuilder<IPerha
      * @param minMax Min-max bound of your choice.
      * @return This sub-builder instance.
      */
-    public IPerhapsPropertyBuilder minMax(double percent);
+    IPerhapsPropertyBuilder minMax(double percent);
 
     /**
      * Supply validator function for this property.
@@ -48,6 +48,6 @@ public interface IPerhapsPropertyBuilder extends IAbstractPropertyBuilder<IPerha
      * @return This sub-builder instance
      * @see {@link IAbstractPropertyBuilder}
      */
-    public IPerhapsPropertyBuilder validator(Function<Perhaps, Perhaps> validator);
+    IPerhapsPropertyBuilder validator(Function<Perhaps, Perhaps> validator);
 
 }

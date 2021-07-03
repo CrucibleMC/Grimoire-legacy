@@ -29,11 +29,11 @@ public interface IValidationEvent extends ILifecycleEvent {
      * lifecycle events to it. This is a good option to prevent your grimmix
      * from loading in case some specific conditions it requires are not satisfied.
      */
-    public void invalidate();
+    void invalidate();
 
     /**
      * @return True if this grimmix was invalidated already, false otherwise.
      */
-    public boolean isValid();
+    boolean isValid();
 
 }

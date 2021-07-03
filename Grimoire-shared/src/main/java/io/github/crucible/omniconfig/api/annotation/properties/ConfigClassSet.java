@@ -28,19 +28,19 @@ public @interface ConfigClassSet {
      * @return Name of this property in config file.
      * If not specified, field name will be used instead.
      */
-    public String name() default "";
+    String name() default "";
 
     /**
      * @return Config category this property should belong to.
      * It is allowed to specify subcategory hierarchy by separating
      * category names with {@link OmniconfigConstants#CATEGORY_SPLITTER}.
      */
-    public String category() default OmniconfigConstants.GENERAL_CATEGORY;
+    String category() default OmniconfigConstants.GENERAL_CATEGORY;
 
     /**
      * @return Human-readable comment describing the purpose
      * of this config property.
      */
-    public String comment() default OmniconfigConstants.DEFAULT_COMMENT;
+    String comment() default OmniconfigConstants.DEFAULT_COMMENT;
 
 }

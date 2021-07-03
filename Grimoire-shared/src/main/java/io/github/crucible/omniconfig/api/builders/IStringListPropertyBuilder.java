@@ -13,7 +13,7 @@ public interface IStringListPropertyBuilder extends IAbstractPropertyBuilder<ISt
      * @param values Valid values.
      * @return This sub-builder instance.
      */
-    public IStringListPropertyBuilder validValues(String... values);
+    IStringListPropertyBuilder validValues(String... values);
 
     /**
      * Supply validator function for this property.
@@ -23,6 +23,6 @@ public interface IStringListPropertyBuilder extends IAbstractPropertyBuilder<ISt
      * @return This sub-builder instance
      * @see {@link IAbstractPropertyBuilder}
      */
-    public IStringListPropertyBuilder validator(Function<String[], String[]> validator);
+    IStringListPropertyBuilder validator(Function<String[], String[]> validator);
 
 }

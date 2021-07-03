@@ -30,7 +30,7 @@ public @interface CoreEventHandler {
      * @return
      */
 
-    public String[] value();
+    String[] value();
 
     /**
      * If true, an exception will be raised if one or more of
@@ -39,6 +39,6 @@ public @interface CoreEventHandler {
      * Default behavior is to simply log a message about it and
      * proceed with our lifes.
      */
-    public boolean mandatory() default false;
+    boolean mandatory() default false;
 
 }

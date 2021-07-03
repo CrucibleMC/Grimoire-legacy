@@ -20,6 +20,6 @@ public interface IBooleanPropertyBuilder extends IAbstractPropertyBuilder<IBoole
      * @return This sub-builder instance
      * @see {@link IAbstractPropertyBuilder}
      */
-    public IBooleanPropertyBuilder validator(Function<Boolean, Boolean> validator);
+    IBooleanPropertyBuilder validator(Function<Boolean, Boolean> validator);
 
 }

@@ -12,7 +12,7 @@ public interface IIntegerPropertyBuilder extends IAbstractPropertyBuilder<IInteg
      * @param maxValue Maximal value of your choice.
      * @return This sub-builder instance.
      */
-    public IIntegerPropertyBuilder max(int maxValue);
+    IIntegerPropertyBuilder max(int maxValue);
 
     /**
      * Specifies minimum value this property will be allowed to take.
@@ -20,7 +20,7 @@ public interface IIntegerPropertyBuilder extends IAbstractPropertyBuilder<IInteg
      * @param minValue Minimal value of your choice.
      * @return This sub-builder instance.
      */
-    public IIntegerPropertyBuilder min(int minValue);
+    IIntegerPropertyBuilder min(int minValue);
 
     /**
      * Specifies both minimum and maximum values thes property will
@@ -34,7 +34,7 @@ public interface IIntegerPropertyBuilder extends IAbstractPropertyBuilder<IInteg
      * @param minMax Min-max bound of your choice.
      * @return This sub-builder instance.
      */
-    public IIntegerPropertyBuilder minMax(int minMax);
+    IIntegerPropertyBuilder minMax(int minMax);
 
     /**
      * Supply validator function for this property.
@@ -44,6 +44,6 @@ public interface IIntegerPropertyBuilder extends IAbstractPropertyBuilder<IInteg
      * @return This sub-builder instance
      * @see {@link IAbstractPropertyBuilder}
      */
-    public IIntegerPropertyBuilder validator(Function<Integer, Integer> validator);
+    IIntegerPropertyBuilder validator(Function<Integer, Integer> validator);
 
 }

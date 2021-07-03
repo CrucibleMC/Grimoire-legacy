@@ -67,7 +67,7 @@ public interface IOmniconfigBuilder {
      */
 
     @PhaseOnly(INITIALIZATION)
-    public IOmniconfigBuilder versioningPolicy(VersioningPolicy policy);
+    IOmniconfigBuilder versioningPolicy(VersioningPolicy policy);
 
 
     /**
@@ -92,7 +92,7 @@ public interface IOmniconfigBuilder {
      * @return This builder instance.
      */
     @PhaseOnly(INITIALIZATION)
-    public IOmniconfigBuilder versioningPolicyBackflips(Function<Version, VersioningPolicy> determinator);
+    IOmniconfigBuilder versioningPolicyBackflips(Function<Version, VersioningPolicy> determinator);
 
     /**
      * Allows you define resolution strategy for properties that are present in physical file,
@@ -112,7 +112,7 @@ public interface IOmniconfigBuilder {
      * @return This builder instance.
      */
     @PhaseOnly(INITIALIZATION)
-    public IOmniconfigBuilder terminateNonInvokedKeys(boolean terminate);
+    IOmniconfigBuilder terminateNonInvokedKeys(boolean terminate);
 
     /**
      * Load physical configuration file from disk and proceed to property loading phase.
@@ -123,7 +123,7 @@ public interface IOmniconfigBuilder {
      */
     @PhaseOnly(INITIALIZATION)
     @Finalizes(INITIALIZATION)
-    public IOmniconfigBuilder loadFile();
+    IOmniconfigBuilder loadFile();
 
     /**
      * Set prefix that all subsequently built config properties will have.
@@ -133,7 +133,7 @@ public interface IOmniconfigBuilder {
      * @return This builder instance.
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IOmniconfigBuilder prefix(String prefix);
+    IOmniconfigBuilder prefix(String prefix);
 
     /**
      * Remove prefix for subsequently built config properties.
@@ -142,7 +142,7 @@ public interface IOmniconfigBuilder {
      * @return This builder instance.
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IOmniconfigBuilder resetPrefix();
+    IOmniconfigBuilder resetPrefix();
 
     /**
      * Put the specified category on top of current category stack.
@@ -152,7 +152,7 @@ public interface IOmniconfigBuilder {
      * @see #pushCategory(String, String)
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IOmniconfigBuilder pushCategory(String category);
+    IOmniconfigBuilder pushCategory(String category);
 
     /**
      * Put specified category on top of current category stack.
@@ -168,14 +168,14 @@ public interface IOmniconfigBuilder {
      * @return This builder instance.
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IOmniconfigBuilder pushCategory(String category, String comment);
+    IOmniconfigBuilder pushCategory(String category, String comment);
 
     /**
      * Pop category on top of current category stack.
      * @return This builder instance.
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IOmniconfigBuilder popCategory();
+    IOmniconfigBuilder popCategory();
 
     /**
      * Pop all current categories. Category stack will be left about as empty
@@ -184,7 +184,7 @@ public interface IOmniconfigBuilder {
      * @return This builder instance.
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IOmniconfigBuilder resetCategory();
+    IOmniconfigBuilder resetCategory();
 
     /**
      * If argument is true, ensures that every subsequently built properties
@@ -197,7 +197,7 @@ public interface IOmniconfigBuilder {
      * @return This builder instance.
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IOmniconfigBuilder synchronize(boolean sync);
+    IOmniconfigBuilder synchronize(boolean sync);
 
     /**
      * Start builder for {@link IBooleanProperty}.
@@ -208,7 +208,7 @@ public interface IOmniconfigBuilder {
      * @see IBooleanPropertyBuilder
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IBooleanPropertyBuilder getBoolean(String name, boolean defaultValue);
+    IBooleanPropertyBuilder getBoolean(String name, boolean defaultValue);
 
     /**
      * Start builder for {@link IIntegerProperty}.
@@ -219,7 +219,7 @@ public interface IOmniconfigBuilder {
      * @see IIntegerPropertyBuilder
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IIntegerPropertyBuilder getInteger(String name, int defaultValue);
+    IIntegerPropertyBuilder getInteger(String name, int defaultValue);
 
     /**
      * Start builder for {@link IDoubleProperty}.
@@ -230,7 +230,7 @@ public interface IOmniconfigBuilder {
      * @see IDoubleProperty
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IDoublePropertyBuilder getDouble(String name, double defaultValue);
+    IDoublePropertyBuilder getDouble(String name, double defaultValue);
 
     /**
      * Start builder for {@link IFloatProperty}.
@@ -241,7 +241,7 @@ public interface IOmniconfigBuilder {
      * @see IFloatProperty
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IFloatPropertyBuilder getFloat(String name, float defaultValue);
+    IFloatPropertyBuilder getFloat(String name, float defaultValue);
 
     /**
      * Start builder for {@link IPerhapsProperty}.
@@ -252,7 +252,7 @@ public interface IOmniconfigBuilder {
      * @see IPerhapsProperty
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IPerhapsPropertyBuilder getPerhaps(String name, Perhaps defaultValue);
+    IPerhapsPropertyBuilder getPerhaps(String name, Perhaps defaultValue);
 
     /**
      * Start builder for {@link IStringProperty}.
@@ -263,7 +263,7 @@ public interface IOmniconfigBuilder {
      * @see IStringProperty
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IStringPropertyBuilder getString(String name, String defaultValue);
+    IStringPropertyBuilder getString(String name, String defaultValue);
 
     /**
      * Start builder for {@link IStringListProperty}.
@@ -274,7 +274,7 @@ public interface IOmniconfigBuilder {
      * @see IStringListProperty
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public IStringListPropertyBuilder getStringList(String name, String... defaultValue);
+    IStringListPropertyBuilder getStringList(String name, String... defaultValue);
 
     /**
      * Start builder for {@link IEnumProperty}.
@@ -286,7 +286,7 @@ public interface IOmniconfigBuilder {
      * @see IEnumProperty
      */
     @PhaseOnly(PROPERTY_LOADING)
-    public <T extends Enum<T>> IEnumPropertyBuilder<T> getEnum(String name, T defaultValue);
+    <T extends Enum<T>> IEnumPropertyBuilder<T> getEnum(String name, T defaultValue);
 
     /**
      * Mark this particular config as reloadable.<br>
@@ -303,7 +303,7 @@ public interface IOmniconfigBuilder {
      */
     @PhaseOnly({PROPERTY_LOADING, FINALIZATION})
     @Finalizes(PROPERTY_LOADING)
-    public IOmniconfigBuilder setReloadable();
+    IOmniconfigBuilder setReloadable();
 
     /**
      * If this config is marked as reloadable, passed consumer will be invoked every time
@@ -322,7 +322,7 @@ public interface IOmniconfigBuilder {
      */
     @PhaseOnly({PROPERTY_LOADING, FINALIZATION})
     @Finalizes(PROPERTY_LOADING)
-    public IOmniconfigBuilder addUpdateListener(Consumer<IOmniconfig> consumer);
+    IOmniconfigBuilder addUpdateListener(Consumer<IOmniconfig> consumer);
 
     /**
      * If you create property sub-builder during property loading phase, but never end up
@@ -341,7 +341,7 @@ public interface IOmniconfigBuilder {
      */
     @PhaseOnly({PROPERTY_LOADING, FINALIZATION})
     @Finalizes(PROPERTY_LOADING)
-    public IOmniconfigBuilder buildIncompleteParameters();
+    IOmniconfigBuilder buildIncompleteParameters();
 
     /**
      * Finishes building your omniconfig instance. It is when this method is called that physical
@@ -353,7 +353,7 @@ public interface IOmniconfigBuilder {
      */
     @PhaseOnly({PROPERTY_LOADING, FINALIZATION})
     @Finalizes({PROPERTY_LOADING, FINALIZATION})
-    public IOmniconfig build();
+    IOmniconfig build();
 
 }
 
@@ -368,7 +368,7 @@ public interface IOmniconfigBuilder {
 @Retention(RetentionPolicy.CLASS)
 @interface PhaseOnly {
 
-    public BuildingPhase[] value();
+    BuildingPhase[] value();
 
 }
 
@@ -383,6 +383,6 @@ public interface IOmniconfigBuilder {
 @Retention(RetentionPolicy.CLASS)
 @interface Finalizes {
 
-    public BuildingPhase[] value();
+    BuildingPhase[] value();
 
 }

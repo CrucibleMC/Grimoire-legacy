@@ -14,7 +14,7 @@ public class IncelOPChecker {
 
     public static boolean isPlayerOP(EntityPlayer player) {
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        return server != null ? server.getPlayerList().getOppedPlayers().getEntry(player.getGameProfile()) != null : false;
+        return server != null && server.getPlayerList().getOppedPlayers().getEntry(player.getGameProfile()) != null;
     }
 
     public static boolean isPlayerOP(UUID playerID) {

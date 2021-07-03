@@ -11,21 +11,21 @@ public interface IIntegerProperty extends IAbstractProperty {
     /**
      * @return Current value of this property.
      */
-    public int getValue();
+    int getValue();
 
     /**
      * @return Maximum possible value this property can take.
      */
-    public int getMax();
+    int getMax();
 
     /**
      * @return Minimum possible value this property can take.
      */
-    public int getMin();
+    int getMin();
 
     /**
      * @return Default value of this property, as declared in config file.
      */
-    public int getDefault();
+    int getDefault();
 
 }

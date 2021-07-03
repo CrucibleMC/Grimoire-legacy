@@ -11,21 +11,21 @@ public interface IDoubleProperty extends IAbstractProperty {
     /**
      * @return Current value of this property.
      */
-    public double getValue();
+    double getValue();
 
     /**
      * @return Maximum possible value this property can take.
      */
-    public double getMax();
+    double getMax();
 
     /**
      * @return Minimum possible value this property can take.
      */
-    public double getMin();
+    double getMin();
 
     /**
      * @return Default value of this property, as declared in config file.
      */
-    public double getDefault();
+    double getDefault();
 
 }

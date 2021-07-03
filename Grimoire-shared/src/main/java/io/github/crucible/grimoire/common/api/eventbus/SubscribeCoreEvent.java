@@ -34,13 +34,13 @@ public @interface SubscribeCoreEvent {
      * @return {@link Priority} this event receiver should have,
      * compared to other receivers.
      */
-    public Priority priority() default Priority.NORMAL;
+    Priority priority() default Priority.NORMAL;
 
     /**
      * @return True if this event receiver should receive
      * dispatched event even if it was canceled by some other
      * receiver earlier.
      */
-    public boolean receiveCanceled() default false;
+    boolean receiveCanceled() default false;
 
 }

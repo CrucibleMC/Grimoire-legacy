@@ -14,13 +14,13 @@ import io.github.crucible.omniconfig.api.core.IOmniconfig;
  * @author Aizistral
  */
 
-public abstract interface IAbstractProperty {
+public interface IAbstractProperty {
 
     /**
      * @return {@link String}-form ID used to distinguish this property among others.
      * It normally will look like <code>[config_category]$[property_name]</code>
      */
-    public String getID();
+    String getID();
 
     /**
      * @return Category name this property belongs to. If category is a part of
@@ -28,17 +28,17 @@ public abstract interface IAbstractProperty {
      * categories in that hierarchy; singular category names are separated from one
      * another with <code>$</code> symbol.
      */
-    public String getCategory();
+    String getCategory();
 
     /**
      * @return Name of this property, as used in physical config file.
      */
-    public String getName();
+    String getName();
 
     /**
      * @return (Supposedly) human-readable comment describing this particular property.
      */
-    public String getComment();
+    String getComment();
 
     /**
      * @return Whether server will attempt to synchronize value of this config property
@@ -51,6 +51,6 @@ public abstract interface IAbstractProperty {
      * reloadable. Logging into and out of server will then be the only time their value
      * can change.
      */
-    public boolean isSynchronized();
+    boolean isSynchronized();
 
 }

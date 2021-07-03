@@ -19,7 +19,7 @@ public interface IModIntegrationRegistry {
      *
      * @param containerClass Container class.
      */
-    public void registerIntegration(Class<? extends ModIntegrationContainer<?>> containerClass);
+    void registerIntegration(Class<? extends ModIntegrationContainer<?>> containerClass);
 
     /**
      * Find mod integration instance that matches supplied class of its
@@ -29,13 +29,12 @@ public interface IModIntegrationRegistry {
      * integration.
      * @return Integration instance if exists, null if does not.
      */
-    @Nullable
-    public <T extends IModIntegration> T getIntegration(Class<T> integrationClass);
+    @Nullable <T extends IModIntegration> T getIntegration(Class<T> integrationClass);
 
     /**
      * @return List of all existing mod integrations. Unmodifiable.
      */
-    public List<? extends IModIntegration> getAllIntegrations();
+    List<? extends IModIntegration> getAllIntegrations();
 
     /**
      * @return True if <code>FMLPreInitializationEvent</code> have already passed
@@ -43,6 +42,6 @@ public interface IModIntegrationRegistry {
      * If containers are registered after <code>FMLPreInitializationEvent</code>,
      * they will be constructed immediately.
      */
-    public boolean isInitialized();
+    boolean isInitialized();
 
 }

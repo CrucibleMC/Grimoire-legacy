@@ -23,42 +23,42 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public interface IEventHelperIntegration extends IModIntegration {
 
-    public boolean canBreak(@NotNull EntityPlayer player, int x, int y, int z);
+    boolean canBreak(@NotNull EntityPlayer player, int x, int y, int z);
 
-    public boolean canBreak(@NotNull EntityPlayer player, double x, double y, double z);
+    boolean canBreak(@NotNull EntityPlayer player, double x, double y, double z);
 
-    public boolean canDamage(@NotNull Entity attacker, @NotNull Entity victim);
+    boolean canDamage(@NotNull Entity attacker, @NotNull Entity victim);
 
-    public boolean canInteract(@NotNull EntityPlayer player, @Nullable ItemStack stack, int x, int y, int z, @NotNull ForgeDirection side);
+    boolean canInteract(@NotNull EntityPlayer player, @Nullable ItemStack stack, int x, int y, int z, @NotNull ForgeDirection side);
 
-    public boolean canFromTo(@NotNull World world, int fromX, int fromY, int fromZ, int toX, int toY, int toZ);
+    boolean canFromTo(@NotNull World world, int fromX, int fromY, int fromZ, int toX, int toY, int toZ);
 
-    public boolean canFromTo(@NotNull World world, int fromX, int fromY, int fromZ, @NotNull ForgeDirection direction);
+    boolean canFromTo(@NotNull World world, int fromX, int fromY, int fromZ, @NotNull ForgeDirection direction);
 
-    public boolean canTeleport(EntityPlayer player, World toWorld, double toX, double toY, double toZ);
+    boolean canTeleport(EntityPlayer player, World toWorld, double toX, double toY, double toZ);
 
-    public boolean canTeleport(EntityPlayer player, World fromWorld, double fromX, double fromY, double fromZ, World toWorld, double toX, double toY, double toZ);
+    boolean canTeleport(EntityPlayer player, World fromWorld, double fromX, double fromY, double fromZ, World toWorld, double toX, double toY, double toZ);
 
-    public boolean canTeleport(Entity entity, World toWorld, double toX, double toY, double toZ);
+    boolean canTeleport(Entity entity, World toWorld, double toX, double toY, double toZ);
 
-    public boolean canTeleport(Entity entity, World fromWorld, double fromX, double fromY, double fromZ, World toWorld, double toX, double toY, double toZ);
+    boolean canTeleport(Entity entity, World fromWorld, double fromX, double fromY, double fromZ, World toWorld, double toX, double toY, double toZ);
 
-    public boolean isInPrivate(@NotNull World world, int x, int y, int z);
+    boolean isInPrivate(@NotNull World world, int x, int y, int z);
 
-    public boolean isPrivateMember(@NotNull EntityPlayer player, double x, double y, double z);
+    boolean isPrivateMember(@NotNull EntityPlayer player, double x, double y, double z);
 
-    public boolean isPrivateMember(@NotNull EntityPlayer player, int x, int y, int z);
+    boolean isPrivateMember(@NotNull EntityPlayer player, int x, int y, int z);
 
-    public boolean isPrivateOwner(@NotNull EntityPlayer player, double x, double y, double z);
+    boolean isPrivateOwner(@NotNull EntityPlayer player, double x, double y, double z);
 
-    public boolean isPrivateOwner(@NotNull EntityPlayer player, int x, int y, int z);
+    boolean isPrivateOwner(@NotNull EntityPlayer player, int x, int y, int z);
 
-    public boolean isInPrivate(@NotNull Entity entity);
+    boolean isInPrivate(@NotNull Entity entity);
 
-    public boolean hasPermission(@Nullable EntityPlayer player, @NotNull String permission);
+    boolean hasPermission(@Nullable EntityPlayer player, @NotNull String permission);
 
-    public boolean hasPermission(@Nullable UUID playerId, @NotNull String permission);
+    boolean hasPermission(@Nullable UUID playerId, @NotNull String permission);
 
-    public boolean hasPermission(@Nullable String playerName, @NotNull String permission);
+    boolean hasPermission(@Nullable String playerName, @NotNull String permission);
 
 }
