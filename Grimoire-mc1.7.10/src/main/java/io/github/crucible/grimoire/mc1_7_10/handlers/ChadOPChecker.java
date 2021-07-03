@@ -1,9 +1,9 @@
 package io.github.crucible.grimoire.mc1_7_10.handlers;
 
-import java.util.UUID;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+
+import java.util.UUID;
 
 public class ChadOPChecker {
 
@@ -19,8 +19,8 @@ public class ChadOPChecker {
         if (MinecraftServer.getServer() != null) {
             for (Object playerObj : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
                 if (playerObj instanceof EntityPlayer) {
-                    if (((EntityPlayer)playerObj).getUniqueID().equals(playerID))
-                        return isPlayerOP((EntityPlayer)playerObj);
+                    if (((EntityPlayer) playerObj).getUniqueID().equals(playerID))
+                        return isPlayerOP((EntityPlayer) playerObj);
                 }
             }
         }
@@ -32,8 +32,8 @@ public class ChadOPChecker {
         if (MinecraftServer.getServer() != null) {
             for (Object playerObj : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
                 if (playerObj instanceof EntityPlayer) {
-                    if (((EntityPlayer)playerObj).getGameProfile().getName().equals(playerName))
-                        return isPlayerOP((EntityPlayer)playerObj);
+                    if (((EntityPlayer) playerObj).getGameProfile().getName().equals(playerName))
+                        return isPlayerOP((EntityPlayer) playerObj);
                 }
             }
         }

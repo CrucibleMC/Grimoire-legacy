@@ -24,19 +24,18 @@
  */
 package org.spongepowered.asm.mixin;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
+import io.github.crucible.grimoire.common.api.GrimoireAPI;
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.ICoreLoadEvent;
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.mixin.transformer.Config;
 
-import io.github.crucible.grimoire.common.api.GrimoireAPI;
-import io.github.crucible.grimoire.common.api.grimmix.lifecycle.ICoreLoadEvent;
-import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
-import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Entry point for registering global mixin resources. Compatibility with

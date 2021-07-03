@@ -1,10 +1,10 @@
 package io.github.crucible.grimoire.mc1_7_10.mixins.forge;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.util.List;
-
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModClassLoader;
+import cpw.mods.fml.common.ModContainer;
+import io.github.crucible.grimoire.common.GrimoireCore;
+import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,11 +14,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.transformer.MixinTransformer;
 import org.spongepowered.asm.mixin.transformer.Proxy;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModClassLoader;
-import cpw.mods.fml.common.ModContainer;
-import io.github.crucible.grimoire.common.GrimoireCore;
-import net.minecraft.launchwrapper.Launch;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.util.List;
 
 /**
  * This is not the ideal way to do it, pretend this does not even exist.

@@ -1,16 +1,15 @@
 package io.github.crucible.grimoire.mc1_7_10.api.integration.eventhelper;
 
-import java.util.UUID;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 /**
  * Static class that serves as a shortcut to 1.7.10-specific EventHelper integration.

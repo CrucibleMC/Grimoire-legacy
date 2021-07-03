@@ -1,17 +1,14 @@
 package io.github.crucible.grimoire.mc1_7_10.mixins.forge;
 
-import java.util.List;
-
+import cpw.mods.fml.common.discovery.ModCandidate;
+import cpw.mods.fml.common.discovery.ModDiscoverer;
+import io.github.crucible.grimoire.common.GrimoireCore;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import cpw.mods.fml.common.discovery.ModCandidate;
-import cpw.mods.fml.common.discovery.ModDiscoverer;
-import io.github.crucible.grimoire.common.GrimoireCore;
-import io.github.crucible.grimoire.common.core.GrimmixLoader;
-import io.github.crucible.grimoire.common.modules.legacy.LegacyPatchController;
+import java.util.List;
 
 @Mixin(value = ModDiscoverer.class, remap = false)
 public class MixinModDiscoverer {
@@ -29,7 +26,7 @@ public class MixinModDiscoverer {
     @Redirect(method = "findModDirMods(Ljava/io/File;[Ljava/io/File;)V", at = @At(
             target = "Ljava/util/List;contains(Ljava/lang/Object;)Z",
             value = "INVOKE"
-            ))
+    ))
     private boolean redirectCoremodCheck(List<?> loadedCoremods, Object file) {
         String fileName = String.valueOf(file);
 

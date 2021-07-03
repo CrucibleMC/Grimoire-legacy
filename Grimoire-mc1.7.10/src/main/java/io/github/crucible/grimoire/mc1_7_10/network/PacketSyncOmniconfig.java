@@ -1,9 +1,5 @@
 package io.github.crucible.grimoire.mc1_7_10.network;
 
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -17,6 +13,9 @@ import io.github.crucible.omniconfig.core.OmniconfigRegistry;
 import io.github.crucible.omniconfig.core.SynchronizationManager;
 import io.github.crucible.omniconfig.core.SynchronizationManager.SyncData;
 import io.netty.buffer.ByteBuf;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class PacketSyncOmniconfig implements IMessage {
     private final ChadPacketDispatcher dispatcher = ChadPacketDispatcher.INSTANCE;
