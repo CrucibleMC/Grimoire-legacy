@@ -19,3 +19,6 @@ Here are the examples of how to setup Grimoire-dependent mod workspace:
 - For 1.12.2: https://github.com/CrucibleMC/ForgeWorkspaceSetup/tree/1.12.2-grimmix
 
 You can find most details over there, but to praise what was achieved through our hard work, I will mention once more: **Grimoire has proper development environment support!** Starting a client via `runClient` command or IDE launch configuration will have Grimoire, all dependent grimmixes and that one grimmix you might be developing yourself properly loaded. Refmap generation also works perfectly fine, so no need to target production-time obfuscated names and sacrifice compatibility with development environment.
+
+## Changelog:
+As of release 3.2.0, you can find global changelog listing all Grimoire changes here: [docs/CHANGELOG.md](https://github.com/CrucibleMC/Grimoire/blob/master/docs/CHANGELOG.md)
