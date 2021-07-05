@@ -147,6 +147,10 @@ processResources {
         include "mcmod.info"
         expand "version": project.version, "mcversion": project.mcVersion
     }
+	
+	from("${project.projectDir}/../docs") {
+		include "CHANGELOG.md"
+	}
 
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
