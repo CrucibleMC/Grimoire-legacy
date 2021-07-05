@@ -107,9 +107,12 @@ public class OmniconfigCore {
         tempFile.delete();
 
         // For the time of writing, preserve old archive as temporary file
-        boolean renameOk = zipFile.renameTo(tempFile);
-        if (!renameOk)
-            throw new RuntimeException("Could not rename the file " + zipFile.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
+        try {
+            Files.move(zipFile.toPath(), tempFile.toPath());
+        } catch(IOException e) {
+            throw new RuntimeException("Could not rename the file " + zipFile.getAbsolutePath() + " to " + tempFile.getAbsolutePath(), e);
+        }
+
         byte[] buf = new byte[1024];
 
         ZipInputStream zipInput = new ZipInputStream(new FileInputStream(tempFile));
