@@ -179,12 +179,18 @@ public class MixinConfigBuilder implements IMixinConfigurationBuilder {
     private List<String> matchClassDeclaration(String declaration) {
         List<String> matches = new ArrayList<>();
 
-        if (!declaration.contains("*")) {
+        if (!declaration.contains("*") && !declaration.contains("?")) {
             matches.add(declaration);
         } else {
-            declaration = declaration.replace(".", "\\.").replace("*", ".*");
+            declaration = declaration.replace(".", "/")
+                    .replace("**", "~")
+                    .replace("?", "(.(?<!/)){1}") // the fuck
+                    .replace("*", "(.(?<!/))*")   // the fuck again?..
+                    .replace("~", ".*");
+
             for (String cl : this.getOwnerMixinClasses()) {
-                if (cl.matches(declaration)) {
+
+                if (cl.replace(".", "/").matches(declaration)) {
                     matches.add(cl);
                 }
             }

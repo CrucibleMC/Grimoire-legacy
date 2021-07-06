@@ -78,18 +78,26 @@ public interface IMixinConfigurationBuilder {
      * {@link #mixinPackage(String)} call.<br><br>
      *
      * One advantage this builder has is that it allows you to use wildcards
-     * in class name specification. Whatever file your grimmix resides within
-     * will be analyzed for classes that match wildcard specification, and
-     * class list in generated .json file will include all that do. A couple
-     * examples on how to use wildcards:<br><br>
+     * in class name specification, following ant-style path pattern.
+     * Whatever file your grimmix resides within will be analyzed for classes
+     * that match wildcard specification, and class list in generated .json file
+     * will include all that do. General rules are:<br><br>
+     *
+     * <pre>
+     * ?  - matches one character;
+     * *  - matches zero or more characters;
+     * ** - matches zero or more packages in a path.
+     * </pre>
+     *
+     * A couple examples on how to use wildcards:<br><br>
      *
      * String of format <code>"*"</code> will match all classes contained within
-     * mixin package specifed by by {@link #mixinPackage(String)} call, including
-     * classes in all subpackages.<br><br>
+     * mixin package specifed by by {@link #mixinPackage(String)} call, but not
+     * classes subpackages or subclasses.<br><br>
      *
-     * String of format <code>"common.*"</code> will match all classes that reside
+     * String of format <code>"common.**"</code> will match all classes that reside
      * in <code>common</code> subpackage of mixin package, including classes in
-     * all subpackages of <code>common</code> subpackage, if such exist.<br><br>
+     * subpackages of <code>common</code> subpackage, and any subclasses.<br><br>
      *
      * String of format <code>"Mixin*"</code> will match all classes that reside
      * in the root of mixin package and which have their name starting with

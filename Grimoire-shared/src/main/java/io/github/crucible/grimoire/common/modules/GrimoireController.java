@@ -3,6 +3,7 @@ package io.github.crucible.grimoire.common.modules;
 import io.github.crucible.grimoire.common.api.grimmix.Grimmix;
 import io.github.crucible.grimoire.common.api.grimmix.GrimmixController;
 import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IConfigBuildingEvent;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 
 /**
  * Purposeless for now, but let's keep it around for
@@ -23,9 +24,10 @@ public class GrimoireController extends GrimmixController {
         /*
         event.createBuilder("omg/randommixins.json")
         .mixinPackage("io.github.crucible.grimoire.common.test.mixins")
-        .configurationType(ConfigurationType.CORE)
-        .clientMixins("client.*")
-        .mixinPriority(1001)
+        .configurationType(ConfigurationType.MOD)
+        .clientMixins("*sx.*.*R")
+        .commonMixins("???")
+        .commonMixins("*")
         .required(true)
         .build();
          */
