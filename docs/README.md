@@ -22,3 +22,7 @@ You can find most details over there, but to praise what was achieved through ou
 
 ## Changelog:
 As of release 3.2.0, you can find global changelog listing all Grimoire changes here: [docs/CHANGELOG.md](https://github.com/CrucibleMC/Grimoire/blob/master/docs/CHANGELOG.md)
+
+## Notes on Legacy Support:
+Since in version 3.+ Grimoire was rewritten basically from scratch, and system for loading framework implementers is much different now, [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins-1.7.10) remain yet to be adapted to this new system. Current builds of Grimoire-Mixins are not loaded by default; if you need to load them, after starting client/server with Grimoire at least once procceed to `GrimoireAPI.cfg` file located in config folder within your Minecraft directory. In there, find and enable an option for legacy support:
+![image](https://user-images.githubusercontent.com/47505981/124995010-ff455b00-e046-11eb-870b-3229967098ea.png)
