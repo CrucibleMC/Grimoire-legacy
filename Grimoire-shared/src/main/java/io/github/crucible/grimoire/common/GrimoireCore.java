@@ -23,6 +23,7 @@ public class GrimoireCore {
     private static final LaunchClassLoader classLoader = (LaunchClassLoader) GrimoireCore.class.getClassLoader();
     public static final Logger logger = LogManager.getLogger("Grimoire");
     public static final GrimoireCore INSTANCE = new GrimoireCore();
+    public static final String VERSION = "@VERSION@";
 
     private List<String> forcedFilenames = new ArrayList<String>();;
     private final GrimmixLoader grimmixLoader;

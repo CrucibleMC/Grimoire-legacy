@@ -14,11 +14,11 @@ import io.github.crucible.grimoire.mc1_7_10.integration.eventhelper.EHIntegratio
 import io.github.crucible.grimoire.mc1_7_10.network.PacketSyncOmniconfig;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid = GrimoireMod.MODID, name = GrimoireMod.NAME, version = GrimoireMod.VERSION)
+@Mod(modid = GrimoireMod.MODID, name = GrimoireMod.NAME, version = GrimoireMod.VERSION, acceptableRemoteVersions = "*")
 public class GrimoireMod {
     public static final String MODID = "grimoire";
     public static final String NAME = "Grimoire";
-    public static final String VERSION = "@VERSION@";
+    public static final String VERSION = GrimoireCore.VERSION;
 
     public static SimpleNetworkWrapper packetPipeline;
 
@@ -35,7 +35,7 @@ public class GrimoireMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        GrimoireCore.logger.info("Pre initialization happened!");
+        GrimoireCore.logger.info("Pre-initialization happens!");
 
         ChadPacketDispatcher.INSTANCE.getClass();
 

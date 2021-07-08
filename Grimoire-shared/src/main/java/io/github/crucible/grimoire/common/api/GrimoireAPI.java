@@ -174,7 +174,7 @@ public class GrimoireAPI {
      * present. Be aware that at the time of grimmix lifecycle events no mods are discovered
      * and loaded yet, and trying to call this method at such time will always return false;
      * you should only call it at or after the time your <b><code>@Mod</code></b> class is loaded,
-	 * no earlier than at <b><code>FMLPreInitializationEvent</code></b>.
+     * no earlier than at <b><code>FMLPreInitializationEvent</code></b>.
      *
      * @param modID ID of mod to verify existance of.
      * @return True if such mod exists and is loaded, false otherwise.
@@ -220,6 +220,13 @@ public class GrimoireAPI {
      */
     public static boolean isObfuscatedEnvironment() {
         return !GrimoireCore.INSTANCE.isDevEnvironment();
+    }
+
+    /**
+     * @return Minecraft version we are currently loading on.
+     */
+    public static String getMinecraftVersion() {
+        return GrimoireCore.INSTANCE.getMCVersion();
     }
 
     /**

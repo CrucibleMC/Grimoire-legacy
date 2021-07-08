@@ -4,7 +4,6 @@
     "name": "Grimoire",
     "description": "The almighty Grimoire framework.",
     "version": "${version}",
-    "mcversion": "${mcversion}",
     "url": "https://github.com/CrucibleMC/Grimoire",
     "updateUrl": "",
     "authorList": [

@@ -145,7 +145,7 @@ processResources {
 
     from("${project.projectDir}/../docs") {
         include "mcmod.info"
-        expand "version": project.version, "mcversion": project.mcVersion
+        expand "version": project.version
     }
 	
 	from("${project.projectDir}/../docs") {

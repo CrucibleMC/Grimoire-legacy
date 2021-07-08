@@ -22,3 +22,20 @@ dependencies {
         exclude module: 'lwjgl'
     }
 }
+
+task deleteSource(type: Delete) {
+	delete "$buildDir/src"
+}
+
+task processSource(type: Sync) {
+    from sourceSets.main.java
+    inputs.property 'version', version
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [VERSION: project.version])
+    into "$buildDir/src"
+}
+
+compileJava {
+    source = processSource.outputs
+}
+
+compileJava.finalizedBy deleteSource

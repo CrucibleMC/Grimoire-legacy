@@ -1,5 +1,6 @@
 package io.github.crucible.grimoire.mc1_12_2;
 
+import io.github.crucible.grimoire.common.GrimoireCore;
 import io.github.crucible.grimoire.common.integration.ModIntegrationRegistry;
 import io.github.crucible.grimoire.mc1_12_2.handlers.IncelEventHandler;
 import io.github.crucible.grimoire.mc1_12_2.handlers.IncelPacketDispatcher;
@@ -13,11 +14,11 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = GrimoireMod.MODID, name = GrimoireMod.NAME, version = GrimoireMod.VERSION)
+@Mod(modid = GrimoireMod.MODID, name = GrimoireMod.NAME, version = GrimoireMod.VERSION, acceptableRemoteVersions = "*")
 public class GrimoireMod {
     public static final String MODID = "grimoire";
     public static final String NAME = "Grimoire";
-    public static final String VERSION = "@VERSION@";
+    public static final String VERSION = GrimoireCore.VERSION;
 
     public static SimpleNetworkWrapper packetPipeline;
 
