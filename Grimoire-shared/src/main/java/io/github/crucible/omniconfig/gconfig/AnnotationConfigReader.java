@@ -87,6 +87,7 @@ public class AnnotationConfigReader {
 
                 this.forceCategories(wrapper, configAnnotation.category())
                 .getBoolean(name, defaultValue)
+                .sync(configAnnotation.sync())
                 .comment(configAnnotation.comment())
                 .uponLoad(value -> this.trySetBoolean(field, value.getValue()))
                 .build();
@@ -101,6 +102,7 @@ public class AnnotationConfigReader {
 
                 this.forceCategories(wrapper, configAnnotation.category())
                 .getFloat(name, defaultValue)
+                .sync(configAnnotation.sync())
                 .comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
                 .uponLoad(value -> this.trySetFloat(field, value.getValue()))
@@ -116,6 +118,7 @@ public class AnnotationConfigReader {
 
                 this.forceCategories(wrapper, configAnnotation.category())
                 .getDouble(name, defaultValue)
+                .sync(configAnnotation.sync())
                 .comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
                 .uponLoad(value -> this.trySetDouble(field, value.getValue()))
@@ -131,6 +134,7 @@ public class AnnotationConfigReader {
 
                 this.forceCategories(wrapper, configAnnotation.category())
                 .getInteger(name, defaultValue)
+                .sync(configAnnotation.sync())
                 .comment(configAnnotation.comment())
                 .min(configAnnotation.min()).max(configAnnotation.max())
                 .uponLoad(value -> this.trySetInt(field, value.getValue()))
@@ -146,6 +150,7 @@ public class AnnotationConfigReader {
 
                 this.forceCategories(wrapper, configAnnotation.category())
                 .getString(name, defaultValue)
+                .sync(configAnnotation.sync())
                 .comment(configAnnotation.comment())
                 .uponLoad(value -> this.trySetString(field, value.getValue()))
                 .build();
@@ -160,6 +165,7 @@ public class AnnotationConfigReader {
 
                 this.forceCategories(wrapper, configAnnotation.category())
                 .getStringList(name, classSet.getRaw().toArray(new String[0]))
+                .sync(configAnnotation.sync())
                 .comment(configAnnotation.comment())
                 .uponLoad(value ->  {
                     classSet.clear();
@@ -178,6 +184,7 @@ public class AnnotationConfigReader {
 
                 this.forceCategories(wrapper, configAnnotation.category())
                 .getEnum(name, defaultValue)
+                .sync(configAnnotation.sync())
                 .comment(configAnnotation.comment())
                 .uponLoad(value -> this.trySetValue(field, ((EnumParameter)value).getValue()))
                 .build();
@@ -192,6 +199,7 @@ public class AnnotationConfigReader {
 
                 this.forceCategories(wrapper, configAnnotation.category())
                 .getStringList(name, collection.toArray(new String[0]))
+                .sync(configAnnotation.sync())
                 .comment(configAnnotation.comment())
                 .uponLoad(value -> {
                     collection.clear();
@@ -280,7 +288,6 @@ public class AnnotationConfigReader {
         String simplePackageName = packageName.substring(packageDelimeterIndex + 1);
         return Strings.isNullOrEmpty(simplePackageName) ? PACKAGE_DEFAULT : simplePackageName;
     }
-
 
     // REFLECTION HELPER METHODS //
 

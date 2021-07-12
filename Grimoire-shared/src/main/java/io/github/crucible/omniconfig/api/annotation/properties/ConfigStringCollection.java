@@ -8,6 +8,7 @@ import java.util.List;
 
 import io.github.crucible.omniconfig.api.OmniconfigConstants;
 import io.github.crucible.omniconfig.api.lib.ClassSet;
+import io.github.crucible.omniconfig.api.properties.IAbstractProperty;
 import io.github.crucible.omniconfig.backing.Configuration;
 
 /**
@@ -44,5 +45,12 @@ public @interface ConfigStringCollection {
      * of this config property.
      */
     public String comment() default OmniconfigConstants.DEFAULT_COMMENT;
+
+    /**
+     * @return Whether or not this config property should be synchronized
+     * from client to server.
+     * @see IAbstractProperty#isSynchronized()
+     */
+    public boolean sync() default false;
 
 }

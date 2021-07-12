@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import io.github.crucible.omniconfig.api.OmniconfigConstants;
+import io.github.crucible.omniconfig.api.properties.IAbstractProperty;
 import io.github.crucible.omniconfig.backing.Configuration;
 
 /**
@@ -48,5 +49,12 @@ public @interface ConfigDouble {
      * @return Maximum value this property is allowed to take.
      */
     public double max() default OmniconfigConstants.STANDART_INTEGER_LIMIT;
+
+    /**
+     * @return Whether or not this config property should be synchronized
+     * from client to server.
+     * @see IAbstractProperty#isSynchronized()
+     */
+    public boolean sync() default false;
 
 }
