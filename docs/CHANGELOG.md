@@ -15,3 +15,7 @@ Global log for all Grimoire changes, starting with release 3.2.0.
 - Removed strict requirements for Minecraft version on coremod/mod;
 - Added Minecraft version getter to `GrimoireAPI`;
 - Fixed version token replacement when building.
+
+## Release v3.2.3
+
+- Removed Mixin tweaker specification for `dev` artifact, as it is not used in development environment, and its presence there prevented Grimoire from being properly discovered as mod.
