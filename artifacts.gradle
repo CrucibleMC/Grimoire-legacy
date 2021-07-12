@@ -15,18 +15,15 @@ tasks.withType(Jar) {
 	if (name.equals('jar') || name.equals('devJar')) {
 		manifest {
 			attributes([
-					"Specification-Title": project.group,
-					"Specification-Vendor": "CrucibleMC Team",
-					"Specification-Version": "1",
-					"Implementation-Title": project.name,
-					"Implementation-Version": project.version,
-					"Implementation-Vendor": "CrucibleMC Team",
-					"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-					'IsThatYouGrimoire': "Indeed",
-					'FMLCorePluginContainsFMLMod': 'true',
-					"ForceLoadAsMod": "true",
-					'TweakOrder': '-2147482648',
-					'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
+				"Specification-Title": project.group,
+				"Specification-Vendor": "CrucibleMC Team",
+				"Specification-Version": "1",
+				"Implementation-Title": project.name,
+				"Implementation-Version": project.version,
+				"Implementation-Vendor": "CrucibleMC Team",
+				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+				'IsThatYouGrimoire': "Indeed",
+				'FMLCorePluginContainsFMLMod': 'true'
 			])
 		}
 	}
@@ -38,6 +35,12 @@ jar {
 	from(zipTree(mixinRepackFile)) {
 		exclude 'META-INF/MANIFEST.MF'
 		exclude 'LICENSE.txt'
+	}
+	manifest {
+		attributes([
+			'TweakOrder': '-2147482648',
+			'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
+		])
 	}
 }
 
