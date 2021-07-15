@@ -164,10 +164,18 @@ public class Configuration {
     }
 
     private String getSynchronizedComment() {
+        return this.getSynchronizedComment(true);
+    }
+
+    private String getSynchronizedComment(boolean after) {
         String comment = "";
 
         if (!this.sidedType.isSided()) {
-            comment =  ", synchronized: " + this.pullSynchronized();
+            if (after) {
+                comment =  ", synchronized: " + this.pullSynchronized();
+            } else {
+                comment = "synchronized: " + this.pullSynchronized();
+            }
         }
 
         return comment;
@@ -1628,7 +1636,7 @@ public class Configuration {
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.setValidValues(validValues);
-        prop.comment = comment + " [default: " + prop.getDefault() + this.getSynchronizedComment() + "]";
+        prop.comment = comment + " [" + this.getSynchronizedComment(false) + "]";
 
         if (validValues != null && validValues.length > 0) {
             prop.comment += NEW_LINE +
