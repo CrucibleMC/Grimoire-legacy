@@ -19,3 +19,8 @@ Global log for all Grimoire changes, starting with release 3.2.0.
 ## Release v3.2.3
 
 - Removed Mixin tweaker specification for `dev` artifact, as it is not used in development environment, and its presence there prevented Grimoire from being properly discovered as mod.
+
+## Release v3.2.4
+
+- Annotation config properties can now be marked as synchronized;
+- Default value is no longer added to property comment for string lists.
