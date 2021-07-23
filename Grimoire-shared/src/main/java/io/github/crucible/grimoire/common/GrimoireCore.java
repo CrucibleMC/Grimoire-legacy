@@ -50,8 +50,9 @@ public class GrimoireCore {
 
             System.setProperty("mixin.debug", "true");
             System.setProperty("mixin.hotSwap", "true");
-            System.setProperty("mixin.env.disableRefMap", "true");
+            System.setProperty("mixin.env.disableRefMap", "true"); // TODO Remapping support?
             System.setProperty("mixin.debug.export", "true");
+            System.setProperty("mixin.debug.countInjections", "true");
             System.setProperty("mixin.checks", "true");
             System.setProperty("mixin.checks.interfaces", "true");
             System.setProperty("mixin.env", "true");

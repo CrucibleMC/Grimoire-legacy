@@ -105,6 +105,7 @@ public abstract class AbstractParameter<T extends IAbstractProperty> implements 
             this.load(parentBuilder.getBackingConfig());
             this.notifyListeners();
         });
+
         builder.getParentBuilder().getPropertyMap().put(this.getID(), this);
     }
 
