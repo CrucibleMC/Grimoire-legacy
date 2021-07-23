@@ -24,3 +24,8 @@ Global log for all Grimoire changes, starting with release 3.2.0.
 
 - Annotation config properties can now be marked as synchronized;
 - Default value is no longer added to property comment for string lists.
+
+
+## Release v3.2.5
+
+- Brought back `ForceLoadAsMod` attribute in manifest. Turns out Grimoire was unable to load as mod in production environment without it.
