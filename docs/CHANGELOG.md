@@ -29,3 +29,8 @@ Global log for all Grimoire changes, starting with release 3.2.0.
 ## Release v3.2.5
 
 - Brought back `ForceLoadAsMod` attribute in manifest. Turns out Grimoire was unable to load as mod in production environment without it.
+
+
+## Release v3.2.6
+
+- Fixed a bug where Grimoire would scan jar files in versioned mod folder twice. 
