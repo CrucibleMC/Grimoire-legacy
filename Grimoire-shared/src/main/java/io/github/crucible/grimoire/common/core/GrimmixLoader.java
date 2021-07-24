@@ -59,6 +59,8 @@ public class GrimmixLoader {
     protected GrimmixContainer activeContainer = null;
     protected boolean finishedScan = false;
 
+    private List<File> scannedFiles = new ArrayList<>();
+
     public GrimmixLoader() {
         // NO-OP
     }
@@ -124,16 +126,23 @@ public class GrimmixLoader {
         return null;
     }
 
-    private boolean examineForAnnotations(File file, List<GrimmixCandidate> candidates, List<EventHandlerCandidate> handlers, List<String> configList, String recursivePath) {
+    private boolean examineForAnnotations(File someFile, List<GrimmixCandidate> candidates, List<EventHandlerCandidate> handlers, List<String> configList, String recursivePath) {
         boolean hadForcedConfigurations = false;
-        if (file.isDirectory()) {
-            String newPath = recursivePath == null ? "" : (recursivePath + file.getName() + File.separator);
+        try {
+            final File file = someFile.getCanonicalFile();
 
-            for (File newFile : file.listFiles()) {
-                this.examineForAnnotations(newFile, candidates, handlers, configList, newPath); // Do recursive kekw
-            }
-        } else if (file.getName().endsWith(".jar")) { // Its a jar man
-            try {
+            if (file.isDirectory()) {
+                String newPath = recursivePath == null ? "" : (recursivePath + file.getName() + File.separator);
+
+                for (File newFile : file.listFiles()) {
+                    this.examineForAnnotations(newFile, candidates, handlers, configList, newPath); // Do recursive kekw
+                }
+            } else if (file.getName().endsWith(".jar")) { // Its a jar man
+                if (this.scannedFiles.contains(file))
+                    return false;
+
+                this.scannedFiles.add(file);
+
                 JarFile jar = new JarFile(file);
 
                 for (ZipEntry ze : Collections.list(jar.entries())) {
@@ -170,40 +179,40 @@ public class GrimmixLoader {
                 }
 
                 jar.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (this.isClassFile(file.getName())) { // Its a .class file
-            GrimoireAnnotationAnalyzer analyzer = null;
+            } else if (this.isClassFile(file.getName())) { // Its a .class file
+                GrimoireAnnotationAnalyzer analyzer = null;
 
-            try {
-                analyzer = GrimoireAnnotationAnalyzer.examineClass(file);
-            } catch (Exception ex) {
-                // Ignore, likely invalid class file
-            }
-
-            if (analyzer != null) {
-                if (analyzer.getGrimmixCandidate().validate()) {
-                    candidates.add(analyzer.getGrimmixCandidate());
+                try {
+                    analyzer = GrimoireAnnotationAnalyzer.examineClass(file);
+                } catch (Exception ex) {
+                    // Ignore, likely invalid class file
                 }
 
-                if (analyzer.getHandlerCandidate().validate()) {
-                    handlers.add(analyzer.getHandlerCandidate());
-                }
-            }
-        } else if (this.isJson(file.getName())) {
-            DeserializedMixinJson json = DeserializedMixinJson.deserialize(() -> this.tryGetInputStream(file));
-            String cfgPath = recursivePath + file.getName();
-            cfgPath = cfgPath.replace(File.separator, "/");
+                if (analyzer != null) {
+                    if (analyzer.getGrimmixCandidate().validate()) {
+                        candidates.add(analyzer.getGrimmixCandidate());
+                    }
 
-            if (json != null && json.isValidConfiguration()) {
-                if (json.getForceLoadType() != null) {
-                    hadForcedConfigurations = true;
-                    ForceLoadController.addForcedConfiguration(json.getForceLoadType(), cfgPath);
-                } else {
-                    configList.add(cfgPath);
+                    if (analyzer.getHandlerCandidate().validate()) {
+                        handlers.add(analyzer.getHandlerCandidate());
+                    }
+                }
+            } else if (this.isJson(file.getName())) {
+                DeserializedMixinJson json = DeserializedMixinJson.deserialize(() -> this.tryGetInputStream(file));
+                String cfgPath = recursivePath + file.getName();
+                cfgPath = cfgPath.replace(File.separator, "/");
+
+                if (json != null && json.isValidConfiguration()) {
+                    if (json.getForceLoadType() != null) {
+                        hadForcedConfigurations = true;
+                        ForceLoadController.addForcedConfiguration(json.getForceLoadType(), cfgPath);
+                    } else {
+                        configList.add(cfgPath);
+                    }
                 }
             }
+        } catch (Throwable ex) {
+            Throwables.propagate(ex);
         }
 
         return hadForcedConfigurations;
@@ -344,6 +353,10 @@ public class GrimmixLoader {
                 }
             }
         }
+
+        GrimoireCore.logger.info("Total of {} jar files was scanned.", this.scannedFiles.size());
+        this.scannedFiles.clear();
+        this.scannedFiles = null;
     }
 
     public void scanForGrimmixes(@Nullable LaunchClassLoader classLoader, File... directories) {
