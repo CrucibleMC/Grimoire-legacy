@@ -34,3 +34,8 @@ Global log for all Grimoire changes, starting with release 3.2.0.
 ## Release v3.2.6
 
 - Fixed a bug where Grimoire would scan jar files in versioned mod folder twice. 
+
+
+## Release v3.2.7
+
+- Fixed a bug where `NullPointerException` was raised during annotation analysis phase.

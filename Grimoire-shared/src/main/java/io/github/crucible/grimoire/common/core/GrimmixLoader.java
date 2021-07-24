@@ -353,10 +353,6 @@ public class GrimmixLoader {
                 }
             }
         }
-
-        GrimoireCore.logger.info("Total of {} jar files was scanned.", this.scannedFiles.size());
-        this.scannedFiles.clear();
-        this.scannedFiles = null;
     }
 
     public void scanForGrimmixes(@Nullable LaunchClassLoader classLoader, File... directories) {
@@ -428,6 +424,10 @@ public class GrimmixLoader {
         }
 
         this.finishedScan = true;
+
+        GrimoireCore.logger.info("Total of {} jar files was scanned.", this.scannedFiles.size());
+        this.scannedFiles.clear();
+        this.scannedFiles = null;
     }
 
     public void construct() {
