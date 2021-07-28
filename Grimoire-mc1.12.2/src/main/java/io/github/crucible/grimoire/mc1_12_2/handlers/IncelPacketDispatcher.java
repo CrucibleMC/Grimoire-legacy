@@ -125,8 +125,9 @@ public class IncelPacketDispatcher extends AbstractPacketDispatcher<ByteBuf, Inc
             if (size < 0)
                 return "null";
 
-            String str = new String(this.buffer.readBytes(size).array(), Charsets.UTF_8);
-
+            byte[] strBytes = new byte[size];
+            this.buffer.readBytes(strBytes);
+            String str = new String(strBytes, Charsets.UTF_8);
 
             if (str.length() <= charLimit)
                 return str;
