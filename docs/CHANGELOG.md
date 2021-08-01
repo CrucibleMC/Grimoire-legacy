@@ -39,3 +39,8 @@ Global log for all Grimoire changes, starting with release 3.2.0.
 ## Release v3.2.7
 
 - Fixed a bug where `NullPointerException` was raised during annotation analysis phase.
+
+
+## Release v3.2.8
+
+- Fixed a bug where `UnsupportedOperationException` was raised when handling omniconfig synchronization packet.
