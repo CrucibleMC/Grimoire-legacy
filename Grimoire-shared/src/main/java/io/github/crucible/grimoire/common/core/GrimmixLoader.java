@@ -47,7 +47,7 @@ import io.github.crucible.grimoire.common.modules.ForceLoadController;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
 public class GrimmixLoader {
-    public static Pattern classFile = Pattern.compile("[^\\s\\$]+(\\$[^\\s]+)?\\.class$");
+    public static final Pattern classFile = Pattern.compile("[^\\s\\$]+(\\$[^\\s]+)?\\.class$");
     public static final GrimmixLoader INSTANCE = new GrimmixLoader();
 
     protected final List<GrimmixContainer> containerList = new ArrayList<>();
