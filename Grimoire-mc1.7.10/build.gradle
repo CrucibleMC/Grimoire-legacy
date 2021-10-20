@@ -36,7 +36,7 @@ minecraft {
 dependencies {
 	implementation(project(':Grimoire-shared'))
 	implementation('org.jetbrains:annotations:20.1.0')
-    implementation name: "mixin-0.7.11-SNAPSHOT-REPACK"
+    implementation name: "mixin-0.8-SNAPSHOT"
     implementation name: "EventHelper-1.7.10-1.13.1-dummydev"
 }
 

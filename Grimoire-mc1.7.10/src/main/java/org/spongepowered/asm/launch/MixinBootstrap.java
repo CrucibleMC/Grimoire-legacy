@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.launch.platform.CommandLineOptions;
 import org.spongepowered.asm.launch.platform.MixinPlatformManager;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
@@ -60,7 +61,7 @@ public abstract class MixinBootstrap {
     /**
      * Subsystem version
      */
-    public static final String VERSION = "0.7.11";
+    public static final String VERSION = "0.8";
 
     /**
      * Log all the things
@@ -164,7 +165,7 @@ public abstract class MixinBootstrap {
     /**
      * Phase 2 of mixin initialisation, initialise the phases
      */
-    static void doInit(List<String> args) {
+    static void doInit(CommandLineOptions args) {
         if (!MixinBootstrap.initialised) {
             if (MixinBootstrap.isSubsystemRegistered()) {
                 MixinBootstrap.logger.warn("Multiple Mixin containers present, init suppressed for " + MixinBootstrap.VERSION);
