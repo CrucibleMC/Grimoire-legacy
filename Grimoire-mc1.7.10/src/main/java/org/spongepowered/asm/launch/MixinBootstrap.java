@@ -124,7 +124,10 @@ public abstract class MixinBootstrap {
 
     /**
      * Initialise the mixin subsystem
+     * @deprecated Grimoire will do this for ya, don't touch this yourself.
      */
+
+    @Deprecated
     public static void init() {
         if (!MixinBootstrap.start()) {
             return;
@@ -150,6 +153,11 @@ public abstract class MixinBootstrap {
 
         if (!MixinBootstrap.initialised) {
             MixinBootstrap.initialised = true;
+
+            String command = System.getProperty("sun.java.command");
+            if (command != null && command.contains("GradleStart")) {
+                System.setProperty("mixin.env.remapRefMap", "true");
+            }
 
             Phase initialPhase = MixinService.getService().getInitialPhase();
             if (initialPhase == Phase.DEFAULT) {

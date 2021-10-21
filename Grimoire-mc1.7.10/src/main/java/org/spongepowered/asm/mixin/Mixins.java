@@ -29,6 +29,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import io.github.crucible.grimoire.common.api.GrimoireAPI;
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.ICoreLoadEvent;
+import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
+import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
 import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.GlobalProperties.Keys;
@@ -70,7 +74,12 @@ public final class Mixins {
      * Add multiple configurations
      *
      * @param configFiles config resources to add
+     * @deprecated Use {@link ICoreLoadEvent} and {@link IModLoadEvent} for registering configurations.
+     * If you ABSOLUTELY NEED to register configuration outside of your GrimmixController instance, then use
+     * {@link GrimoireAPI#registerMixinConfiguration(String, ConfigurationType)}.
      */
+
+    @Deprecated
     public static void addConfigurations(String... configFiles) {
         MixinEnvironment fallback = MixinEnvironment.getDefaultEnvironment();
         for (String configFile : configFiles) {
@@ -82,7 +91,12 @@ public final class Mixins {
      * Add a mixin configuration resource
      *
      * @param configFile path to configuration resource
+     * @deprecated Use {@link ICoreLoadEvent} and {@link IModLoadEvent} for registering configurations.
+     * If you ABSOLUTELY NEED to register configuration outside of your GrimmixController instance, then use
+     * {@link GrimoireAPI#registerMixinConfiguration(String, ConfigurationType)}.
      */
+
+    @Deprecated
     public static void addConfiguration(String configFile) {
         Mixins.createConfiguration(configFile, MixinEnvironment.getDefaultEnvironment());
     }
