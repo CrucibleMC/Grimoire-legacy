@@ -9,6 +9,7 @@ buildscript {
         }
     }
     dependencies {
+        classpath 'org.ow2.asm:asm:7.2' //FIXME: Temporary fix for something that should be fixed on forge gradle - juan
         classpath 'net.minecraftforge.gradle:ForgeGradle:[1.2-1.4.3-SNAPSHOT,)'
 		classpath 'com.integral.grimoire:GrimoireShenanigans:' + grimoireShenanigansVersion
     }
@@ -31,12 +32,13 @@ archivesBaseName = project.name
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
     runDir = "minecraft"
+    srgExtra "PK: org/objectweb mixin/org/objectweb"
 }
 
 dependencies {
 	implementation(project(':Grimoire-shared'))
 	implementation('org.jetbrains:annotations:20.1.0')
-    implementation name: "mixin-0.7.11-SNAPSHOT-REPACK"
+    implementation name: "mixin-0.8.4"
     implementation name: "EventHelper-1.7.10-1.13.1-dummydev"
 }
 

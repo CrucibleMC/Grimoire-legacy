@@ -1,3 +1,4 @@
+
 /*
  * This file is part of Mixin, licensed under the MIT License (MIT).
  *
@@ -24,13 +25,18 @@
  */
 package org.spongepowered.asm.launch;
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.logging.ILogger;
+import org.spongepowered.asm.launch.platform.CommandLineOptions;
 import org.spongepowered.asm.launch.platform.MixinPlatformManager;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
+import org.spongepowered.asm.mixin.throwables.MixinError;
+import org.spongepowered.asm.service.IMixinInternal;
+import org.spongepowered.asm.service.IMixinService;
 import org.spongepowered.asm.service.MixinService;
 
 /**
@@ -52,7 +58,7 @@ import org.spongepowered.asm.service.MixinService;
  * to register the additional tweaker for environment to detect the transition
  * from pre-init to default and we cannot do this within the tweaker constructor
  * without triggering a ConcurrentModificationException in the tweaker list. To
- * work around this we register the secondary tweaker from within the mixin
+ * work around this we register the secondary tweaker from within the mixin 
  * tweaker's acceptOptions method instead.</p>
  */
 public abstract class MixinBootstrap {
@@ -60,21 +66,28 @@ public abstract class MixinBootstrap {
     /**
      * Subsystem version
      */
-    public static final String VERSION = "0.7.11";
+    public static final String VERSION = "0.8.4";
 
     /**
-     * Log all the things
+     * Transformer factory 
      */
-    private static final Logger logger = LogManager.getLogger("mixin");
+    private static final String MIXIN_TRANSFORMER_FACTORY_CLASS = "org.spongepowered.asm.mixin.transformer.MixinTransformer$Factory";
+
 
     // These are Klass local, with luck this shouldn't be a problem
     private static boolean initialised = false;
     private static boolean initState = true;
 
+    /**
+     * Log all the things
+     */
+    private static ILogger logger;
+
     // Static initialiser, run boot services as early as possible
     static {
         MixinService.boot();
         MixinService.getService().prepare();
+        MixinBootstrap.logger = MixinService.getService().getLogger("mixin");
     }
 
     /**
@@ -111,15 +124,13 @@ public abstract class MixinBootstrap {
 
     /**
      * Initialise the mixin subsystem
-     * @deprecated Grimoire will do this for ya, don't touch this yourself.
      */
-
-    @Deprecated
     public static void init() {
-        if (!MixinBootstrap.start())
+        if (!MixinBootstrap.start()) {
             return;
+        }
 
-        MixinBootstrap.doInit(null);
+        MixinBootstrap.doInit(CommandLineOptions.defaultArgs());
     }
 
     /**
@@ -127,27 +138,24 @@ public abstract class MixinBootstrap {
      */
     static boolean start() {
         if (MixinBootstrap.isSubsystemRegistered()) {
-            if (!MixinBootstrap.checkSubsystemVersion())
+            if (!MixinBootstrap.checkSubsystemVersion()) {
                 throw new MixinInitialisationError("Mixin subsystem version " + MixinBootstrap.getActiveSubsystemVersion()
-                + " was already initialised. Cannot bootstrap version " + MixinBootstrap.VERSION);
+                        + " was already initialised. Cannot bootstrap version " + MixinBootstrap.VERSION);
+            }
             return false;
         }
 
         MixinBootstrap.registerSubsystem(MixinBootstrap.VERSION);
+        MixinBootstrap.offerInternals();
 
         if (!MixinBootstrap.initialised) {
             MixinBootstrap.initialised = true;
-
-            String command = System.getProperty("sun.java.command");
-            if (command != null && command.contains("GradleStart")) {
-                System.setProperty("mixin.env.remapRefMap", "true");
-            }
 
             Phase initialPhase = MixinService.getService().getInitialPhase();
             if (initialPhase == Phase.DEFAULT) {
                 MixinBootstrap.logger.error("Initialising mixin subsystem after game pre-init phase! Some mixins may be skipped.");
                 MixinEnvironment.init(initialPhase);
-                MixinBootstrap.getPlatform().prepare(null);
+                MixinBootstrap.getPlatform().prepare(CommandLineOptions.defaultArgs());
                 MixinBootstrap.initState = false;
             } else {
                 MixinEnvironment.init(initialPhase);
@@ -161,13 +169,18 @@ public abstract class MixinBootstrap {
         return true;
     }
 
+    @Deprecated
+    static void doInit(List<String> args) {
+        MixinBootstrap.doInit(CommandLineOptions.ofArgs(args));
+    }
+
     /**
      * Phase 2 of mixin initialisation, initialise the phases
      */
-    static void doInit(List<String> args) {
+    static void doInit(CommandLineOptions args) {
         if (!MixinBootstrap.initialised) {
             if (MixinBootstrap.isSubsystemRegistered()) {
-                MixinBootstrap.logger.warn("Multiple Mixin containers present, init suppressed for " + MixinBootstrap.VERSION);
+                MixinBootstrap.logger.warn("Multiple Mixin containers present, init suppressed for {}", MixinBootstrap.VERSION);
                 return;
             }
 
@@ -175,10 +188,10 @@ public abstract class MixinBootstrap {
         }
 
         MixinBootstrap.getPlatform().getPhaseProviderClasses();
-        //        for (String platformProviderClass : MixinBootstrap.getPlatform().getPhaseProviderClasses()) {
-        //            System.err.printf("Registering %s\n", platformProviderClass);
-        //            MixinEnvironment.registerPhaseProvider(platformProviderClass);
-        //        }
+//        for (String platformProviderClass : MixinBootstrap.getPlatform().getPhaseProviderClasses()) {
+//            System.err.printf("Registering %s\n", platformProviderClass);
+//            MixinEnvironment.registerPhaseProvider(platformProviderClass);
+//        }
 
         if (MixinBootstrap.initState) {
             MixinBootstrap.getPlatform().prepare(args);
@@ -205,6 +218,33 @@ public abstract class MixinBootstrap {
 
     private static void registerSubsystem(String version) {
         GlobalProperties.put(GlobalProperties.Keys.INIT, version);
+    }
+
+    private static void offerInternals() {
+        IMixinService service = MixinService.getService();
+
+        try {
+            for (IMixinInternal internal : MixinBootstrap.getInternals()) {
+                service.offer(internal);
+            }
+        } catch (AbstractMethodError ex) {
+            // outdated service
+            ex.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<IMixinInternal> getInternals() throws MixinError {
+        List<IMixinInternal> internals = new ArrayList<IMixinInternal>();
+        try {
+            Class<IMixinInternal> clTransformerFactory = (Class<IMixinInternal>)Class.forName(MixinBootstrap.MIXIN_TRANSFORMER_FACTORY_CLASS);
+            Constructor<IMixinInternal> ctor = clTransformerFactory.getDeclaredConstructor();
+            ctor.setAccessible(true);
+            internals.add(ctor.newInstance());
+        } catch (ReflectiveOperationException ex) {
+            throw new MixinError(ex);
+        }
+        return internals;
     }
 
 }

@@ -25,18 +25,17 @@
 package org.spongepowered.asm.mixin;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.launch.GlobalProperties;
+import org.spongepowered.asm.launch.GlobalProperties.Keys;
+import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import org.spongepowered.asm.mixin.transformer.ClassInfo;
 import org.spongepowered.asm.mixin.transformer.Config;
-
-import io.github.crucible.grimoire.common.api.GrimoireAPI;
-import io.github.crucible.grimoire.common.api.grimmix.lifecycle.ICoreLoadEvent;
-import io.github.crucible.grimoire.common.api.grimmix.lifecycle.IModLoadEvent;
-import io.github.crucible.grimoire.common.api.mixin.ConfigurationType;
+import org.spongepowered.asm.service.MixinService;
 
 /**
  * Entry point for registering global mixin resources. Compatibility with
@@ -48,17 +47,22 @@ public final class Mixins {
     /**
      * Logger
      */
-    private static final Logger logger = LogManager.getLogger("mixin");
+    private static final ILogger logger = MixinService.getService().getLogger("mixin");
 
     /**
      * GlobalProperties key storing mixin configs which are pending
      */
-    private static final String CONFIGS_KEY = GlobalProperties.Keys.CONFIGS + ".queue";
+    private static final Keys CONFIGS_KEY = Keys.of(GlobalProperties.Keys.CONFIGS + ".queue");
 
     /**
      * Error handlers for environment
      */
     private static final Set<String> errorHandlers = new LinkedHashSet<String>();
+
+    /**
+     * Names of configs which have already been registered
+     */
+    private static final Set<String> registeredConfigs = new HashSet<String>();
 
     private Mixins() {}
 
@@ -66,12 +70,7 @@ public final class Mixins {
      * Add multiple configurations
      *
      * @param configFiles config resources to add
-     * @deprecated Use {@link ICoreLoadEvent} and {@link IModLoadEvent} for registering configurations.
-     * If you ABSOLUTELY NEED to register configuration outside of your GrimmixController instance, then use
-     * {@link GrimoireAPI#registerMixinConfiguration(String, ConfigurationType)}.
      */
-
-    @Deprecated
     public static void addConfigurations(String... configFiles) {
         MixinEnvironment fallback = MixinEnvironment.getDefaultEnvironment();
         for (String configFile : configFiles) {
@@ -83,12 +82,7 @@ public final class Mixins {
      * Add a mixin configuration resource
      *
      * @param configFile path to configuration resource
-     * @deprecated Use {@link ICoreLoadEvent} and {@link IModLoadEvent} for registering configurations.
-     * If you ABSOLUTELY NEED to register configuration outside of your GrimmixController instance, then use
-     * {@link GrimoireAPI#registerMixinConfiguration(String, ConfigurationType)}.
      */
-
-    @Deprecated
     public static void addConfiguration(String configFile) {
         Mixins.createConfiguration(configFile, MixinEnvironment.getDefaultEnvironment());
     }
@@ -112,14 +106,21 @@ public final class Mixins {
     }
 
     private static void registerConfiguration(Config config) {
-        if (config == null)
+        if (config == null || Mixins.registeredConfigs.contains(config.getName())) {
             return;
+        }
 
         MixinEnvironment env = config.getEnvironment();
         if (env != null) {
             env.registerConfig(config.getName());
         }
         Mixins.getConfigs().add(config);
+        Mixins.registeredConfigs.add(config.getName());
+
+        Config parent = config.getParent();
+        if (parent != null) {
+            Mixins.registerConfiguration(parent);
+        }
     }
 
     /**
@@ -158,6 +159,21 @@ public final class Mixins {
             GlobalProperties.put(Mixins.CONFIGS_KEY, mixinConfigs);
         }
         return mixinConfigs;
+    }
+
+    /**
+     * Get information about mixins applied to the specified class in the
+     * current session.
+     *
+     * @param className Name of class to retrieve mixins for
+     * @return Set of applied mixins
+     */
+    public static Set<IMixinInfo> getMixinsForClass(String className) {
+        ClassInfo classInfo = ClassInfo.fromCache(className);
+        if (classInfo != null) {
+            return classInfo.getAppliedMixins();
+        }
+        return Collections.<IMixinInfo>emptySet();
     }
 
     /**
