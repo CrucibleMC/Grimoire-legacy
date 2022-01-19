@@ -1,5 +1,6 @@
 package io.github.crucible.grimoire.common.api.lib;
 
+import java.lang.reflect.Constructor;
 import java.util.function.Supplier;
 
 import io.github.crucible.grimoire.common.GrimoireCore;
@@ -51,4 +52,28 @@ public enum Environment {
             code.get().run();
         }
     }
+
+    /**
+     * If we are on dedicated server, constructs the <code>commonClass</code> and returns the instance;
+     * otherwise constructs and returns the instance of <code>clientClass</code>. Both classes must have
+     * a constructor that accepts no arguments; its visibility however does not matter.<br><br>
+     * This can be used as more flexible replacement for Forge's <code>@SidedProxy</code>, as this method
+     * is version-independent and allows to assign result to <code>final</code> field.
+     *
+     * @param commonClass Server-sided proxy class.
+     * @param clientClass Client-sided proxy class.
+     * @return Whatever we managed to instantiate.
+     */
+
+    public static <T> T createProxy(Class<T> commonClass, Class<? extends T> clientClass) {
+        try {
+            Class<? extends T> chosenClass = GrimoireAPI.getEnvironment() == DEDICATED_SERVER ? commonClass : clientClass;
+            Constructor<? extends T> constructor = chosenClass.getConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (Throwable ex) {
+            return null;
+        }
+    }
+
 }
