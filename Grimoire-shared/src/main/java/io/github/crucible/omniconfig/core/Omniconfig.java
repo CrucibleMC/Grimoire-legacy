@@ -288,6 +288,13 @@ public class Omniconfig implements IOmniconfig {
         }
 
         @Override
+        public IOmniconfigBuilder commentCategory(String category, String comment) {
+            this.assertPhase(PROPERTY_LOADING);
+            this.config.addCustomCategoryComment(this.clearCategorySplitters(category), comment);
+            return this;
+        }
+
+        @Override
         public Builder popCategory() {
             this.assertPhase(PROPERTY_LOADING);
             if (this.currentCategory.contains(Configuration.CATEGORY_SPLITTER)) {

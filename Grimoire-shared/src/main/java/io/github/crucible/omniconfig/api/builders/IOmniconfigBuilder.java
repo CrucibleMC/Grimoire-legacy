@@ -171,6 +171,17 @@ public interface IOmniconfigBuilder {
     public IOmniconfigBuilder pushCategory(String category, String comment);
 
     /**
+     * Set custom comment for specified category without putting it on top of
+     * category stack.
+     *
+     * @param category Name of category.
+     * @param comment Human-readable comment.
+     * @return This builder instance.
+     */
+    @PhaseOnly(PROPERTY_LOADING)
+    public IOmniconfigBuilder commentCategory(String category, String comment);
+
+    /**
      * Pop category on top of current category stack.
      * @return This builder instance.
      */
