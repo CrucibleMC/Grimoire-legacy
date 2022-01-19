@@ -225,7 +225,6 @@ public class ConfigCategory implements Map<String, Property> {
 
         this.write(out, pad0, displayName, " {");
 
-
         List<Property> orderedValues = new ArrayList<>();
         this.getOrderedValues().forEach(value -> {
             if (value.initialized || !owner.terminateNonInvokedKeys()) {

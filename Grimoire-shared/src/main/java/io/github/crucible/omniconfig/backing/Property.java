@@ -525,7 +525,6 @@ public class Property {
      */
     public String getString() {
         if (this.validator != null) {
-            System.out.println("Property name: " + this.name);
             Function<String, String> validator = (Function<String, String>) this.validator;
             this.value = validator.apply(this.value);
         }
@@ -681,7 +680,7 @@ public class Property {
     }
 
     public String[] getRawValues(boolean forceDefault) {
-        return forceDefault ? this.values : this.defaultValues;
+        return forceDefault ? this.defaultValues : this.values;
     }
 
     public String[] getStringList() {

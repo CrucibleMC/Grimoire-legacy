@@ -1154,7 +1154,6 @@ public class Configuration {
     }
 
     protected void saveFile() {
-
         if (PARENT != null && PARENT != this) {
             PARENT.saveFile();
             return;
@@ -1167,7 +1166,6 @@ public class Configuration {
 
             if (!this.file.exists() && !this.file.createNewFile())
                 return;
-
 
             if (this.file.canWrite()) {
                 OutputStream fos = new FileOutputStream(this.file);
