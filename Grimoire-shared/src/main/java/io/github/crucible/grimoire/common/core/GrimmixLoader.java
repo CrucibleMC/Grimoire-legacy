@@ -364,6 +364,7 @@ public class GrimmixLoader {
         if (classLoader != null) {
             GrimoireCore.logger.info("Location: Java Classpath");
         }
+
         for (File file : directories) {
             try {
                 GrimoireCore.logger.info("Location: " + GrimoireInternals.sanitizePath(file.getCanonicalFile().toURI().toString()));
@@ -383,7 +384,7 @@ public class GrimmixLoader {
 
         for (File dir : directories) {
             if (dir.exists() && dir.isDirectory()) {
-                for (File mod : FileUtils.listFiles(dir, new String[]{"jar"}, true)) {
+                for (File mod : FileUtils.listFiles(dir, new String[]{"jar"}, false)) {
                     try {
                         URL fileURL = mod.getCanonicalFile().toURI().toURL();
 
