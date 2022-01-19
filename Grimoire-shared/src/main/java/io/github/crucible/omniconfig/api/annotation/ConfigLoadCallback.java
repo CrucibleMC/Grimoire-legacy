@@ -8,11 +8,9 @@ import java.lang.annotation.Target;
 import io.github.crucible.omniconfig.api.builders.IOmniconfigBuilder;
 
 /**
- * By design, if annotation config class contains static methods decorated
- * with this annotation, that method will be invoked with an instance of
- * {@link IOmniconfigBuilder} passed as its argument once all property fields
- * are assigned their values loaded from actual file.<br><br>
- * Not implemented yet.
+ * If annotation config class contains static methods decorated with this
+ * annotation, such methods will be invoked with an instance of {@link IOmniconfigBuilder}
+ * passed as argument at specified loading stage.
  *
  * @author Aizistral
  */
@@ -20,5 +18,22 @@ import io.github.crucible.omniconfig.api.builders.IOmniconfigBuilder;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface ConfigLoadCallback {
-    // NO-OP
+
+    /**
+     * Determines at which loading stage this callback should be invoked:<br>
+     *
+     * <li>{@link Stage#BEFORE_INIT} - when {@link IOmniconfigBuilder} was instantiated,
+     * but nothing is done with it yet;</li>
+     * <li>{@link Stage#AFTER_INIT} - when {@link IOmniconfigBuilder} was instantiated
+     * and property loading phase initiated, but no actual properties are loaded yet;</li>
+     * <li>{@link Stage#BEFORE_FINALIZATION} - after property loading has finished, but
+     * before builder has transitioned into finalization phase.</li><br>
+     *
+     * @return Stage at which this callback should be invoked.
+     */
+    public Stage value() default Stage.BEFORE_FINALIZATION;
+
+    public static enum Stage {
+        BEFORE_INIT, AFTER_INIT, BEFORE_FINALIZATION;
+    }
 }

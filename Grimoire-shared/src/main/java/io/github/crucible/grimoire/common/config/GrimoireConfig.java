@@ -1,7 +1,10 @@
 package io.github.crucible.grimoire.common.config;
 
 import io.github.crucible.omniconfig.api.annotation.AnnotationConfig;
+import io.github.crucible.omniconfig.api.annotation.ConfigLoadCallback;
+import io.github.crucible.omniconfig.api.annotation.ConfigLoadCallback.Stage;
 import io.github.crucible.omniconfig.api.annotation.properties.ConfigBoolean;
+import io.github.crucible.omniconfig.api.builders.IOmniconfigBuilder;
 import io.github.crucible.omniconfig.api.core.VersioningPolicy;
 
 @AnnotationConfig(name = "GrimoireAPI", version = "1.0.0", reloadable = false, policy = VersioningPolicy.RESPECTFUL)

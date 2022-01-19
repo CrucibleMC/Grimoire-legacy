@@ -2,11 +2,16 @@ package io.github.crucible.omniconfig.gconfig;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +22,8 @@ import com.google.common.base.Strings;
 
 import io.github.crucible.omniconfig.api.OmniconfigAPI;
 import io.github.crucible.omniconfig.api.annotation.AnnotationConfig;
+import io.github.crucible.omniconfig.api.annotation.ConfigLoadCallback;
+import io.github.crucible.omniconfig.api.annotation.ConfigLoadCallback.Stage;
 import io.github.crucible.omniconfig.api.annotation.properties.ConfigBoolean;
 import io.github.crucible.omniconfig.api.annotation.properties.ConfigClassSet;
 import io.github.crucible.omniconfig.api.annotation.properties.ConfigDouble;
@@ -36,6 +43,7 @@ public class AnnotationConfigReader {
     private static final String PACKAGE_DEFAULT = "default";
     private final Class<?> configClass;
     private final Map<Field, Annotation> annotatedFields = new HashMap<>();
+    private final Map<Method, Stage> loadingCallbacks = new HashMap<>();
 
     protected AnnotationConfigReader(Class<?> configClass) {
         this.configClass = configClass;
@@ -53,12 +61,15 @@ public class AnnotationConfigReader {
         this.parseAnnotations();
 
         IOmniconfigBuilder wrapper = OmniconfigAPI.configBuilder(cfgName, new Version(annotation.version()), annotation.sided());
+        this.getLoadingCallbacks(Stage.BEFORE_INIT).stream().forEach(method -> this.tryInvoke(method, wrapper));
+
         wrapper.versioningPolicy(annotation.policy());
         wrapper.terminateNonInvokedKeys(annotation.terminateNonInvokedKeys());
-
         wrapper.loadFile();
 
+        this.getLoadingCallbacks(Stage.AFTER_INIT).stream().forEach(method -> this.tryInvoke(method, wrapper));
         this.loadFieldValues(wrapper);
+        this.getLoadingCallbacks(Stage.BEFORE_FINALIZATION).stream().forEach(method -> this.tryInvoke(method, wrapper));
 
         if (annotation.reloadable()) {
             wrapper.setReloadable();
@@ -233,11 +244,43 @@ public class AnnotationConfigReader {
                         if (!this.annotatedFields.containsKey(field)) {
                             this.annotatedFields.put(field, declaredAnnotation);
                         } else
-                            throw new IllegalArgumentException("Field " + field.getName() + "in annotation config " + this.configClass + "has more than one @Config[Value] annotation!");
+                            throw new IllegalArgumentException("Field " + field.getName() + " in annotation config " + this.configClass + " has more than one @Config[Value] annotation!");
                     }
                 }
             }
         }
+
+        for (Method method : this.configClass.getDeclaredMethods()) {
+            if (Modifier.isStatic(method.getModifiers())) {
+                method.setAccessible(true);
+
+                for (Annotation declaredAnnotation : method.getDeclaredAnnotations()) {
+                    Class<? extends Annotation> type = declaredAnnotation.annotationType();
+
+                    if (type == ConfigLoadCallback.class) {
+                        if (method.getParameterCount() == 1 && method.getParameterTypes()[0] == IOmniconfigBuilder.class) {
+                            ConfigLoadCallback annotation = (ConfigLoadCallback) declaredAnnotation;
+                            this.loadingCallbacks.put(method, annotation.value());
+                        } else
+                            throw new IllegalArgumentException("Method " + method.getName() + " in annotation config " + this.configClass
+                                    + " is annotated with @ConfigLoadCallback and thus must accept single IOmniconfigBuilder argument, but does not!");
+                    }
+                }
+            }
+        }
+    }
+
+    private void tryInvoke(Method method, IOmniconfigBuilder builder) {
+        try {
+            method.invoke(null, builder);
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private List<Method> getLoadingCallbacks(Stage stage) {
+        return this.loadingCallbacks.entrySet().stream().filter(entry -> entry.getValue() == stage)
+                .collect(ArrayList::new, (list, entry) -> list.add(entry.getKey()), ArrayList::addAll);
     }
 
     private IOmniconfigBuilder forceCategories(IOmniconfigBuilder builder, String categories) {
