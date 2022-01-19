@@ -68,7 +68,7 @@ public enum Environment {
     public static <T> T createProxy(Class<T> commonClass, Class<? extends T> clientClass) {
         try {
             Class<? extends T> chosenClass = GrimoireAPI.getEnvironment() == DEDICATED_SERVER ? commonClass : clientClass;
-            Constructor<? extends T> constructor = chosenClass.getConstructor();
+            Constructor<? extends T> constructor = chosenClass.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (Throwable ex) {
