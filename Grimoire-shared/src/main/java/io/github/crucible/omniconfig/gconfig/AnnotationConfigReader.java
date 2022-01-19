@@ -202,10 +202,14 @@ public class AnnotationConfigReader {
                 .sync(configAnnotation.sync())
                 .comment(configAnnotation.comment())
                 .uponLoad(value -> {
-                    collection.clear();
+                    try {
+                        collection.clear();
 
-                    for (String string : value.getValue()) {
-                        collection.add(string);
+                        for (String string : value.getValue()) {
+                            collection.add(string);
+                        }
+                    } catch (UnsupportedOperationException ex) {
+                        throw new IllegalStateException("List \"" + rawName + "\" annoted with @ConfigStringCollection in class " + this.configClass + " does not support modification operations!", ex);
                     }
                 })
                 .build();
