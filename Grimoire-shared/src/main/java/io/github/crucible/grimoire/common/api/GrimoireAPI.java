@@ -272,4 +272,17 @@ public class GrimoireAPI {
         return GrimoireCore.INSTANCE.getClassLoader();
     }
 
+    /**
+     * Loads the given class if it has not been loaded yet, does nothing otherwise.
+     * @param theClass Your (or not) class.
+     */
+
+    public static void loadClass(Class<?> theClass) {
+        try {
+            Class.forName(theClass.getName());
+        } catch (Throwable ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
 }
