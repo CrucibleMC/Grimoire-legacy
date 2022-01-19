@@ -222,7 +222,7 @@ public class Configuration {
         return this.loadingOutdatedFile;
     }
 
-    public boolean сaseSensitiveCustomCategories() {
+    public boolean caseSensitiveCustomCategories() {
         return this.caseSensitiveCustomCategories;
     }
 

@@ -229,7 +229,7 @@ public class Omniconfig implements IOmniconfig {
                         File defaultCopy = OmniconfigCore.INSTANCE.extractDefaultCopy(this.fileID);
 
                         if (defaultCopy != null && defaultCopy.exists() && defaultCopy.isFile()) {
-                            this.oldDefaultCopy = new Configuration(defaultCopy, this.config.getDefinedConfigVersion(), this.config.сaseSensitiveCustomCategories());
+                            this.oldDefaultCopy = new Configuration(defaultCopy, this.config.getDefinedConfigVersion(), this.config.caseSensitiveCustomCategories());
                             this.oldDefaultCopy.setVersioningPolicy(VersioningPolicy.DISMISSIVE);
                             this.oldDefaultCopy.markTemporary();
                             this.oldDefaultCopy.load();
