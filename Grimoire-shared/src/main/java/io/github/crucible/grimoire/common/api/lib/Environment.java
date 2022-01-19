@@ -72,7 +72,7 @@ public enum Environment {
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (Throwable ex) {
-            return null;
+            throw new RuntimeException(ex);
         }
     }
 
