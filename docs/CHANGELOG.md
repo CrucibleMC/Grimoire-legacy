@@ -2,6 +2,12 @@
 Global log for all Grimoire changes, starting with release 3.2.0.
 
 
+## Release v3.2.10
+
+- Implemented `IOmniconfigBuilder#commentCategory` method;
+- Implemented `@ConfigLoadCallback` annotation.
+
+
 ## Release v3.2.9
 
 - Fixed omniconfig string lists being restored to their default value after initial loading (#20);
