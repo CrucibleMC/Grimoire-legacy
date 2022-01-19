@@ -2,6 +2,15 @@
 Global log for all Grimoire changes, starting with release 3.2.0.
 
 
+## Release v3.2.9
+
+- Fixed omniconfig string lists being restored to their default value after initial loading (#20);
+- Fixed *all* subfolders of mods folder being scanned for grimmixes, recursively (#19);
+- Ensured proper exception logging when immutable list is used along with @ConfigStringList in annotation config (#15);
+- Implemented `Environment#createProxy` method;
+- Implemented `GrimoireAPI#loadClass` method.
+
+
 ## Release v3.2.8
 
 - Fixed a bug where `UnsupportedOperationException` was raised when handling omniconfig synchronization packet.
