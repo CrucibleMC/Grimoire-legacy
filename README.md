@@ -1,5 +1,13 @@
 # Grimoire: Legacy 1.7.10
-### Notice: As of 20.01.2022 this project is continued and developed independently by Aizistral. Check out his repository if you want to get updated Grimoire (3.x.x or later): https://github.com/Aizistral-Studios/Grimoire
+
+
+### Note 1: Personal Suggestion, Use UniMixins as grimoire will not be compatible with other projects.
+
+The idea of grimoire is to allow the fixing of multiple mods! Right now, the biggest FixingProject on 1.7.10 is [GTNewHorizons](https://github.com/GTNewHorizons) and they use [UniMixins](https://github.com/LegacyModdingMC/UniMixins)!
+
+**So, i recommend you to use [UniMixins](https://github.com/LegacyModdingMC/UniMixins) to keep yourself compatible with them.**
+
+### Note 2: As of 20.01.2022 this project is continued and developed independently by Aizistral. Check out his repository if you want to get updated Grimoire (3.x.x or later): https://github.com/Aizistral-Studios/Grimoire
 
 A coremod that ships mixin and loads all necessary things for grimoire mixins.
 
